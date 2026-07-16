@@ -85,7 +85,7 @@ hackaton-pidi/
 │   ├── Proposal Hackaton PIDI.docx
 │   └── ILT_practicioner/ , everest-architecture.*
 │
-└── NN - <nama-course>/
+└── NN-<nama-course>/             ← nama folder TANPA spasi (mis. 01-fundamental-deep-learning)
     └── <sub-proyek>/              ← "proyek-akhir" (atau utk course 01: "klasifikasi-gambar" & "analisis-sentimen")
         ├── artifact/instruksi/    ← 📕 INSTRUKSI ASLI DICODING (rubric, kriteria) — READ-ONLY
         └── pengerjaan/
@@ -95,7 +95,7 @@ hackaton-pidi/
                 └── submission/    ← deliverable final (yang di-zip ke Dicoding)
 ```
 
-**9 course:** `01 fundamental-deep-learning` (2 sub: klasifikasi-gambar + analisis-sentimen), `02 fundamental-generative-ai`, `03 pengembangan-generative-ai-llm`, `04 membangun-sistem-machine-learning`, `05 penerapan-machine-learning-google-cloud`, `06 penerapan-ai-aplikasi-web`, `07 penerapan-machine-learning-flutter`, `08 membangun-proyek-machine-learning`, `09 openshop-restful-api`.
+**9 course:** `01-fundamental-deep-learning` (2 sub: klasifikasi-gambar + analisis-sentimen), `02-fundamental-generative-ai`, `03-pengembangan-generative-ai-llm`, `04-membangun-sistem-machine-learning`, `05-penerapan-machine-learning-google-cloud`, `06-penerapan-ai-aplikasi-web`, `07-penerapan-machine-learning-flutter`, `08-membangun-proyek-machine-learning`, `09-openshop-restful-api`.
 
 **4 anggota:** `nazhif-setya-nugroho`, `fareynaldi-affan`, `dafina`, `bimo-bramantyo`.
 
