@@ -1,0 +1,134 @@
+# 📊 STATUS.md — Dashboard Lintas Device (Hackaton PIDI 2026)
+
+> **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
+
+**Terakhir di-update:** `2026-07-16` · **oleh device:** `Mac (M1)` · **oleh:** setup awal (survey otomatis 17 folder)
+
+---
+
+<!-- HANDOFF:START -->
+## 🎯 FOKUS SAAT INI / HANDOFF
+
+> Isi ulang bagian ini tiap akhir sesi: apa yang barusan dikerjakan, di device apa, dan apa langkah berikutnya untuk device yang lanjut. Ini yang pertama dibaca device berikutnya.
+
+- **Device terakhir aktif:** Mac (M1) — sesi setup sistem sync lintas-device (2026-07-16).
+- **Yang paling mendesak (open action, urut prioritas):**
+  1. **02 BFGAI (Nazhif)** — DITOLAK reviewer, revisi v3 sudah siap. Perlu **Run All notebook di Colab T4** → regenerate zip → **re-submit**. ⛅ butuh online.
+  2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
+  3. **05 Asclepius GCP (Nazhif)** — ⛔ TERBLOKIR: butuh `gcloud auth login` + billing account sebelum deploy Phase 3-7. Backend sudah OK lokal.
+  4. **03 PGABL (Fareynaldi)** — skeleton notebook siap, belum pernah Run All. Perlu akun HF + Colab Secret → Run All di Colab T4.
+- **Menunggu review Dicoding (jangan submit ulang):** 01-klasifikasi (Nazhif, Dafina, Fareynaldi), 01-analisis (Dafina, Fareynaldi, Bimo), 04 (Nazhif, Fareynaldi), 07 (Nazhif), 09 (Nazhif).
+- **⚠️ Artefak yang cuma ada di SATU device (risiko sync):** zip final **01-klasifikasi/dafina** & **01-analisis/dafina** hanya ada di **Victus** (belum di Mac). Kalau mau upload dari Mac → regenerate dulu. Lihat tabel artefak di bawah.
+<!-- HANDOFF:END -->
+
+---
+
+## Legenda status
+
+| Simbol | Arti |
+|---|---|
+| ✅ | **Diterima** reviewer Dicoding (selesai) |
+| 📤 | **Sudah dipaket** — terkirim / menunggu review (JANGAN submit ulang) |
+| 🔁 | **Ditolak → revisi siap re-submit** |
+| 🚧 | **Sedang dikerjakan** (belum tuntas) |
+| ⛔ | **Terblokir** (nunggu sesuatu di luar kode) |
+
+Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · ⛅ = butuh online (Colab/Cloud)
+
+---
+
+## Ringkasan cepat
+
+- **Total:** 17 folder pengerjaan (9 course, 4 anggota).
+- **✅ Diterima:** 3 (semua Nazhif, semua ⭐⭐⭐⭐⭐) — `01 analisis-sentimen`, `03 PGABL`, `08 BMLP`.
+- **🔁 Ditolak→siap resubmit:** 2 — `02 BFGAI`, `06 RootFacts`.
+- **📤 Menunggu review / upload:** 10.
+- **🚧 Sedang dikerjakan:** 1 — `03 PGABL (Fareynaldi)`.
+- **⛔ Terblokir:** 1 — `05 Asclepius GCP` (gcloud auth + billing).
+
+---
+
+## Matriks status per course × anggota
+
+| # | Course | Tema / anggota | Status | Bintang | Dev | Langkah berikutnya |
+|---|---|---|---|---|---|---|
+| 01 | fundamental-deep-learning · **klasifikasi-gambar** | Animals-10 CNN — **Nazhif** | 📤 | target ⭐⭐⭐⭐⭐ | ⛅🍎 | Upload zip 82MB / tunggu review |
+| 01 | · klasifikasi-gambar | TF Flowers — **Dafina** | 📤 | target ⭐⭐⭐ | 🎮 | Upload zip (⚠️ zip cuma di Victus) |
+| 01 | · klasifikasi-gambar | Garbage 12-kelas EffNetV2 — **Fareynaldi** | 📤 | target ⭐⭐⭐⭐⭐ | ⛅🍎 | Upload zip 96MB ke Drive → submit link |
+| 01 | fundamental-deep-learning · **analisis-sentimen** | PLN Mobile 4-skema — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ | 🍎🎮 | **SELESAI** |
+| 01 | · analisis-sentimen | Shopee 4-skema — **Bimo** | 📤 | ⭐⭐⭐⭐ (Skilled) | ⛅🍎 | Upload zip / tunggu review |
+| 01 | · analisis-sentimen | DANA SVM+TF-IDF — **Dafina** | 📤 | target ⭐⭐⭐ | 🍎 | Upload zip (⚠️ zip cuma di Victus) |
+| 01 | · analisis-sentimen | MyTelkomsel 4-skema — **Fareynaldi** | 📤 | target ⭐⭐⭐⭐⭐ | 🎮🍎 | Upload zip 6.6MB / tunggu review |
+| 02 | fundamental-generative-ai | BFGAI Streamlit SD1.5 — **Nazhif** | 🔁 | target ⭐⭐⭐⭐⭐ | ⛅ | Run All v3 di Colab → regen zip → **re-submit** |
+| 03 | pengembangan-generative-ai-llm | PGABL chatbot legal RAG — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ | ⛅ | **SELESAI** |
+| 03 | pengembangan-generative-ai-llm | PGABL versi Basic — **Fareynaldi** | 🚧 | target ⭐⭐⭐ | ⛅ | Akun HF + Colab Secret → Run All 2 notebook |
+| 04 | membangun-sistem-machine-learning | SMSML Pima diabetes — **Nazhif** | 📤 | — | 🍎 | Cek status review di dashboard Dicoding |
+| 04 | membangun-sistem-machine-learning | SMSML Titanic — **Fareynaldi** | 📤 | — | 🍎 | Cek review; pastikan `Workflow-CI` ke-push GitHub |
+| 05 | penerapan-machine-learning-google-cloud | Asclepius Hapi TF.js GCP — **Nazhif** | ⛔ | target ⭐⭐⭐⭐⭐ | ⛅🍎 | `gcloud auth login` + billing → deploy Phase 3-7 |
+| 06 | penerapan-ai-aplikasi-web | RootFacts PWA TF.js — **Nazhif** | 🔁 | target ⭐⭐⭐ (Basic) | 🍎 | **Re-submit** (koreksi-2 sudah beres, live sehat) |
+| 07 | penerapan-machine-learning-flutter | Food Recognizer TFLite — **Nazhif** | 📤 | target ⭐⭐⭐ | 🎮 | Verifikasi zip ter-upload / tunggu review |
+| 08 | membangun-proyek-machine-learning | BMLP Clustering+Klasifikasi — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ (4.0) | 🍎 | **SELESAI** |
+| 09 | openshop-restful-api | OpenShop Django REST — **Nazhif** | 📤 | — | 🍎 | Konfirmasi zip ter-upload / cek review |
+
+---
+
+## Di mana artefak berat hidup (KRITIS untuk sync — git TIDAK bawa ini)
+
+> Model/dataset/`.venv` di-`.gitignore`. Kalau pindah device dan butuh artefak ini, ambil dari lokasi berikut (atau regenerate).
+
+| Proyek | Artefak berat | Lokasi |
+|---|---|---|
+| 03 PGABL (Nazhif) | Model SFT & GRPO (merged_16bit) | **HuggingFace** [PGABL-Llama-3.2-3B-SFT](https://huggingface.co/nazhifsetya-merpati/PGABL-Llama-3.2-3B-SFT) · [PGABL-Llama-3.2-3B-GRPO](https://huggingface.co/nazhifsetya-merpati/PGABL-Llama-3.2-3B-GRPO). Bobot+ChromaDB cache di **Google Drive** `MyDrive/PGABL/models` (~10GB) |
+| 02 BFGAI (Nazhif) | SD1.5 + inpainting (~10GB) | Di-pull runtime dari HF (`stable-diffusion-v1-5/*`, `CIDAS/clipseg-*`). Video demo di `submission/video_demo_aplikasi_BFGAI.mp4` |
+| 06 RootFacts (Nazhif) | Model TM (in-repo) + SmolLM2-135M | TF.js Teachable Machine ada di `submission/root-facts/model/` (ikut git). LLM di-download runtime dari HF CDN. Live: [lively-gecko-2d2054.netlify.app](https://lively-gecko-2d2054.netlify.app/) |
+| 05 Asclepius (Nazhif) | Model TF.js graph (~14MB) + test images | Git-ignored lokal; re-download dari release Dicoding. Target GCS `gs://submissionmlgc-nazhifsetya-model` |
+| 01-klasifikasi (Nazhif) | SavedModel/TFLite/TFJS (~82MB zip) | Lokal di `submission/` + zip di root (git-ignored). Dataset via `kagglehub` on-the-fly |
+| 01-klasifikasi (Dafina) | Zip 45MB + saved_model/tfjs | **HANYA di Victus** (`d:\`) — belum ada di Mac ⚠️ |
+| 01-klasifikasi (Fareynaldi) | Zip 96MB + saved_model/tflite/tfjs | Lokal `submission/`; belum di-upload ke Drive |
+| 01-analisis (Nazhif) | *.keras/*.joblib + IndoBERT + CSV | Lokal `submission/` (git-ignored, tak ada mirror). IndoBERT dilatih di Victus |
+| 01-analisis (Dafina) | Zip final 1.5MB | **HANYA di Victus** — belum di Mac ⚠️ |
+| 01-analisis (Fareynaldi/Bimo) | IndoBERT weights | Fareynaldi: dilatih di Victus (folder `indobert_victus/`, bukan bobot). Bimo: dilatih di Colab, hanya JSON metrik disimpan |
+| 07 Food Recognizer (Nazhif) | `aiy_food_v1.tflite` (~20MB ×3) | **In-repo, TIDAK git-ignored** (dari Kaggle). Ada 3 salinan |
+| 04, 08, 09 (Nazhif/Fareynaldi) | Model kecil (<2MB) | Ikut git di `submission/` — aman lintas device |
+
+---
+
+## Catatan detail per-proyek
+
+### ✅ Sudah diterima (SELESAI)
+- **01 analisis-sentimen / Nazhif** — PLN Mobile, 4 skema (SVM/BiLSTM/CNN/IndoBERT), ⭐⭐⭐⭐⭐. IndoBERT dilatih di Victus.
+- **03 PGABL / Nazhif** — chatbot legal SLM (Llama-3.2-3B QLoRA+GRPO) + RAG + Gradio, Advanced 4pts semua kriteria. Model di HF.
+- **08 BMLP / Nazhif** — Clustering K-Means + Klasifikasi DT/RF, Advanced 4.0 semua 5 kriteria. Jalan penuh di Mac.
+
+### 🔁 Ditolak → revisi siap re-submit
+- **02 BFGAI / Nazhif** — Streamlit SD1.5 (Text-to-Image + Inpaint/Outpaint + UI). v1 ditolak (K1&K2), sudah revisi ke v3 "SIAP RESUBMIT". **Perlu Run All di Colab T4** dulu buat verifikasi visual + regen zip.
+- **06 RootFacts / Nazhif** — web app Vanilla JS (CV TF.js + GenAI Transformers.js, PWA, Netlify). Ditolak 2×, kedua koreksi RESOLVED, live site 0-error. Tinggal re-submit.
+
+### 🚧 Sedang dikerjakan
+- **03 PGABL / Fareynaldi** — target Basic. 2 notebook skeleton lolos syntax, **belum Run All**. Butuh akun HF sendiri + Colab Secret (HF_TOKEN, HF_USERNAME) + upload 4 PDF ke Drive, lalu Run All (SFT ~90-120mnt, baru RAG). Victus 4GB VRAM TIDAK cukup → wajib Colab T4.
+
+### ⛔ Terblokir
+- **05 Asclepius / Nazhif** — backend Hapi TF.js untuk deteksi kanker, deploy ke GCP (Cloud Run + Storage + Firestore + App Engine). Backend **sudah lolos 4 skenario Postman lokal**. Deploy Phase 3-7 nunggu `gcloud auth login` + billing account (`nazhif.nugroho@gmail.com`), region `asia-southeast2`. Panduan di `DEPLOY-NOTES.md`.
+
+### 📤 Menunggu review (jangan submit ulang)
+- **01 klasifikasi / Nazhif** — Animals-10 CNN, notebook Colab 0-error (Test 96.61%), zip 82MB siap.
+- **01 klasifikasi / Dafina** — TF Flowers 5 kelas (Test 86.72%), lokal Victus CPU. ⚠️ zip cuma di Victus.
+- **01 klasifikasi / Fareynaldi** — Garbage 12 kelas EfficientNetV2B0 (Test 95.64%), zip 96MB perlu upload Drive.
+- **01 analisis / Bimo** — Shopee 4-skema, dapat ⭐⭐⭐⭐ Skilled (target 5, test 90.66%). IndoBERT di Colab.
+- **01 analisis / Dafina** — DANA SVM+TF-IDF (Test 91.41%). ⚠️ zip cuma di Victus.
+- **01 analisis / Fareynaldi** — MyTelkomsel 4-skema (IndoBERT test 92.78%), zip 6.6MB. IndoBERT di Victus.
+- **04 SMSML / Nazhif** — Pima diabetes, MLflow+CI+Prometheus/Grafana. Repo: `github.com/nazhifSetya/Workflow-CI`, `Eksperimen_SML_Nazhif-Setya-Nugroho`.
+- **04 SMSML / Fareynaldi** — Titanic, MLflow LogisticRegression + CI + monitoring. Repo `github.com/fareynaldi/*`.
+- **07 Food Recognizer / Nazhif** — Flutter TFLite AIY Food V1, "shipped as Basic". Build di Windows + Android emulator.
+- **09 OpenShop / Nazhif** — Django 4.2 + DRF CRUD produk + soft-delete + Postman. Jalan di Mac.
+
+---
+
+## Yang belum punya CLAUDE.md per-proyek (memory tipis)
+
+Folder ini belum punya `CLAUDE.md` sendiri — konteks disimpulkan dari README/kode. Kalau nanti dikerjakan lagi, pertimbangkan bikin `CLAUDE.md` biar nyambung lintas device:
+`04/nazhif`, `04/fareynaldi`, `05/nazhif`, `09/nazhif`.
+
+---
+
+**Cara update file ini:** ubah baris proyek yang digarap + isi ulang blok **FOKUS SAAT INI / HANDOFF** + ganti stempel **Terakhir di-update** di atas. Lalu commit+push.

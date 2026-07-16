@@ -1,5 +1,11 @@
 # CLAUDE.md — Proyek Akhir Root Facts App (Belajar Penerapan AI di Aplikasi Web)
 
+> ### 🔄 SYNC LINTAS DEVICE (Mac ⇄ Victus)
+> Konteks & memory Claude Code TIDAK auto-sync antar device — yang nyambung cuma Git.
+> **Awal sesi:** `git pull --rebase --autostash`. **Akhir sesi:** update Progress Log di bawah **+** [`/_meta/STATUS.md`](../../../../_meta/STATUS.md), lalu commit + push.
+> Peta repo & protokol lengkap → [`/CLAUDE.md`](../../../../CLAUDE.md) · Status semua proyek & lokasi artefak berat → [`/_meta/STATUS.md`](../../../../_meta/STATUS.md).
+
+
 > **File ini = memory + HARD rules proyek ini.** Baca SELURUHNYA di awal tiap sesi sebelum mengerjakan apa pun.
 > Update bagian [Progress Log](#-progress-log) tiap satu tahap selesai.
 

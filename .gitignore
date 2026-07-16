@@ -8,6 +8,13 @@ Thumbs.db
 .idea/
 .vscode/
 
+# ─── Claude Code (state lokal per-device — JANGAN di-sync) ──
+# Root CLAUDE.md, _meta/STATUS.md, & CLAUDE.md per-proyek IKUT git (itu otak bersama).
+# Yang di-ignore cuma setting/izin/riwayat lokal yang beda tiap komputer:
+.claude/settings.local.json
+.claude/*.local.json
+.claude/local/
+
 # ─── Python environments ────────────────────────────
 .venv/
 venv/

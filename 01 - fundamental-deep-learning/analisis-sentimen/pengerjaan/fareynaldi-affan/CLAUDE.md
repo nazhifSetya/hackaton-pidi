@@ -1,5 +1,11 @@
 # CLAUDE.md — Proyek Analisis Sentimen (Deep Learning) · **MyTelkomsel** · submission utk **Fareynaldi**
 
+> ### 🔄 SYNC LINTAS DEVICE (Mac ⇄ Victus)
+> Konteks & memory Claude Code TIDAK auto-sync antar device — yang nyambung cuma Git.
+> **Awal sesi:** `git pull --rebase --autostash`. **Akhir sesi:** update Progress Log di bawah **+** [`/_meta/STATUS.md`](../../../../_meta/STATUS.md), lalu commit + push.
+> Peta repo & protokol lengkap → [`/CLAUDE.md`](../../../../CLAUDE.md) · Status semua proyek & lokasi artefak berat → [`/_meta/STATUS.md`](../../../../_meta/STATUS.md).
+
+
 > **File ini = memory + HARD rules untuk project ini.** Baca SELURUHNYA di awal tiap sesi sebelum mengerjakan apa pun.
 > **Update bagian [Progress Log](#-progress-log-living-section) setiap kali menyelesaikan satu tahap.** Ini sumber kebenaran status pengerjaan.
 

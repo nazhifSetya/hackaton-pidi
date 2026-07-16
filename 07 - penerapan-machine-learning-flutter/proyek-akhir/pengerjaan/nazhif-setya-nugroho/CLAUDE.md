@@ -1,5 +1,11 @@
 # Proyek Akhir — Food Recognizer Playbook
 
+> ### 🔄 SYNC LINTAS DEVICE (Mac ⇄ Victus)
+> Konteks & memory Claude Code TIDAK auto-sync antar device — yang nyambung cuma Git.
+> **Awal sesi:** `git pull --rebase --autostash`. **Akhir sesi:** update Progress Log di bawah **+** [`/_meta/STATUS.md`](../../../../_meta/STATUS.md), lalu commit + push.
+> Peta repo & protokol lengkap → [`/CLAUDE.md`](../../../../CLAUDE.md) · Status semua proyek & lokasi artefak berat → [`/_meta/STATUS.md`](../../../../_meta/STATUS.md).
+
+
 Working notes for future sessions on the Dicoding submission `Belajar Penerapan Machine Learning untuk Flutter`.
 
 ## Layout

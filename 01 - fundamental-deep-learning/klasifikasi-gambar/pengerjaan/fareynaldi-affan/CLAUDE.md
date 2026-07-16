@@ -1,5 +1,11 @@
 # CLAUDE.md — Proyek Akhir Klasifikasi Gambar (versi FAREYNALDI)
 
+> ### 🔄 SYNC LINTAS DEVICE (Mac ⇄ Victus)
+> Konteks & memory Claude Code TIDAK auto-sync antar device — yang nyambung cuma Git.
+> **Awal sesi:** `git pull --rebase --autostash`. **Akhir sesi:** update Progress Log di bawah **+** [`/_meta/STATUS.md`](../../../../_meta/STATUS.md), lalu commit + push.
+> Peta repo & protokol lengkap → [`/CLAUDE.md`](../../../../CLAUDE.md) · Status semua proyek & lokasi artefak berat → [`/_meta/STATUS.md`](../../../../_meta/STATUS.md).
+
+
 > **File ini = memory + rules untuk submission Fareynaldi.** Baca seluruhnya di awal tiap sesi.
 > **Update [Progress Log](#-progress-log) tiap tahap selesai.**
 
