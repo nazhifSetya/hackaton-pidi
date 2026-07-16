@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
 
-**Terakhir di-update:** `2026-07-16` · **oleh device:** `Mac (M1)` · **oleh:** setup awal (survey otomatis 17 folder)
+**Terakhir di-update:** `2026-07-16` · **oleh device:** `Mac (M1)` · **oleh:** implementasi 06 RootFacts (Fareynaldi) — Basic done, verified lokal
 
 ---
 
@@ -17,6 +17,7 @@
   2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
   3. **05 Asclepius GCP (Nazhif)** — ⛔ TERBLOKIR: butuh `gcloud auth login` + billing account sebelum deploy Phase 3-7. Backend sudah OK lokal.
   4. **03 PGABL (Fareynaldi)** — skeleton notebook siap, belum pernah Run All. Perlu akun HF + Colab Secret → Run All di Colab T4.
+  5. **06 RootFacts (Fareynaldi)** — 🆕 kode Basic SELESAI & terverifikasi lokal (Mac). Tinggal **user deploy Netlify (akun Fareynaldi)** → isi `STUDENT.txt` → zip `RootFacts_Fareynaldi_Affan.zip` → upload. Panduan di folder proyek.
 - **Menunggu review Dicoding (jangan submit ulang):** 01-klasifikasi (Nazhif, Dafina, Fareynaldi), 01-analisis (Dafina, Fareynaldi, Bimo), 04 (Nazhif, Fareynaldi), 07 (Nazhif), 09 (Nazhif).
 - **⚠️ Artefak yang cuma ada di SATU device (risiko sync):** zip final **01-klasifikasi/dafina** & **01-analisis/dafina** hanya ada di **Victus** (belum di Mac). Kalau mau upload dari Mac → regenerate dulu. Lihat tabel artefak di bawah.
 <!-- HANDOFF:END -->
@@ -39,11 +40,11 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ## Ringkasan cepat
 
-- **Total:** 17 folder pengerjaan (9 course, 4 anggota).
+- **Total:** 18 folder pengerjaan (9 course, 4 anggota) — +1: `06 RootFacts (Fareynaldi)` dibuat 2026-07-16.
 - **✅ Diterima:** 3 (semua Nazhif, semua ⭐⭐⭐⭐⭐) — `01 analisis-sentimen`, `03 PGABL`, `08 BMLP`.
 - **🔁 Ditolak→siap resubmit:** 2 — `02 BFGAI`, `06 RootFacts`.
 - **📤 Menunggu review / upload:** 10.
-- **🚧 Sedang dikerjakan:** 1 — `03 PGABL (Fareynaldi)`.
+- **🚧 Sedang dikerjakan:** 2 — `03 PGABL (Fareynaldi)`, `06 RootFacts (Fareynaldi)` (kode done, tinggal user deploy).
 - **⛔ Terblokir:** 1 — `05 Asclepius GCP` (gcloud auth + billing).
 
 ---
@@ -66,6 +67,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 04 | membangun-sistem-machine-learning | SMSML Titanic — **Fareynaldi** | 📤 | — | 🍎 | Cek review; pastikan `Workflow-CI` ke-push GitHub |
 | 05 | penerapan-machine-learning-google-cloud | Asclepius Hapi TF.js GCP — **Nazhif** | ⛔ | target ⭐⭐⭐⭐⭐ | ⛅🍎 | `gcloud auth login` + billing → deploy Phase 3-7 |
 | 06 | penerapan-ai-aplikasi-web | RootFacts PWA TF.js — **Nazhif** | 🔁 | target ⭐⭐⭐ (Basic) | 🍎 | **Re-submit** (koreksi-2 sudah beres, live sehat) |
+| 06 | penerapan-ai-aplikasi-web | RootFacts PWA (LaMini-Flan-T5) — **Fareynaldi** | 🚧 | target ⭐⭐⭐ (Basic) | 🍎 | Kode Basic done+verified lokal. **User deploy Netlify → STUDENT.txt → zip → upload** |
 | 07 | penerapan-machine-learning-flutter | Food Recognizer TFLite — **Nazhif** | 📤 | target ⭐⭐⭐ | 🎮 | Verifikasi zip ter-upload / tunggu review |
 | 08 | membangun-proyek-machine-learning | BMLP Clustering+Klasifikasi — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ (4.0) | 🍎 | **SELESAI** |
 | 09 | openshop-restful-api | OpenShop Django REST — **Nazhif** | 📤 | — | 🍎 | Konfirmasi zip ter-upload / cek review |
@@ -81,6 +83,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 03 PGABL (Nazhif) | Model SFT & GRPO (merged_16bit) | **HuggingFace** [PGABL-Llama-3.2-3B-SFT](https://huggingface.co/nazhifsetya-merpati/PGABL-Llama-3.2-3B-SFT) · [PGABL-Llama-3.2-3B-GRPO](https://huggingface.co/nazhifsetya-merpati/PGABL-Llama-3.2-3B-GRPO). Bobot+ChromaDB cache di **Google Drive** `MyDrive/PGABL/models` (~10GB) |
 | 02 BFGAI (Nazhif) | SD1.5 + inpainting (~10GB) | Di-pull runtime dari HF (`stable-diffusion-v1-5/*`, `CIDAS/clipseg-*`). Video demo di `submission/video_demo_aplikasi_BFGAI.mp4` |
 | 06 RootFacts (Nazhif) | Model TM (in-repo) + SmolLM2-135M | TF.js Teachable Machine ada di `submission/root-facts/model/` (ikut git). LLM di-download runtime dari HF CDN. Live: [lively-gecko-2d2054.netlify.app](https://lively-gecko-2d2054.netlify.app/) |
+| 06 RootFacts (Fareynaldi) | Model TM (in-repo) + LaMini-Flan-T5-248M | TF.js Teachable Machine ikut git di `pengerjaan/fareynaldi-affan/submission/root-facts/model/`. LLM (`Xenova/LaMini-Flan-T5-248M`, text2text) di-download runtime dari HF Hub. Belum deploy (nunggu user). |
 | 05 Asclepius (Nazhif) | Model TF.js graph (~14MB) + test images | Git-ignored lokal; re-download dari release Dicoding. Target GCS `gs://submissionmlgc-nazhifsetya-model` |
 | 01-klasifikasi (Nazhif) | SavedModel/TFLite/TFJS (~82MB zip) | Lokal di `submission/` + zip di root (git-ignored). Dataset via `kagglehub` on-the-fly |
 | 01-klasifikasi (Dafina) | Zip 45MB + saved_model/tfjs | **HANYA di Victus** (`d:\`) — belum ada di Mac ⚠️ |
