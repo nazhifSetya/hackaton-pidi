@@ -1,0 +1,73 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "uid": "dashboard-fareynaldi",
+  "title": "Dashboard-fareynaldi",
+  "tags": ["titanic", "pidi"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-15m", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Total Inference Requests",
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "titanic_inference_requests_total", "legendFormat": "{{endpoint}}", "refId": "A"}]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Inference Rate (req/s)",
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(titanic_inference_requests_total[1m]))", "refId": "A"}]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Avg Inference Latency (s)",
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(titanic_inference_latency_seconds_sum[1m]))/sum(rate(titanic_inference_latency_seconds_count[1m]))", "refId": "A"}]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Survival Predictions by Class",
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "titanic_survival_predictions_total", "legendFormat": "class {{label}}", "refId": "A"}]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Service CPU (%)",
+      "gridPos": {"h": 7, "w": 8, "x": 0, "y": 14},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "service_cpu_percent", "refId": "A"}]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Service Memory (%)",
+      "gridPos": {"h": 7, "w": 8, "x": 8, "y": 14},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "service_memory_percent", "refId": "A"}]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Inflight Requests",
+      "gridPos": {"h": 7, "w": 8, "x": 16, "y": 14},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "service_inflight_requests", "refId": "A"}]
+    }
+  ]
+}
