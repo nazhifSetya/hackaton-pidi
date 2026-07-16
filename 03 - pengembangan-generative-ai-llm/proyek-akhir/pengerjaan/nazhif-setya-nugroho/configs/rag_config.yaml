@@ -1,0 +1,169 @@
+# PGABL - RAG pipeline configuration
+# Modular: loader → cleaner → chunker → embedder → vector_store → retriever → reranker → generator
+# Load: yaml.safe_load(open("configs/rag_config.yaml"))
+
+seed: 42
+
+# ==================== Chunker ====================
+# Per-PDF adaptive strategy (WAJIB per karakter PDF berbeda)
+chunker:
+  # Strategy mapping: PDF → chunker type
+  strategy_per_pdf:
+    PP_5_2021: hierarchical             # 739 hlm, mixed text-layer, batang tubuh + KBLI matrix
+    PP_35_2021: flat_per_pasal          # 56 hlm, mixed OCR, per-pasal jelas
+    PP_51_2023: flat_per_pasal          # 27 hlm, GOOD text-layer, per-perubahan
+    UU_6_2023: hierarchical             # 1127 hlm/85MB, 15 klaster, WAJIB hierarchical
+
+  # Flat chunker params (untuk semua 4 PDF di Tahap 3a)
+  # 1 pasal = 1 chunk kalau <= chunk_size; pasal panjang di-sub-split dgn overlap.
+  flat:
+    chunk_size: 1200                    # char target (rubric max 5000); ~1200 = mayoritas pasal utuh
+    chunk_overlap: 100                  # eksplisit (rubric WAJIB) - overlap antar sub-chunk
+    hard_cap: 5000                      # batas keras per chunk (rubric max)
+    pasal_split_regex: '^Pasal\s+\d+'
+
+  # UU 6/2023: BAB Roman I-XV -> klaster_id 1-15 (= 15 collection ChromaDB).
+  # Terverifikasi via recon: UU 6/2023 punya TEPAT 15 BAB.
+  uu_6_2023_klaster_labels:
+    1: Ketentuan Umum
+    2: Asas, Tujuan, dan Ruang Lingkup
+    3: Peningkatan Ekosistem Investasi dan Kegiatan Berusaha
+    4: Ketenagakerjaan
+    5: Koperasi dan UMK-M
+    6: Kemudahan Berusaha
+    7: Dukungan Riset dan Inovasi
+    8: Pengadaan Tanah
+    9: Kawasan Ekonomi
+    10: Investasi Pemerintah Pusat dan Proyek Strategis Nasional
+    11: Administrasi Pemerintahan
+    12: Pengawasan dan Pembinaan
+    13: Ketentuan Lain-Lain
+    14: Ketentuan Peralihan
+    15: Ketentuan Penutup
+
+  # Hierarchical (parent-child) params - untuk PP 5, UU 6
+  hierarchical:
+    parent_size: 2000                   # char per BAB/klaster (konteks luas untuk generation)
+    child_size: 800                     # char per pasal (retrieval presisi)
+    child_overlap: 100
+
+  # OCR preprocessing (dilakukan cleaner sebelum chunker)
+  cleaner:
+    header_regex_patterns:
+      - 'PRESIDEN\s+REPUBLIK\s+INDONESIA'
+      - 'SK\s+No\s+\d+\s*[A-Z]?'
+    normalize_digits_in_number_context: true   # O→0, l→1 hanya dalam context angka
+    reconstruct_hyphenated_words: true         # gabung kata terpotong antar halaman
+    filter_cukup_jelas: true                   # skip section "Cukup jelas" di Penjelasan
+
+# ==================== Embedder ====================
+embedder:
+  model_id: BAAI/bge-m3
+  device: cuda
+  batch_size: 32
+  max_length: 8192                      # bge-m3 max ctx
+  normalize_embeddings: true
+  # Multi-mode support (Advanced: hybrid dense+sparse via ensemble)
+  return_dense: true
+  return_sparse: true
+  return_colbert_vecs: false            # ColBERT expensive, dipakai kalau perlu re-rank internal
+
+# ==================== Vector Store (ChromaDB) ====================
+vector_store:
+  persist_directory_key: chroma_db      # → paths.yaml
+  distance_metric: cosine
+  hnsw_space: cosine
+  # Multi-collection strategy
+  # NOTE: 3 PP + 15 klaster UU 6/2023 = 18 collections total
+  collections:
+    - name: pp_5_2021
+      pdf: PP_5_2021
+    - name: pp_35_2021
+      pdf: PP_35_2021
+    - name: pp_51_2023
+      pdf: PP_51_2023
+  # UU 6/2023 per klaster (di-populate saat ingest)
+  uu_6_2023_collections:
+    name_pattern: "uu_6_2023_klaster_{klaster_id}"
+    num_klaster: 15
+
+# ==================== Retriever ====================
+retriever:
+  # Basic tier
+  top_k: 20                             # kandidat dense retrieval (sebelum rerank)
+
+  # Skilled tier
+  ensemble:
+    enabled: true
+    bm25_weight: 0.5
+    dense_weight: 0.5
+    method: rrf                         # "rrf" (Reciprocal Rank Fusion) atau "weighted_sum"
+
+  parent_child:
+    enabled: true
+    return_parent_context: true
+
+  metadata_filter:
+    enabled: true
+    routing_regex:                      # keyword-based routing → klaster filter
+      ketenagakerjaan: 'lembur|upah|karyawan|pkwt|phk|pesangon|cuti'
+      perpajakan: 'pph|pajak|npwp|spt'
+      perizinan: 'izin|nib|oss|kbli'
+
+# ==================== Reranker ====================
+reranker:
+  model_id: BAAI/bge-reranker-v2-m3
+  device: cuda
+  batch_size: 8
+  top_n: 5                              # keep Top-N setelah rerank (dari top_k=20)
+
+# ==================== HyDE (Advanced) ====================
+hyde:
+  enabled: true
+  num_halusinasi: 2                     # rubric WAJIB min 2
+  max_new_tokens: 300
+  temperature: 0.7                      # cukup tinggi untuk variasi antar halusinasi
+  system_prompt: |
+    Bayangkan Anda advokat senior yang menguasai regulasi Indonesia.
+    Tulis jawaban singkat 2-3 kalimat untuk pertanyaan berikut.
+    Gunakan terminologi hukum formal Indonesia.
+  fallback_to_original_if_short: true
+  min_hallucinated_char: 50             # kalau lebih pendek → fallback ke query asli
+
+# ==================== Fallback ke DuckDuckGo ====================
+fallback:
+  enabled: true
+  relevance_threshold: 0.3              # kalau max(rerank_scores) < threshold → DDG
+  ddg_max_results: 5
+  ddg_query_prefix: "regulasi Indonesia"
+  ddg_site_bias: ["peraturan.bpk.go.id", "hukumonline.com"]
+  disclaimer: |
+    ⚠️ Sumber dari DuckDuckGo (bukan 4 dokumen regulasi resmi).
+    Verifikasi ke tim legal sebelum tindakan hukum.
+
+# ==================== Generator ====================
+generator:
+  max_new_tokens: 512
+  temperature: 0.3                      # low temp untuk legal (deterministic)
+  top_p: 0.9
+  do_sample: true
+  repetition_penalty: 1.1
+  # Prompt template
+  system_prompt: |
+    Anda adalah asisten hukum untuk tim legal internal. Jawab berdasarkan konteks
+    yang diberikan. Selalu sebutkan sumber pasal (mis. [Sumber 1]) saat mengutip.
+    Jika konteks tidak cukup, katakan "Informasi tidak ditemukan di regulasi yang tersedia."
+  # Format context injection
+  context_template: |
+    Konteks:
+    {sources}
+
+    Pertanyaan: {question}
+    Jawaban:
+
+# ==================== Citation format ====================
+citation:
+  format: "[Sumber {rank}: {pdf} - {bab} - Pasal {pasal}]"
+  include_relevance_score: true
+  include_snippet: true
+  snippet_length: 250                   # char

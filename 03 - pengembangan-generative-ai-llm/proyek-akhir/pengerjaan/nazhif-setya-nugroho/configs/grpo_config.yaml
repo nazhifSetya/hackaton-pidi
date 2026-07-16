@@ -1,0 +1,74 @@
+# PGABL - GRPOTrainer configuration (K1 Advanced)
+# Rubric Advanced: WAJIB GRPO + 4 reward function
+# Load: yaml.safe_load(open("configs/grpo_config.yaml"))
+
+seed: 42
+
+# ==================== GRPO Trainer hyperparams (T4-friendly) ====================
+trainer:
+  num_generations: 4                   # T4 constraint - 8 sering OOM
+  max_completion_length: 384           # mitigasi OOM saat generate 4 sample sekaligus
+  max_prompt_length: 512
+  beta: 0.04                           # KL divergence weight (default GRPO)
+  learning_rate: 5.0e-6                # LEBIH KECIL dari SFT (stability GRPO)
+  max_steps: 300                       # GRPO expensive, 300 sudah kelihatan pattern
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  logging_steps: 5
+  save_steps: 50
+  save_total_limit: 3
+  fp16: true
+  report_to: wandb
+
+# ==================== 4 Reward Function Weights ====================
+# WAJIB semua 4 - kurang 1 = drop dari Advanced ke Skilled
+reward_weights:
+  format: 0.30                         # <think>...</think> tag presence
+  reasoning_length: 0.15               # sigmoid 100-500 char di dalam <think>
+  correctness: 0.40                    # ROUGE-L / BLEU vs ground truth
+  language: 0.15                       # reward ID, penalty EN
+
+# ==================== format_reward_func ====================
+# Regex: <think>.*?</think>
+# Present → 1.0, absent → 0.0
+format_reward:
+  regex_pattern: '<think>.*?</think>'
+  reward_present: 1.0
+  reward_absent: 0.0
+
+# ==================== reasoning_length_reward ====================
+# Sigmoid smooth di rentang 100-500 char, peak di 300
+# Formula: 1.0 / (1.0 + ((length - peak) / spread)^2)
+reasoning_length_reward:
+  peak_char: 300
+  spread: 150
+
+# ==================== correctness_reward ====================
+# Extract text setelah </think>, hitung score vs ground_truth
+correctness_reward:
+  metric: rouge_l                      # opsi: "rouge_l", "bleu", "combined"
+  combined_weights:                    # dipakai jika metric=combined
+    rouge_l: 0.6
+    bleu: 0.4
+
+# ==================== language_reward_func ====================
+# Deteksi bahasa - reward ID, penalty EN
+language_reward:
+  method: langdetect                   # opsi: "langdetect", "sastrawi_ratio"
+  id_prob_threshold: 0.7               # >0.7 → 1.0
+  en_penalty_threshold: 0.3            # <0.3 → -0.5 penalty
+  penalty_value: -0.5
+
+# ==================== System prompt untuk memancing <think> ====================
+system_prompt: |
+  Anda adalah asisten hukum. Selalu berpikir dulu di dalam <think>...</think>
+  sebelum memberikan jawaban akhir dalam Bahasa Indonesia.
+
+# ==================== Test case WAJIB (rubric) ====================
+mandatory_test_case:
+  prompt: "Berapa hak lembur staf admin menurut PP 35/2021?"
+  expected_pattern: '<think>.*?</think>'
+  expected_language: id
+
+# ==================== Output directory ====================
+output_dir_key: grpo_checkpoints

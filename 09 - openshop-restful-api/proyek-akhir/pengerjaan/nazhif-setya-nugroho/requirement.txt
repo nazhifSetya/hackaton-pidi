@@ -1,0 +1,425 @@
+Proyek Akhir: OpenShop RESTful API
+
+Studi Kasus
+Sebagai seorang Back-End Developer, Anda memutuskan untuk bergabung dengan tim TSC (Technical Steering Committee) dalam mengembangkan sebuah platform e-commerce yang diberi nama OpenShop. Seperti namanya, OpenShop akan menjadi platform penjualan yang dapat diakses oleh siapa saja dengan mudah, serta memungkinkan para penjual dari berbagai kategori produk untuk menawarkan barang-barang mereka secara online.
+Aplikasi ini akan dikembangkan secara bertahap, dimulai dari fitur-fitur dasar seperti menambahkan produk, mengelola inventaris, hingga membuat kategori produk. Di masa mendatang, OpenShop diharapkan memiliki kemampuan untuk memungkinkan pengguna membuat wishlist, melakukan filter pencarian produk, hingga membandingkan harga antar toko. Aplikasi ini dirancang untuk menjadi salah satu platform penjualan terbaik di dunia!
+Pada tahap pertama, tim TSC bertanggung jawab membangun API dasar untuk OpenShop. Pada tahap ini, API akan menangani pengelolaan produk di dalam database, termasuk fitur untuk menambahkan, menghapus, dan mengubah informasi produk.
+Tugas Anda adalah merancang dan membangun API untuk OpenShop sesuai dengan kriteria yang akan dijelaskan pada materi selanjutnya.
+
+Pengantar
+Setiap kriteria dapat bernilai 0 sampai 4 points (pts). Untuk lulus dari submission ini setidaknya Anda harus mendapatkan 2 points dari setiap kriteria. Submission akan ditolak jika masih terdapat kriteria dengan nilai 0 points.
+
+Kriteria 1: RESTful API dapat menyimpan data produk
+RESTful API yang dibuat harus mampu menyimpan data dengan ketentuan sebagai berikut.
+
+Method: POST
+URL: /products
+Body request:
+{
+    "name": "string",
+    "sku": "string",
+    "description": "string",
+    "shop": "string",
+    "location": "string",
+    "price": "integer",
+    "discount": "integer",
+    "category": "string",
+    "stock": "integer",
+    "is_available": "boolean",
+    "picture": "string"
+}
+Body response:
+{
+    "id": "590f5c38-e7cf-45c9-8b0a-0937f7de6fa4",
+    "name": "Kelas Belajar Python",
+    "shop": "Dicoding",
+    "price": 1500000,
+    "sku": "DCD01",
+    "description": "This is a sample description of the product.",
+    "location": "Bandung",
+    "discount": 0,
+    "category": "Course",
+    "stock": 1000,
+    "is_available": true,
+    "picture": "https://www.shutterstock.com/image-vector/sample-red-square-grunge-stamp-260nw-338250266.jpg",
+    "_links": [
+        {
+            "rel": "self",
+            "href": "/products",
+            "action": "POST",
+            "types": [
+                "application/json"
+            ]
+        },
+        {
+            "rel": "self",
+            "href": "/products/590f5c38-e7cf-45c9-8b0a-0937f7de6fa4/",
+            "action": "GET",
+            "types": [
+                "application/json"
+            ]
+        },
+        {
+            "rel": "self",
+            "href": "/products/590f5c38-e7cf-45c9-8b0a-0937f7de6fa4/",
+            "action": "PUT",
+            "types": [
+                "application/json"
+            ]
+        },
+        {
+            "rel": "self",
+            "href": "/products/590f5c38-e7cf-45c9-8b0a-0937f7de6fa4/",
+            "action": "DELETE",
+            "types": [
+                "application/json"
+            ]
+        }
+    ]
+}
+Berikut adalah ketentuan kriteria 1.
+
+Reject (0 pts): 
+RESTful API tidak dapat menyimpan data produk.
+Tidak menggunakan Django REST Framework.
+Basic (2 pts):
+RESTful API dapat menyimpan data produk.
+Menerapkan Django Model dengan nama Product.
+Membuat view dengan cara class based view atau function based view.
+Skilled (3 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menggunakan class Response milik Django REST Framework untuk mengembalikan response RESTful API.
+Mengembalikan response status code 400 ketika data yang dikirimkan tidak valid.
+Mengembalikan response status code 201 ketika sukses menambahkan data.
+Advanced (4 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menerapkan serializers pada saat ingin menyimpan data produk.
+Menerapkan validasi data dengan method is_valid saat menyimpan data produk.
+
+
+Kriteria 2: RESTful API dapat menampilkan data produk
+RESTful API yang dibuat harus mampu menampilkan data dengan ketentuan sebagai berikut.
+
+Method: GET
+URL: /products
+Body response:
+{
+  "products": [
+    {
+      "id": "590f5c38-e7cf-45c9-8b0a-0937f7de6fa4",
+      "name": "Kelas Belajar Python",
+      "shop": "Dicoding",
+      "price": 1500000,
+      "sku": "DCD01",
+      "description": "This is a sample description of the product.",
+      "location": "Bandung",
+      "discount": 0,
+      "category": "Course",
+      "stock": 1000,
+      "is_available": true,
+      "picture": "https://www.shutterstock.com/image-vector/sample-red-square-grunge-stamp-260nw-338250266.jpg",
+      "_links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products",
+          "action": "POST",
+          "types": [
+            "application/json"
+          ]
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products/75ea4e94-65a1-4c84-b5ab-b15b3af9ffac/",
+          "action": "GET",
+          "types": [
+            "application/json"
+          ]
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products/75ea4e94-65a1-4c84-b5ab-b15b3af9ffac/",
+          "action": "PUT",
+          "types": [
+            "application/json"
+          ]
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products/75ea4e94-65a1-4c84-b5ab-b15b3af9ffac/",
+          "action": "DELETE",
+          "types": [
+            "application/json"
+          ]
+        }
+      ]
+    }
+  ]
+}
+Berikut adalah ketentuan kriteria 2.
+
+Reject (0 pts): 
+RESTful API tidak dapat menampilkan data produk.
+Tidak menggunakan Django REST Framework.
+Basic (2 pts):
+RESTful API dapat menampilkan data produk.
+Menerapkan Django Model dengan nama Product.
+Membuat view dengan cara class based view atau function based view.
+Skilled (3 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menggunakan class Response milik Django REST Framework untuk mengembalikan response RESTful API.
+Menampilkan list kosong dengan nama products di response body jika data produk tidak ada atau belum ditambahkan.
+Advanced (4 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menerapkan HATEOAS untuk mendapatkan link dari resources terkait seperti yang dicontohkan.
+Terdapat route GET /products/:id/ untuk menampilkan detail product berdasarkan id.
+Mengembalikan response status code 404 dan response body mengembalikan detail dengan message "Not found." ketika data detail product tidak ditemukan.
+
+
+Kriteria 3: RESTful API dapat mengubah data produk
+RESTful API yang dibuat harus mampu mengubah data dengan ketentuan sebagai berikut.
+
+Method: PUT
+URL: /products/{id}
+Body request:
+{
+    "name": "string",
+    "sku": "string",
+    "description": "string",
+    "shop": "string",
+    "location": "string",
+    "price": "integer",
+    "discount": "integer",
+    "category": "string",
+    "stock": "integer",
+    "is_available": "boolean",
+    "picture": "string"
+}
+Body response:
+{
+  "id": "590f5c38-e7cf-45c9-8b0a-0937f7de6fa4",
+  "name": "Kelas Belajar Python Dasar",
+  "shop": "Dicoding Academy",
+  "price": 1200000,
+  "sku": "DCD02",
+  "description": "This is a updated sample description of the product.",
+  "location": "Indonesia",
+  "discount": 300000,
+  "category": "Bootcamp",
+  "stock": 500,
+  "is_available": true,
+  "picture": "https://www.shutterstock.com/image-vector/sample-red-square-grunge-stamp-260nw-338250266.jpg",
+  "_links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8000/products",
+      "action": "POST",
+      "types": [
+        "application/json"
+      ]
+    },
+    {
+      "rel": "self",
+      "href": "http://localhost:8000/products/590f5c38-e7cf-45c9-8b0a-0937f7de6fa4/",
+      "action": "GET",
+      "types": [
+        "application/json"
+      ]
+    },
+    {
+      "rel": "self",
+      "href": "http://localhost:8000/products/590f5c38-e7cf-45c9-8b0a-0937f7de6fa4/",
+      "action": "PUT",
+      "types": [
+        "application/json"
+      ]
+    },
+    {
+      "rel": "self",
+      "href": "http://localhost:8000/products/590f5c38-e7cf-45c9-8b0a-0937f7de6fa4/",
+      "action": "DELETE",
+      "types": [
+        "application/json"
+      ]
+    }
+  ]
+}
+Berikut adalah ketentuan kriteria 3.
+
+Reject (0 pts): 
+RESTful API tidak dapat mengubah data produk.
+Tidak menggunakan Django REST Framework.
+Basic (2 pts):
+RESTful API dapat mengubah data produk.
+Menerapkan Django Model dengan nama Product.
+Membuat view dengan cara class based view atau function based view.
+Skilled (3 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menggunakan class Response milik Django REST Framework untuk mengembalikan response RESTful API.
+Mengembalikan response status code 400 ketika data yang dikirimkan tidak valid.
+Mengembalikan response status code 404 dan response body mengembalikan detail dengan message "Not found." ketika data yang ingin diubah tidak ditemukan.
+Advanced (4 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menerapkan serializers pada saat ingin mengubah data produk.
+Menerapkan validasi data dengan method is_valid saat mengubah data produk.
+
+
+Kriteria 4: RESTful API dapat menghapus data produk
+RESTful API yang dibuat harus mampu menghapus data dengan ketentuan sebagai berikut.
+
+Method: DELETE
+URL: /products/{id}
+Response status code: 204
+Berikut adalah ketentuan kriteria 4.
+
+Reject (0 pts): 
+RESTful API tidak dapat menghapus data produk.
+Tidak menggunakan Django REST Framework.
+Basic (2 pts):
+RESTful API dapat menghapus data produk.
+Membuat view dengan cara class based view atau function based view.
+Skilled (3 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Mengembalikan response status code 204 ketika sukses menghapus data.
+Mengembalikan response status code 404 dan response body mengembalikan detail dengan message "Not found." ketika data yang ingin dihapus tidak ditemukan.
+Advanced (4 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menggunakan module status dari rest_framework ketika mengembalikan response seperti 204 dan 404.
+Menerapkan soft delete pada fitur menghapus data produk (data tidak hilang permanen). 
+Jika menerapkan ini, terdapat atribut is_delete di models dan response setiap endpoint.
+Jika menerapkan ini, produk berstatus terhapus masih dapat diakses melalui endpoint GET /products/:id/
+
+
+Kriteria 5: RESTful API dapat mencari data produk
+RESTful API yang dibuat harus mampu mencari data berdasarkan nama dengan ketentuan sebagai berikut.
+
+Method: GET
+URL: /products?name=
+Body response:
+{
+  "products": [
+    {
+      "id": "b6cc15d9-d154-41b4-a92f-c82b9e3cea31",
+      "name": "Kelas Belajar Python",
+      "shop": "Dicoding",
+      "price": 1500000,
+      "sku": "DCD01",
+      "description": "This is a sample description of the product.",
+      "location": "Bandung",
+      "discount": 0,
+      "category": "Course",
+      "stock": 1000,
+      "is_available": true,
+      "picture": "https://www.shutterstock.com/image-vector/sample-red-square-grunge-stamp-260nw-338250266.jpg",
+      "is_delete": false,
+      "_links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products",
+          "action": "POST",
+          "types": [
+            "application/json"
+          ]
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products/b6cc15d9-d154-41b4-a92f-c82b9e3cea31/",
+          "action": "GET",
+          "types": [
+            "application/json"
+          ]
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products/b6cc15d9-d154-41b4-a92f-c82b9e3cea31/",
+          "action": "PUT",
+          "types": [
+            "application/json"
+          ]
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8000/products/b6cc15d9-d154-41b4-a92f-c82b9e3cea31/",
+          "action": "DELETE",
+          "types": [
+            "application/json"
+          ]
+        }
+      ]
+    }
+  ]
+}
+Body response ketika data yang dicari tidak ditemukan:
+{
+    "products": []
+} 
+Berikut adalah ketentuan kriteria 5.
+
+Reject (0 pts): 
+RESTful API tidak dapat mencari data produk berdasarkan nama produk.
+Tidak menggunakan Django REST Framework.
+Basic (2 pts):
+RESTful API dapat mencari data produk berdasarkan nama produk. 
+Membuat view dengan cara class based view atau function based view.
+Skilled (3 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menggunakan class Response milik Django REST Framework untuk mengembalikan response RESTful API.
+Menampilkan list kosong dengan nama products di response body jika produk yang dicari tidak ditemukan.
+Advanced (4 pts):
+Memenuhi ketentuan nilai sebelumnya.
+Menerapkan serializers pada saat menampilkan data produk.
+Menampilkan data produk dengan kata kunci location dan di response body terdapat list bernama products.
+Menerapkan HATEOAS untuk mendapatkan link dari resources terkait seperti yang dicontohkan.
+
+Ketika membangun OpenShop RESTful API, tentu Anda perlu menguji untuk memastikan API berjalan sesuai dengan kriteria yang diminta. Kami sudah menyediakan berkas Postman Collection dan Environment yang dapat Anda gunakan untuk pengujian. Silakan unduh berkasnya pada tautan berikut:
+(saya sudah download dan isinya berada didalam direktori: /Users/nazhifnugroho/Documents/Kalachakra-dev/Everest/docs/hackaton_PIDI/proyek_akhir-OpenShop_RESTful_API/OpenShopAPITestCollectionAndEnvironment)
+
+Anda perlu meng-import kedua berkas tersebut pada Postman untuk menggunakannya. Caranya, ekstrak berkas yang sudah diunduh hingga menghasilkan empat berkas file JSON.
+Berikut penjelasannya:
+
+OpenShop API Test With Soft Delete Collection dan Environment: Untuk Anda yang mengerjakan kriteria soft delete.
+OpenShop API Test Without Soft Delete Collection dan Environment: Untuk Anda yang belum mengerjakan kriteria soft delete.
+Kemudian pada aplikasi Postman, klik tombol import yang berada di atas panel kiri aplikasi Postman.
+
+Catatan:
+Jangan pernah mengubah urutan collection yang telah diimport.
+
+Perhitungan Nilai
+Nilai akhir yang Anda dapatkan diperoleh melalui perhitungan formula berikut.
+
+Nilai Akhir = Total Points /Jumlah Kriteria
+
+Tabel Penilaian
+Ada pun untuk penilaian submission dapat dilihat di tabel berikut.
+
+==================================================================================================================================================================
+Nilai Akhir | Nilai Dicoding | Nilai Huruf | Level of Mastery | Makna Nilai    | Keterangan
+==================================================================================================================================================================
+<1          | Rejected       | E           | -                | Tidak Lulus    | Anda sudah mencoba tetapi belum memenuhi kompetensi minimal
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1 - <2      | Bintang 2      | D           | Below Basic      | Kurang         | Anda sudah memenuhi semua kompetensi minimal tetapi terdapat area yang masih bisa ditingkatkan
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2 - <3      | Bintang 3      | C           | Basic            | Cukup          | Anda sudah memenuhi semua kompetensi minimal dari learning objective
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3 - <4      | Bintang 4      | B           | Skilled          | Mahir          | Anda sudah memenuhi semua kompetensi dengan baik atau mahir
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4           | Bintang 5      | A           | Advanced         | Tingkat Lanjut | Anda sudah memenuhi semua kompetensi dengan sangat baik atau tingkat lanjut
+==================================================================================================================================================================
+
+Ketentuan Berkas Submission
+Berkas submission yang dikirim merupakan folder proyek dari OpenShop RESTful API dalam bentuk ZIP. 
+Pastikan di dalam folder proyek yang Anda kirim terdapat berkas Pipfile.
+
+Submission Anda akan Ditolak bila
+Kriteria OpenShop RESTful API tidak terpenuhi.
+Ketentuan berkas submission tidak terpenuhi.
+Proyek yang Anda kirim tidak menggunakan Python 3.10 dan Django versi LTS 4.2.
+Menggunakan bahasa pemrograman dan teknologi lain, selain Python dan Django.
+Melakukan kecurangan seperti tindakan plagiasi.
+
+Ketentuan Proses Review
+Beberapa hal yang perlu Anda ketahui mengenai proses review:
+
+Tim Reviewer akan mengulas submission Anda dalam waktu selambatnya 3 (tiga) hari kerja (tidak termasuk Sabtu, Minggu, dan hari libur nasional).
+Karena kelas ini merupakan kelas Pemula, mekanisme proses review pada kelas ini hanya pengetesan aplikasi dan tidak dengan kode. Untuk mendapatkan hasil review yang lebih komprehensif Anda dapat mengikuti kelas selanjutnya.
+Tidak disarankan untuk melakukan submit berkali-kali karena akan memperlama proses penilaian.
+Anda akan mendapatkan notifikasi hasil review submission via email. Status submission juga bisa dilihat dengan mengecek di halaman submission.

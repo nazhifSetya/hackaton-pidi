@@ -1,0 +1,27 @@
+# Dependencies untuk notebook Fine-tuning + RAG (PGABL Basic, Fareynaldi).
+# Pipreqs-style: hanya library yang benar-benar di-import oleh notebook,
+# bukan hasil pip freeze. Versi sengaja tidak dipin agar resolver Colab
+# terkini bisa memilih kombinasi yang saling kompatibel (Unsloth 2026.7.x
+# menuntut transformers >= 4.51.3).
+
+# Fine-tuning (K1)
+unsloth
+transformers
+trl
+peft
+bitsandbytes
+accelerate
+datasets
+torch
+
+# RAG (K2)
+pypdf
+sentence-transformers
+chromadb
+
+# Antarmuka (K3)
+gradio
+
+# Utilitas umum
+huggingface_hub
+numpy

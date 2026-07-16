@@ -1,0 +1,12 @@
+[986] status=200 -> {'predictions': [0]}
+[987] status=200 -> {'predictions': [1]}
+[988] status=200 -> {'predictions': [1]}
+[989] status=200 -> {'predictions': [0]}
+[990] status=200 -> {'predictions': [1]}
+[991] status=200 -> {'predictions': [1]}
+[992] status=200 -> {'predictions': [0]}
+[993] status=200 -> {'predictions': [0]}
+[994] status=200 -> {'predictions': [0]}
+[995] status=200 -> {'predictions': [1]}
+[996] status=200 -> {'predictions': [0]}
+[997] status=200 -> {'predictions': [0]}

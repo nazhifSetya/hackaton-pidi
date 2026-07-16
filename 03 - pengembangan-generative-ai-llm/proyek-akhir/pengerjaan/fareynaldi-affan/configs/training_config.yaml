@@ -1,0 +1,32 @@
+# PGABL (Fareynaldi, BASIC) - konfigurasi SFT (single run, tanpa eval split / eksperimen ke-2)
+# Load: yaml.safe_load(open("configs/training_config.yaml"))
+
+seed: 42
+
+dataset:
+  id: Ichsan2895/alpaca-gpt4-indonesian   # LOCKED rubric; 2 kolom: input + output
+  input_col: input
+  output_col: output
+  # filter outlier ringan sebelum training
+  min_input_len: 5
+  min_output_len: 20
+
+sft:
+  max_steps: 800              # HARD RULE min 800
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4     # effective batch 8
+  learning_rate: 0.0002              # 2e-4
+  warmup_steps: 20
+  logging_steps: 20
+  save_steps: 200
+  save_total_limit: 2
+  lr_scheduler_type: linear
+  optim: adamw_8bit
+  weight_decay: 0.01
+  # BASIC: TIDAK pakai eval split / eval_strategy (itu Skilled)
+
+push:
+  # repo_id di-set saat runtime dari HF_USERNAME (akun Fareynaldi) + nama repo
+  repo_name: PGABL-Llama-3.2-3B-SFT-Fareynaldi
+  save_method: merged_16bit          # HARD RULE
+  private: false                     # HARD RULE public

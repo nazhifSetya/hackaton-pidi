@@ -1,0 +1,31 @@
+# PGABL - Fine-tuned Chatbot Tim Legal berbasis RAG
+# Library yang benar-benar dipakai di 3 notebook (bukan pip freeze).
+
+# ── K1: SLM Fine-tuning (SFT + GRPO) ──
+unsloth
+transformers
+trl
+peft
+bitsandbytes
+accelerate
+datasets
+torch
+
+# ── K2: RAG Legal ──
+sentence-transformers
+chromadb
+pypdf
+pdfplumber
+rank-bm25
+huggingface_hub
+ddgs
+
+# ── K3: Antarmuka ──
+gradio
+
+# ── Evaluasi & utilitas ──
+pandas
+numpy
+matplotlib
+rouge-score
+langdetect

@@ -1,0 +1,53 @@
+# PGABL (Fareynaldi, BASIC) - konfigurasi RAG
+# Load: yaml.safe_load(open("configs/rag_config.yaml"))
+# BASIC: loader -> chunker (flat + overlap eksplisit) -> bge-m3 -> ChromaDB (1 collection)
+#        -> retriever top-k -> generator (model K1). TANPA ensemble/parent-child/HyDE/reranker/fallback.
+
+seed: 42
+
+# ==================== Chunker (flat + overlap EKSPLISIT) ====================
+chunker:
+  chunk_size: 1000           # char (rubric max 5000)
+  chunk_overlap: 100         # EKSPLISIT (HARD RULE) - bukan default library
+  pasal_split_regex: '^\s*Pasal\s+\d+\s*$'   # split per-pasal (opsional; boleh sliding-window seragam)
+
+# ==================== Embedder ====================
+embedder:
+  model_id: BAAI/bge-m3      # open-source (HARD RULE no OpenAI)
+  device: cuda
+  batch_size: 32
+  normalize_embeddings: true
+
+# ==================== Vector Store (ChromaDB, 1 collection) ====================
+vector_store:
+  persist_directory: data/chroma_db
+  collection_name: regulasi_ciptaker    # BASIC: cukup 1 collection
+  distance_metric: cosine
+
+# ==================== Retriever (Basic top-k) ====================
+retriever:
+  top_k: 5
+
+# ==================== Generator (model K1 fine-tuned) ====================
+generator:
+  # model_id di-set runtime = repo HF SFT Fareynaldi
+  max_new_tokens: 512
+  temperature: 0.3
+  top_p: 0.9
+  repetition_penalty: 1.1
+  system_prompt: |
+    Anda asisten hukum untuk tim legal. Jawab berdasarkan konteks pasal yang diberikan.
+    Jika konteks tidak memuat jawaban, katakan "Informasi tidak ditemukan pada regulasi yang tersedia."
+  context_template: |
+    Konteks:
+    {context}
+
+    Pertanyaan: {question}
+    Jawaban:
+
+# ==================== 4 PDF sumber ====================
+pdfs:
+  - PP_5_2021
+  - PP_35_2021
+  - PP_51_2023
+  - UU_6_2023

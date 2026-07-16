@@ -1,0 +1,23 @@
+{
+  "model": "indobenchmark/indobert-base-p1",
+  "config": {
+    "batch_size": 16,
+    "max_len": 128,
+    "epochs": 3,
+    "lr": 2e-05,
+    "seed": 42,
+    "fp16": true
+  },
+  "train_acc": 0.96998371998372,
+  "test_acc": 0.9065934065934066,
+  "f1_macro": 0.7361712844852869,
+  "classification_report": "              precision    recall  f1-score   support\n\n     negatif     0.9196    0.9419    0.9306      2392\n      netral     0.4667    0.2851    0.3539       221\n     positif     0.9184    0.9296    0.9240      2301\n\n    accuracy                         0.9066      4914\n   macro avg     0.7682    0.7189    0.7362      4914\nweighted avg     0.8987    0.9066    0.9016      4914\n",
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "n_train": 19656,
+  "n_test": 4914,
+  "elapsed_sec": 537.2825956344604
+}

@@ -1,0 +1,15 @@
+# Dicoding-provided assets — public + re-downloadable, keep local only.
+# Frontend is a separate git clone (github.com/dicodingacademy/asclepius);
+# committing it here would create a broken submodule pointer.
+asclepius-frontend/
+
+# TF.js model weights (~14MB) and reviewer test images (~5MB) — large binaries,
+# downloaded from Dicoding releases. Not source; fetch them again when needed.
+model/
+data-test/
+
+# Downloaded archives
+*.zip
+
+# Node
+node_modules/

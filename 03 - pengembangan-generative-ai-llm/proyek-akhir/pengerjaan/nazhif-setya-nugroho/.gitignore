@@ -1,0 +1,69 @@
+# ==== Python ====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==== Jupyter ====
+.ipynb_checkpoints/
+*.ipynb_meta
+# NOTE: notebook di submission/ TIDAK di-ignore (itu deliverable final)
+
+# ==== Env & Secrets ====
+.env
+.env.local
+*.env
+!.env.example
+
+# ==== Data (large, non-versionable) ====
+data/raw/*.pdf
+data/processed/
+data/chroma_db/
+data/test_set/*.jsonl
+!data/test_set/legal_qa_testset.jsonl
+!data/test_set/.gitkeep
+
+# ==== Models & weights (di-cache di Colab Drive, bukan di git) ====
+models/
+*.safetensors
+*.bin
+*.gguf
+*.pt
+*.pth
+*.onnx
+
+# ==== Outputs (bebas dihapus, di-regenerate saat run) ====
+outputs/wandb/
+outputs/logs/
+outputs/eval_reports/
+outputs/samples/
+outputs/ui_evidence/
+outputs/finetune_evidence/
+outputs/setup_evidence/
+# Root-level fallback (kalau W&B nulis ke root, bukan outputs/wandb/)
+wandb/
+
+# ==== OS ====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==== IDE ====
+.vscode/settings.json
+.idea/
+.jupyter/
+*.swp
+*.swo
+
+# ==== Zip artifacts (dibuat manual saat packaging) ====
+PGABL_*.zip
+
+# ==== scratchpad (kalau ada) ====
+scratchpad/logs/

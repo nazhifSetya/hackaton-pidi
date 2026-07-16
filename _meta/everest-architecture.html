@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1700px;
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(160deg, #0f172a 0%, #131c33 100%);
+    color: #e2e8f0;
+    padding: 30px 34px 26px;
+  }
+  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+  h1 { font-size: 30px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
+  h1 .accent { color: #38bdf8; }
+  .subtitle { font-size: 14px; color: #94a3b8; margin-top: 3px; }
+  .tag-pidi { font-size: 12px; color: #64748b; text-align: right; line-height: 1.5; }
+  .tag-pidi b { color: #cbd5e1; }
+
+  .band { margin-top: 14px; }
+  .band-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: #64748b; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .band-label::before { content: ""; width: 5px; height: 14px; border-radius: 2px; background: #334155; }
+  .row { display: flex; gap: 12px; align-items: stretch; }
+  .row.wrap { flex-wrap: wrap; }
+
+  .card {
+    background: #1e293b; border: 1.5px solid #334155; border-radius: 12px;
+    padding: 11px 14px; flex: 1; box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  }
+  .card .name { font-size: 15px; font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 7px; }
+  .card .meta { font-size: 11.5px; color: #94a3b8; margin-top: 2px; }
+  .card .desc { font-size: 12px; color: #cbd5e1; margin-top: 6px; line-height: 1.45; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .chip {
+    font-size: 10.5px; font-weight: 600; padding: 2.5px 8px; border-radius: 6px;
+    background: #0f172a; color: #cbd5e1; border: 1px solid #334155;
+  }
+
+  /* color accents per layer */
+  .c-fe   { border-color: #2563eb55; } .c-fe .name   { color: #93c5fd; }
+  .c-api  { border-color: #0891b255; } .c-api .name  { color: #67e8f9; }
+  .c-core { border-color: #64748b66; } .c-core .name { color: #e2e8f0; }
+  .c-kafka{ border-color: #d9770655; } .c-kafka .name{ color: #fbbf24; }
+  .c-cons { border-color: #7c3aed55; } .c-cons .name { color: #c4b5fd; }
+  .c-data { border-color: #05966955; } .c-data .name { color: #6ee7b7; }
+  .c-ext  { border-color: #475569; }   .c-ext .name  { color: #e2e8f0; }
+  .c-actor{ border-color: #33415566; background:#172033; }
+  .c-actor .name { color:#cbd5e1; font-size:13.5px; }
+
+  /* future / planned = dashed */
+  .future {
+    border-style: dashed !important; border-color: #f472b677 !important;
+    background: repeating-linear-gradient(135deg, #1e293b, #1e293b 12px, #20253b 12px, #20253b 24px);
+  }
+  .future .name { color: #f9a8d4; }
+  .badge {
+    font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 5px;
+    background: #831843; color: #fbcfe8; text-transform: uppercase;
+  }
+
+  .kafka-bus {
+    background: linear-gradient(90deg, #2a1d0a, #3b2a0e); border: 1.5px solid #d9770655;
+    border-radius: 12px; padding: 11px 14px;
+  }
+  .kafka-bus .name { font-size: 14px; font-weight: 700; color: #fbbf24; margin-bottom: 8px; display:flex; align-items:center; gap:8px;}
+  .topic { font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 6px; background: #1c1407; color: #fcd34d; border: 1px solid #92400e; }
+
+  .twocol { display: flex; gap: 12px; }
+  .twocol > div { flex: 1; }
+
+  .arrow-note { text-align:center; color:#475569; font-size:18px; margin: 5px 0 -2px; }
+
+  /* lifecycle */
+  .flow { display: flex; align-items: stretch; gap: 0; margin-top: 8px; }
+  .step {
+    flex: 1; background: #172033; border: 1px solid #334155; border-radius: 9px;
+    padding: 8px 9px; position: relative; margin-right: 16px;
+  }
+  .step:last-child { margin-right: 0; }
+  .step::after {
+    content: "▶"; position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+    color: #38bdf8; font-size: 12px;
+  }
+  .step:last-child::after { content: ""; }
+  .step .n { font-size: 10px; font-weight: 800; color: #38bdf8; }
+  .step .t { font-size: 11px; color: #e2e8f0; line-height: 1.35; margin-top: 2px; font-weight:600; }
+  .step .s { font-size: 9.5px; color: #94a3b8; margin-top: 2px; }
+
+  .legend { margin-top: 16px; display: flex; gap: 22px; align-items: center; font-size: 11.5px; color: #94a3b8; }
+  .legend .sw { display: inline-flex; align-items: center; gap: 7px; }
+  .legend .box { width: 26px; height: 14px; border-radius: 4px; }
+  .legend .solid { background: #1e293b; border: 1.5px solid #64748b; }
+  .legend .dash  { border: 1.5px dashed #f472b6; background: repeating-linear-gradient(135deg, #1e293b, #1e293b 6px, #20253b 6px, #20253b 12px); }
+  .footer { margin-top: 6px; font-size: 10.5px; color: #475569; }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1><span class="accent">EVEREST</span> — Technical Architecture</h1>
+      <div class="subtitle">Platform Mitigasi Risiko Karyawan Berbasis Data Alternatif · arsitektur sesuai kode produksi (live) + roadmap proposal</div>
+    </div>
+    <div class="tag-pidi">PIDI Digdaya × Hackathon 2026<br><b>Team P0956 · EVEREST</b></div>
+  </div>
+
+  <!-- ACTORS -->
+  <div class="band">
+    <div class="band-label">Pengguna</div>
+    <div class="row">
+      <div class="card c-actor"><div class="name">👤 HR / Pemilik UMKM</div><div class="meta">Client portal — buat enquiry, review laporan risiko</div></div>
+      <div class="card c-actor"><div class="name">🧑 Kandidat / Karyawan</div><div class="meta">Subjek data — e-KYC & consent</div></div>
+      <div class="card c-actor"><div class="name">🌐 Publik</div><div class="meta">Marketing / company profile</div></div>
+      <div class="card c-actor future"><div class="name">📱 Pengguna MyScore <span class="badge">planned</span></div><div class="meta">B2C — akses laporan kredit pribadi</div></div>
+    </div>
+  </div>
+
+  <!-- FRONTEND -->
+  <div class="band">
+    <div class="band-label">Frontend / Client Apps</div>
+    <div class="row">
+      <div class="card c-fe"><div class="name">backoffice</div><div class="meta">React 18 + Vite · :3111</div><div class="desc">HR Admin Portal — onboarding company, workforce, report enquiry, dashboard, settings, audit trail</div></div>
+      <div class="card c-fe"><div class="name">employee-consent-web</div><div class="meta">React 19 + Vite · TensorFlow.js</div><div class="desc">Alur e-KYC subjek data: capture KTP, liveness, persetujuan (consent)</div></div>
+      <div class="card c-fe"><div class="name">company-profile</div><div class="meta">Next.js · static export (i18n)</div><div class="desc">Website marketing / landing page</div></div>
+      <div class="card c-fe future"><div class="name">MyScore Mobile <span class="badge">planned</span></div><div class="meta">iOS &amp; Android (native)</div><div class="desc">Consent gateway B2C + insight literasi finansial + gamifikasi</div></div>
+    </div>
+  </div>
+
+  <div class="arrow-note">▼ &nbsp; HTTPS / REST (Axios)</div>
+
+  <!-- API SERVICES -->
+  <div class="band">
+    <div class="band-label">Application Services (API)</div>
+    <div class="row">
+      <div class="card c-api" style="flex: 1.7;">
+        <div class="name">backoffice-service <span style="font-size:11px;color:#64748b;font-weight:500;">Express 4 · Node 20 · :3100</span></div>
+        <div class="desc">REST API utama · JWT + RBAC (role → permission → sub-permission) · express-validator</div>
+        <div class="chips">
+          <span class="chip">auth</span><span class="chip">company</span><span class="chip">workforce</span>
+          <span class="chip">report_enquiry</span><span class="chip">settings</span><span class="chip">dashboard</span>
+          <span class="chip">audit_trail</span><span class="chip">getcontact</span><span class="chip">geographic</span>
+          <span class="chip">option</span><span class="chip">internal</span>
+        </div>
+      </div>
+      <div class="card c-api">
+        <div class="name">employee-consent-api <span style="font-size:11px;color:#64748b;font-weight:500;">FastAPI · Python</span></div>
+        <div class="desc">e-KYC &amp; consent · <b>OCR &amp; liveness in-house</b> (offline, tanpa pihak ketiga)</div>
+        <div class="chips">
+          <span class="chip">kyc / ocr (RapidOCR)</span><span class="chip">liveness (DeepFace)</span>
+          <span class="chip">consent</span><span class="chip">session</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORE -->
+  <div class="band">
+    <div class="band-label">Core — Shared Library (core/)</div>
+    <div class="card c-core">
+      <div class="row" style="align-items:center;">
+        <div style="flex:0 0 230px;">
+          <div class="name">core</div>
+          <div class="meta">Sequelize 6 · 42 model / tabel · helpers · services (singleton)</div>
+        </div>
+        <div style="flex:1;">
+          <div class="chips">
+            <span class="chip">clik (credit bureau)</span><span class="chip">docusign</span><span class="chip">mail (SMTP)</span>
+            <span class="chip">getcontact</span><span class="chip">ai (Opencode LLM)</span><span class="chip">credit-report (snapshot)</span>
+            <span class="chip">workforce-resolve</span><span class="chip">redis</span><span class="chip">vault</span><span class="chip">kafka</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KAFKA -->
+  <div class="band">
+    <div class="band-label">Event Backbone — Message Queue</div>
+    <div class="kafka-bus">
+      <div class="name">⚡ Kafka (kafkajs) — event-driven, at-least-once + DLQ</div>
+      <div class="chips">
+        <span class="topic">enquiry.ready-for-clik</span><span class="topic">enquiry.clik-completed</span>
+        <span class="topic">enquiry.clik-failed</span><span class="topic">enquiry.ai-completed</span>
+        <span class="topic">enquiry.invite-requested</span><span class="topic">enquiry.revision-requested</span>
+        <span class="topic">consent.submitted</span><span class="topic">everest.dlq</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSUMERS -->
+  <div class="band">
+    <div class="band-label">Background Workers (consumer/) — Kafka consumers</div>
+    <div class="row">
+      <div class="card c-cons"><div class="name">email-dispatcher</div><div class="desc">Kirim email transaksional (invite / revisi) via SMTP</div></div>
+      <div class="card c-cons"><div class="name">clik-dispatcher</div><div class="desc">Panggil API CLIK → tulis tiket &amp; log → flip status enquiry</div></div>
+      <div class="card c-cons"><div class="name">consent-resolver</div><div class="desc">Mirror KYC → workforce, auto-dispatch ke CLIK</div></div>
+      <div class="card c-cons"><div class="name">ai-dispatcher</div><div class="desc">Bake credit report snapshot + narasi LLM</div></div>
+    </div>
+  </div>
+
+  <!-- DATA + EXTERNAL -->
+  <div class="band">
+    <div class="twocol">
+      <div>
+        <div class="band-label">Data Layer</div>
+        <div class="row wrap">
+          <div class="card c-data" style="flex:1 1 30%;"><div class="name">PostgreSQL</div><div class="meta">42 tabel · transactional</div></div>
+          <div class="card c-data" style="flex:1 1 30%;"><div class="name">Redis</div><div class="meta">session · OTP · cache</div></div>
+          <div class="card c-data" style="flex:1 1 30%;"><div class="name">Object Storage</div><div class="meta">dokumen · KTP · audit</div></div>
+          <div class="card c-data" style="flex:1 1 30%;"><div class="name">HashiCorp Vault</div><div class="meta">secrets / kredensial</div></div>
+          <div class="card c-data future" style="flex:1 1 63%;"><div class="name">Data Warehouse <span class="badge">planned</span></div><div class="meta">analytics · feedback loop scoring</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="band-label">Integrasi Eksternal</div>
+        <div class="row wrap">
+          <div class="card c-ext" style="flex:1 1 30%;"><div class="name">CLIK</div><div class="meta">Biro Kredit (LPIP) · validasi NIK→Dukcapil oleh biro</div></div>
+          <div class="card c-ext" style="flex:1 1 30%;"><div class="name">DocuSign</div><div class="meta">e-signature PKS</div></div>
+          <div class="card c-ext" style="flex:1 1 30%;"><div class="name">GetContact</div><div class="meta">phone fraud tags</div></div>
+          <div class="card c-ext" style="flex:1 1 30%;"><div class="name">Opencode</div><div class="meta">LLM gateway (narasi)</div></div>
+          <div class="card c-ext" style="flex:1 1 30%;"><div class="name">SMTP</div><div class="meta">email transaksional</div></div>
+          <div class="card c-ext future" style="flex:1 1 30%;"><div class="name">Social Media OAuth <span class="badge">planned</span></div><div class="meta">screening data alternatif</div></div>
+          <div class="card c-ext future" style="flex:1 1 47%;"><div class="name">Mitra EWA / Employee Loan <span class="badge">planned</span></div><div class="meta">referral inklusi keuangan (keputusan kredit oleh mitra)</div></div>
+          <div class="card c-ext future" style="flex:1 1 47%;"><div class="name">HRIS / Payroll <span class="badge">planned</span></div><div class="meta">integrasi embedded via webhook</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIFECYCLE -->
+  <div class="band">
+    <div class="band-label">Alur Enquiry (Event-Driven, End-to-End)</div>
+    <div class="flow">
+      <div class="step"><div class="n">1</div><div class="t">HR buat enquiry</div><div class="s">backoffice-service</div></div>
+      <div class="step"><div class="n">2</div><div class="t">Email undangan consent</div><div class="s">email-dispatcher → SMTP</div></div>
+      <div class="step"><div class="n">3</div><div class="t">e-KYC: KTP + liveness</div><div class="s">consent-web / consent-api</div></div>
+      <div class="step"><div class="n">4</div><div class="t">consent.submitted</div><div class="s">Kafka event</div></div>
+      <div class="step"><div class="n">5</div><div class="t">Mirror KYC → workforce</div><div class="s">consent-resolver</div></div>
+      <div class="step"><div class="n">6</div><div class="t">Tarik laporan kredit</div><div class="s">clik-dispatcher → CLIK</div></div>
+      <div class="step"><div class="n">7</div><div class="t">Snapshot + narasi LLM</div><div class="s">ai-dispatcher → Opencode</div></div>
+      <div class="step"><div class="n">8</div><div class="t">Tingkat Risiko R/S/T</div><div class="s">HR review di dashboard</div></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="sw"><span class="box solid"></span> Sudah ada di kode (live di production)</span>
+    <span class="sw"><span class="box dash"></span> Visi proposal / belum dibangun (roadmap)</span>
+    <span style="margin-left:auto;color:#475569;">Scoring: rules-based engine (auditable) · LLM hanya untuk narasi plain-language, bukan skor</span>
+  </div>
+  <div class="footer">Cross-cutting: JWT + RBAC · audit trail menyeluruh · consent eksplisit (UU PDP) · secrets via Vault · data region dalam negeri (PP 71/2019)</div>
+
+</body>
+</html>

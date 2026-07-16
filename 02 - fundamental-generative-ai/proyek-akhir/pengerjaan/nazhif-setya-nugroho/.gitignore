@@ -1,0 +1,59 @@
+# ═══════════════════════════════════════════════════════════
+# .gitignore — Proyek Image Generation (BFGAI)
+# ═══════════════════════════════════════════════════════════
+
+# ─── Ephemeral / temporary local files ─────────────────────
+scratchpad/
+streamlit.log
+*.log
+*.tmp
+*.bak
+.env
+.env.local
+
+# ─── Python ─────────────────────────────────────────────────
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+
+# ─── Jupyter ────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ─── IDE ────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── OS metadata ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Media (heavy) ──────────────────────────────────────────
+# Ignore semua image kecuali di folder artifacts/ (referensi Dicoding read-only)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+!artifacts/**
+
+# Video: ignore semua kecuali file deliverable spesifik
+# (mencegah accidental commit video test-rec / draft di submission/)
+*.mp4
+*.mov
+*.avi
+!submission/video_demo_aplikasi_BFGAI.mp4
+
+# ─── Archives (regenerate saat submit) ─────────────────────
+# Zip final submission dibikin fresh sebelum upload ke Dicoding
+*.zip
+*.tar.gz
+*.rar

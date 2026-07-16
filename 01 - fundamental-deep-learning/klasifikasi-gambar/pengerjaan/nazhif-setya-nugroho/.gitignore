@@ -1,0 +1,90 @@
+# ==========================================================================
+# .gitignore — Proyek Akhir Klasifikasi Gambar (Deep Learning / CV)
+# Mencakup submission Nazhif (submission/, Animals-10) + Fareynaldi (fareynaldi/)
+# Prinsip: simpan notebook + kode + dokumen; ABAIKAN artefak besar yang
+# bisa dibuat ulang dengan menjalankan notebook (model, zip, venv, cache).
+# ==========================================================================
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ── Virtual environment (JANGAN di-commit — besar & khusus mesin) ─────────
+.venv/
+venv/
+env/
+ENV/
+.python-version           # hapus baris ini kalau mau simpan pin pyenv 3.10.20
+
+# ── Jupyter ───────────────────────────────────────────────────────────────
+*.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# ── Model & artefak ML (BESAR, dibuat ulang saat run notebook di Colab) ────
+*.h5
+*.hdf5
+*.keras                   # termasuk best_model.keras (checkpoint training)
+*.tflite
+*.pb
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.pickle
+*.joblib
+*.safetensors
+
+# ── Folder output 3 format (SavedModel / TFJS) — isinya biner regeneratable ─
+# TFLite: file .tflite sudah diabaikan di atas, tapi tflite/label.txt TETAP
+# di-track (kecil & bagian dari spec submission).
+saved_model/
+tfjs_model/
+**/saved_model/
+**/tfjs_model/
+variables/                # bobot SavedModel
+group1-shard*.bin         # shard TFJS
+
+# ── Berkas submission & arsip ─────────────────────────────────────────────
+*.zip                     # bundle submission (dibuat ulang saat butuh; dikirim via Drive)
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.log
+
+# ── Scratch / sementara ───────────────────────────────────────────────────
+scratchpad/
+tmp/
+.cache/
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Dataset (TIDAK di-commit — diunduh otomatis via kagglehub saat runtime) ─
+# Animals-10 (~614 MB) & Garbage Classification (~240 MB) diunduh di Colab/M1,
+# jadi tidak perlu (dan tidak boleh) masuk git.
+dataset/                  # folder split train/val/test hasil notebook
+**/dataset/

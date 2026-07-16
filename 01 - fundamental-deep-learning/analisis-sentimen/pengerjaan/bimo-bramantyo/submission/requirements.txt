@@ -1,0 +1,47 @@
+# requirements.txt — Proyek Analisis Sentimen Shopee (Bimo Bramantyo)
+# Belajar Fundamental Deep Learning — Dicoding
+# Python 3.10.20 (dikelola via uv di Windows 11).
+#
+# Install:
+#   pip install -r requirements.txt
+#   pip install git+https://github.com/ariaghora/mpstemmer.git   (baris paling bawah — mpstemmer bukan di PyPI)
+
+# Scraping
+google-play-scraper==1.2.7
+
+# Data & visualisasi
+pandas==2.3.3
+numpy==2.2.6
+matplotlib==3.10.9
+seaborn==0.13.2
+wordcloud==1.9.6
+
+# Machine learning & deep learning
+scikit-learn==1.7.2
+scipy==1.15.3
+tensorflow==2.21.0
+joblib==1.5.3
+
+# Preprocessing Bahasa Indonesia
+Sastrawi==1.0.1
+mpstemmer==0.1.0            # via GitHub — lihat catatan paling bawah
+Levenshtein==0.27.3          # dependency mpstemmer
+
+# XAI & analisis emosi (level Ambisius — saran reviewer Dicoding)
+lime==0.2.0.1
+nrclex==4.1.0
+textblob==0.20.0
+nltk==3.10.0
+
+# Notebook
+ipykernel==7.3.0
+
+# CATATAN mpstemmer:
+# mpstemmer TIDAK tersedia di PyPI. Setelah pip install baris di atas, jalankan:
+#   pip install git+https://github.com/ariaghora/mpstemmer.git
+#
+# CATATAN Skema 4 IndoBERT:
+# IndoBERT fine-tune dilatih terpisah di Google Colab GPU T4 (bukan lokal).
+# Dependensi IndoBERT (torch, transformers, datasets, accelerate) ada di:
+#   indobert_colab/PANDUAN_COLAB.md (baris ke-4 pada instruksi).
+# Notebook hanya me-load hasilnya (indobert_metrics.json + indobert_history.json).

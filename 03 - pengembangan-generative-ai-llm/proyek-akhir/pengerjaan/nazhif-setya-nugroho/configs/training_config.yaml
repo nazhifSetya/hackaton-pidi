@@ -1,0 +1,60 @@
+# PGABL - SFT TrainingArguments configuration
+# Load: yaml.safe_load(open("configs/training_config.yaml"))
+
+seed: 42                              # WAJIB reproducibility di semua random ops
+
+# ==================== K1 Basic - Baseline ====================
+# Target: SFT ≥800 steps tanpa OOM (rubric WAJIB)
+baseline:
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4       # effective batch = 8
+  max_steps: 800                       # rubric min 800 - JANGAN turunkan
+  learning_rate: 2.0e-4
+  warmup_steps: 5
+  lr_scheduler_type: cosine
+  optim: adamw_8bit                    # hemat memory
+  fp16: true                           # T4 native fp16 (bukan bf16)
+  bf16: false
+  logging_steps: 10
+  save_steps: 100
+  save_total_limit: 3
+  eval_strategy: "no"                  # Basic tidak butuh eval
+  report_to: wandb
+
+# ==================== K1 Skilled - Variation ====================
+# Pilih 1 override dari 3 opsi berikut (jangan semua sekaligus)
+# WAJIB: eval_strategy="steps" + 2 eksperimen hyperparameter berbeda + tabel perbandingan
+variation:
+  # OPSI A: LR lebih konservatif (cek eval_loss smoother)
+  # learning_rate: 5.0e-5
+
+  # OPSI B: LoRA rank lebih besar (cek overfit)
+  # override_model_config:
+  #   lora:
+  #     r: 32
+  #     alpha: 64
+
+  # OPSI C: effective batch lebih besar (cek stability)
+  gradient_accumulation_steps: 8       # effective batch = 16
+
+  # WAJIB untuk Skilled
+  eval_strategy: steps
+  eval_steps: 100
+  per_device_eval_batch_size: 2
+
+# ==================== Dataset split ====================
+dataset:
+  hf_id: Ichsan2895/alpaca-gpt4-indonesian
+  # NOTE: dataset punya kolom (input, output) - 2 kolom, BUKAN 3 (instruction/input/output)
+  columns:
+    input: input
+    output: output
+  train_val_split: 0.9                 # 90/10 stratified by input length bucket
+  stratify_bucket_boundaries: [100, 500, 1500]  # short/medium/long/very_long
+  # Filter outlier
+  min_input_chars: 5
+  min_output_chars: 20
+
+# ==================== Output directory ====================
+# key: refer ke paths.yaml.local.sft_checkpoints atau .colab.sft_checkpoints
+output_dir_key: sft_checkpoints

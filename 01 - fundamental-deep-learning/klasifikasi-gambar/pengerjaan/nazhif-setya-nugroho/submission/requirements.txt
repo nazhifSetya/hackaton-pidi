@@ -1,0 +1,8 @@
+tensorflow==2.20.0
+tensorflowjs
+kagglehub
+numpy
+matplotlib
+seaborn
+scikit-learn
+Pillow

@@ -1,0 +1,23 @@
+# requirements.txt — Proyek Generative Image Suite (BFGAI)
+#
+# Library yang dibutuhkan untuk menjalankan Pipeline + Streamlit notebook.
+# Pinning penting (streamlit==1.29.0 + streamlit-drawable-canvas==0.9.3):
+#   Streamlit >=1.32 menghapus internal API `st_image.image_to_url` yang
+#   masih dipakai streamlit-drawable-canvas → wajib di-pin ke versi
+#   kompatibel supaya widget canvas di tab EDIT berfungsi.
+
+# ─── Deep learning (Stable Diffusion 1.5) ─────────────────
+torch
+diffusers
+transformers
+accelerate
+
+# ─── Streamlit interface + tunnel ─────────────────────────
+streamlit==1.29.0
+streamlit-drawable-canvas==0.9.3
+pyngrok
+
+# ─── Visualisasi + image processing ───────────────────────
+matplotlib
+numpy
+Pillow

@@ -1,0 +1,2 @@
+token_hugging_face: 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
+token_wandb.ai : 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

@@ -1,0 +1,65 @@
+# PGABL - Path configuration per environment
+# Load: paths = yaml.safe_load(open("configs/paths.yaml"))[env]  # env = "local" atau "colab"
+
+# ==================== Local (Windows 11 dev) ====================
+# Semua path relatif dari project root
+local:
+  # Data
+  data_raw: data/raw
+  data_processed: data/processed
+  data_test_set: data/test_set
+  chroma_db: data/chroma_db
+  # Models & cache
+  models_cache: models
+  sft_checkpoints: models/checkpoints/sft
+  grpo_checkpoints: models/checkpoints/grpo
+  # Outputs
+  outputs: outputs
+  outputs_wandb: outputs/wandb
+  outputs_eval: outputs/eval_reports
+  outputs_samples: outputs/samples
+  outputs_ui_evidence: outputs/ui_evidence
+  outputs_finetune_evidence: outputs/finetune_evidence
+  outputs_setup_evidence: outputs/setup_evidence
+
+# ==================== Colab (T4 GPU) ====================
+# Drive mount di /content/drive/MyDrive/PGABL/
+# Path Drive = session-safe (bertahan disconnect); path /content/ = ephemeral
+colab:
+  drive_root: /content/drive/MyDrive/PGABL
+  # Data (di Drive supaya reuse antar session)
+  data_raw: /content/drive/MyDrive/PGABL/data/raw
+  data_processed: /content/drive/MyDrive/PGABL/data/processed
+  data_test_set: /content/drive/MyDrive/PGABL/data/test_set
+  chroma_db: /content/drive/MyDrive/PGABL/chroma_db
+  # Models & checkpoints (WAJIB di Drive - kalau di /content/ hilang saat disconnect)
+  models_cache: /content/drive/MyDrive/PGABL/models
+  sft_checkpoints: /content/drive/MyDrive/PGABL/checkpoints/sft
+  grpo_checkpoints: /content/drive/MyDrive/PGABL/checkpoints/grpo
+  # Outputs
+  outputs: /content/drive/MyDrive/PGABL/outputs
+  outputs_wandb: /content/drive/MyDrive/PGABL/outputs/wandb
+  outputs_eval: /content/drive/MyDrive/PGABL/outputs/eval_reports
+  outputs_samples: /content/drive/MyDrive/PGABL/outputs/samples
+  outputs_ui_evidence: /content/drive/MyDrive/PGABL/outputs/ui_evidence
+  outputs_finetune_evidence: /content/drive/MyDrive/PGABL/outputs/finetune_evidence
+  outputs_setup_evidence: /content/drive/MyDrive/PGABL/outputs/setup_evidence
+
+# ==================== HuggingFace repo naming ====================
+# Isi HF_USERNAME via env var. Repo target push_to_hub.
+# Format: "{HF_USERNAME}/PGABL-Llama-3.2-3B-{SFT|GRPO}"
+hf_repos:
+  sft_pattern: "PGABL-Llama-3.2-3B-SFT"
+  grpo_pattern: "PGABL-Llama-3.2-3B-GRPO"
+
+# ==================== Detect environment helper ====================
+# Contoh util di src/data/loaders.py:
+#
+#   def detect_env() -> str:
+#       try:
+#           import google.colab  # noqa
+#           return "colab"
+#       except ImportError:
+#           return "local"
+#
+#   PATHS = yaml.safe_load(open("configs/paths.yaml"))[detect_env()]

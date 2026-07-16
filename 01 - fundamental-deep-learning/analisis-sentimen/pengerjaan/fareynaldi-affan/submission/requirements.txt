@@ -1,0 +1,35 @@
+# requirements.txt — Proyek Analisis Sentimen MyTelkomsel (Belajar Fundamental Deep Learning)
+# Python 3.10. Install: pip install -r requirements.txt
+# CATATAN: mpstemmer TIDAK ada di PyPI -> install dari GitHub resmi (baris paling bawah).
+
+# Scraping
+google-play-scraper==1.2.7
+
+# Data & visualisasi
+pandas==2.3.3
+numpy==2.2.6
+matplotlib==3.10.9
+seaborn==0.13.2
+wordcloud==1.9.6
+
+# Machine learning & deep learning
+scikit-learn==1.7.2
+tensorflow==2.21.0
+
+# Preprocessing Bahasa Indonesia
+Sastrawi==1.0.1
+mpstemmer==0.1.0          # via GitHub (lihat baris paling bawah)
+Levenshtein==0.27.3        # dependency mpstemmer
+
+# XAI & analisis emosi
+lime==0.2.0.1
+nrclex==4.1.0
+textblob==0.20.0
+nltk==3.9.4
+
+# Notebook
+ipykernel==7.3.0
+nbconvert==7.17.1
+
+# mpstemmer hanya tersedia di GitHub (bukan PyPI). Jalankan perintah ini setelah pip install di atas:
+#   pip install git+https://github.com/ariaghora/mpstemmer.git
