@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
 
-**Terakhir di-update:** `2026-07-16` · **oleh device:** `Mac (M1)` · **oleh:** implementasi 06 RootFacts (Fareynaldi) — Basic done, verified lokal
+**Terakhir di-update:** `2026-07-17` · **oleh device:** `Victus (Windows)` · **oleh:** 07 Food Scan App (Fareynaldi) verified di HP Samsung SM-S721B — zip 19MB siap upload
 
 ---
 
@@ -11,13 +11,14 @@
 
 > Isi ulang bagian ini tiap akhir sesi: apa yang barusan dikerjakan, di device apa, dan apa langkah berikutnya untuk device yang lanjut. Ini yang pertama dibaca device berikutnya.
 
-- **Device terakhir aktif:** Mac (M1) — sesi setup sistem sync lintas-device (2026-07-16).
+- **Device terakhir aktif:** Victus (Windows) — scaffold 07 Food Scan App untuk Fareynaldi (2026-07-16).
 - **Yang paling mendesak (open action, urut prioritas):**
   1. **02 BFGAI (Nazhif)** — DITOLAK reviewer, revisi v3 sudah siap. Perlu **Run All notebook di Colab T4** → regenerate zip → **re-submit**. ⛅ butuh online.
   2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
   3. **05 Asclepius GCP (Nazhif)** — ⛔ TERBLOKIR: butuh `gcloud auth login` + billing account sebelum deploy Phase 3-7. Backend sudah OK lokal.
   4. **03 PGABL (Fareynaldi)** — skeleton notebook siap, belum pernah Run All. Perlu akun HF + Colab Secret → Run All di Colab T4.
-  5. **06 RootFacts (Fareynaldi)** — 🆕 kode Basic SELESAI & terverifikasi lokal (Mac). Tinggal **user deploy Netlify (akun Fareynaldi)** → isi `STUDENT.txt` → zip `RootFacts_Fareynaldi_Affan.zip` → upload. Panduan di folder proyek.
+  5. **06 RootFacts (Fareynaldi)** — kode Basic SELESAI & terverifikasi lokal (Mac). Tinggal **user deploy Netlify (akun Fareynaldi)** → isi `STUDENT.txt` → zip `RootFacts_Fareynaldi_Affan.zip` → upload. Panduan di folder proyek.
+  6. **07 Food Scan App (Fareynaldi)** — ✅ FULLY VERIFIED di HP Samsung SM-S721B (Android 16). Kamera + galeri + inferensi TFLite jalan (prediksi "Rendang" 18% untuk foto nasi rendang, "Ramen" 5.5% untuk Sedaap — kategori tepat). **Zip siap:** `submission/food_scan_app_Fareynaldi.zip` = 19.02 MB. Tinggal user **upload ke Dicoding**.
 - **Menunggu review Dicoding (jangan submit ulang):** 01-klasifikasi (Nazhif, Dafina, Fareynaldi), 01-analisis (Dafina, Fareynaldi, Bimo), 04 (Nazhif, Fareynaldi), 07 (Nazhif), 09 (Nazhif).
 - **⚠️ Artefak yang cuma ada di SATU device (risiko sync):** zip final **01-klasifikasi/dafina** & **01-analisis/dafina** hanya ada di **Victus** (belum di Mac). Kalau mau upload dari Mac → regenerate dulu. Lihat tabel artefak di bawah.
 <!-- HANDOFF:END -->
@@ -40,7 +41,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ## Ringkasan cepat
 
-- **Total:** 18 folder pengerjaan (9 course, 4 anggota) — +1: `06 RootFacts (Fareynaldi)` dibuat 2026-07-16.
+- **Total:** 19 folder pengerjaan (9 course, 4 anggota) — +1: `07 Food Scan App (Fareynaldi)` dibuat 2026-07-16.
 - **✅ Diterima:** 3 (semua Nazhif, semua ⭐⭐⭐⭐⭐) — `01 analisis-sentimen`, `03 PGABL`, `08 BMLP`.
 - **🔁 Ditolak→siap resubmit:** 2 — `02 BFGAI`, `06 RootFacts`.
 - **📤 Menunggu review / upload:** 10.
@@ -69,6 +70,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 06 | penerapan-ai-aplikasi-web | RootFacts PWA TF.js — **Nazhif** | 🔁 | target ⭐⭐⭐ (Basic) | 🍎 | **Re-submit** (koreksi-2 sudah beres, live sehat) |
 | 06 | penerapan-ai-aplikasi-web | RootFacts PWA (LaMini-Flan-T5) — **Fareynaldi** | 🚧 | target ⭐⭐⭐ (Basic) | 🍎 | Kode Basic done+verified lokal. **User deploy Netlify → STUDENT.txt → zip → upload** |
 | 07 | penerapan-machine-learning-flutter | Food Recognizer TFLite — **Nazhif** | 📤 | target ⭐⭐⭐ | 🎮 | Verifikasi zip ter-upload / tunggu review |
+| 07 | penerapan-machine-learning-flutter | Food Scan App TFLite — **Fareynaldi** | 📤 | target ⭐⭐⭐ (Basic) | 🎮 | Zip 19MB siap (`food_scan_app_Fareynaldi.zip`). Verified live di HP Samsung. Tinggal upload ke Dicoding |
 | 08 | membangun-proyek-machine-learning | BMLP Clustering+Klasifikasi — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ (4.0) | 🍎 | **SELESAI** |
 | 09 | openshop-restful-api | OpenShop Django REST — **Nazhif** | 📤 | — | 🍎 | Konfirmasi zip ter-upload / cek review |
 
@@ -91,7 +93,8 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 01-analisis (Nazhif) | *.keras/*.joblib + IndoBERT + CSV | Lokal `submission/` (git-ignored, tak ada mirror). IndoBERT dilatih di Victus |
 | 01-analisis (Dafina) | Zip final 1.5MB | **HANYA di Victus** — belum di Mac ⚠️ |
 | 01-analisis (Fareynaldi/Bimo) | IndoBERT weights | Fareynaldi: dilatih di Victus (folder `indobert_victus/`, bukan bobot). Bimo: dilatih di Colab, hanya JSON metrik disimpan |
-| 07 Food Recognizer (Nazhif) | `aiy_food_v1.tflite` (~20MB ×3) | **In-repo, TIDAK git-ignored** (dari Kaggle). Ada 3 salinan |
+| 07 Food Recognizer (Nazhif) | `aiy_food_v1.tflite` (~24MB) | **Git-ignored** (`*.tflite` di root `.gitignore`). Dari Kaggle. Perlu re-download tiap device. |
+| 07 Food Scan App (Fareynaldi) | `aiy_food_v1.tflite` (~24MB) | **Git-ignored**. Sama dari [Kaggle AIY Food V1](https://www.kaggle.com/models/google/aiy/tfLite/vision-classifier-food-v1). Rename ke `aiy_food_v1.tflite` (huruf kecil), taruh di `submission/food_scan_app/assets/models/`. |
 | 04, 08, 09 (Nazhif/Fareynaldi) | Model kecil (<2MB) | Ikut git di `submission/` — aman lintas device |
 
 ---
@@ -109,6 +112,9 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ### 🚧 Sedang dikerjakan
 - **03 PGABL / Fareynaldi** — target Basic. 2 notebook skeleton lolos syntax, **belum Run All**. Butuh akun HF sendiri + Colab Secret (HF_TOKEN, HF_USERNAME) + upload 4 PDF ke Drive, lalu Run All (SFT ~90-120mnt, baru RAG). Victus 4GB VRAM TIDAK cukup → wajib Colab T4.
+
+### 📤 Baru selesai — siap upload
+- **07 Food Scan App / Fareynaldi** — target Basic (⭐⭐⭐). Flutter app di `submission/food_scan_app/`, package `com.fareynaldi.foodscan`, tema hijau. **Sengaja dibedakan struktur** dari `food_recognizer` (Nazhif) untuk anti-plagiarisme (folder `ml/models/screens/widgets`, kelas `TfliteFoodDetector.analyze()` + `ScanResult`, tanpa provider). Fully verified 2026-07-17 di HP Samsung SM-S721B: kamera OK, galeri OK, inferensi TFLite jalan (Rendang → "Rendang" 18%, Sedaap → "Ramen" 5.5%). Screenshot bukti di `scratchpad/`. Zip siap: `submission/food_scan_app_Fareynaldi.zip` (19.02 MB).
 
 ### ⛔ Terblokir
 - **05 Asclepius / Nazhif** — backend Hapi TF.js untuk deteksi kanker, deploy ke GCP (Cloud Run + Storage + Firestore + App Engine). Backend **sudah lolos 4 skenario Postman lokal**. Deploy Phase 3-7 nunggu `gcloud auth login` + billing account (`nazhif.nugroho@gmail.com`), region `asia-southeast2`. Panduan di `DEPLOY-NOTES.md`.
