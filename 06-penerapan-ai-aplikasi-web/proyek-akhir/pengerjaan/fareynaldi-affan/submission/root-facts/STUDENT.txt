@@ -1,1 +1,1 @@
-APP_URL=
+APP_URL=https://famous-moxie-3653a7.netlify.app/
