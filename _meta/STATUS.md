@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
 
-**Terakhir di-update:** `2026-07-17` · **oleh device:** `Victus (Windows)` · **oleh:** 07 Food Scan App (Fareynaldi) verified di HP Samsung SM-S721B — zip 19MB siap upload
+**Terakhir di-update:** `2026-07-18` · **oleh device:** `Victus (Windows)` · **oleh:** 01 klasifikasi-gambar (Bimo) SELESAI — Fruits-360 10 kelas, Train/Test 100%, zip 38.5MB siap upload
 
 ---
 
@@ -11,7 +11,7 @@
 
 > Isi ulang bagian ini tiap akhir sesi: apa yang barusan dikerjakan, di device apa, dan apa langkah berikutnya untuk device yang lanjut. Ini yang pertama dibaca device berikutnya.
 
-- **Device terakhir aktif:** Victus (Windows) — scaffold 07 Food Scan App untuk Fareynaldi (2026-07-16).
+- **Device terakhir aktif:** Victus (Windows) — **01 klasifikasi-gambar (Bimo) SELESAI** (2026-07-18): Fruits-360 10 kelas buah, MobileNetV2 frozen + Conv2D, Train/Test 100%, 3 format + zip 38.5MB siap. Sebelumnya: scaffold 07 Food Scan App untuk Fareynaldi (2026-07-16).
 - **Yang paling mendesak (open action, urut prioritas):**
   1. **02 BFGAI (Nazhif)** — DITOLAK reviewer, revisi v3 sudah siap. Perlu **Run All notebook di Colab T4** → regenerate zip → **re-submit**. ⛅ butuh online.
   2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
@@ -20,7 +20,7 @@
   5. **06 RootFacts (Fareynaldi)** — kode Basic SELESAI & terverifikasi lokal (Mac). Tinggal **user deploy Netlify (akun Fareynaldi)** → isi `STUDENT.txt` → zip `RootFacts_Fareynaldi_Affan.zip` → upload. Panduan di folder proyek.
   6. **07 Food Scan App (Fareynaldi)** — ✅ FULLY VERIFIED di HP Samsung SM-S721B (Android 16). Kamera + galeri + inferensi TFLite jalan (prediksi "Rendang" 18% untuk foto nasi rendang, "Ramen" 5.5% untuk Sedaap — kategori tepat). **Zip siap:** `submission/food_scan_app_Fareynaldi.zip` = 19.02 MB. Tinggal user **upload ke Dicoding**.
 - **Menunggu review Dicoding (jangan submit ulang):** 01-klasifikasi (Nazhif, Dafina, Fareynaldi), 01-analisis (Dafina, Fareynaldi, Bimo), 04 (Nazhif, Fareynaldi), 07 (Nazhif), 09 (Nazhif).
-- **⚠️ Artefak yang cuma ada di SATU device (risiko sync):** zip final **01-klasifikasi/dafina** & **01-analisis/dafina** hanya ada di **Victus** (belum di Mac). Kalau mau upload dari Mac → regenerate dulu. Lihat tabel artefak di bawah.
+- **⚠️ Artefak yang cuma ada di SATU device (risiko sync):** zip final **01-klasifikasi/dafina**, **01-klasifikasi/bimo**, & **01-analisis/dafina** hanya ada di **Victus** (belum di Mac). Kalau mau upload dari Mac → regenerate dulu. Lihat tabel artefak di bawah.
 <!-- HANDOFF:END -->
 
 ---
@@ -57,6 +57,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 01 | fundamental-deep-learning · **klasifikasi-gambar** | Animals-10 CNN — **Nazhif** | 📤 | target ⭐⭐⭐⭐⭐ | ⛅🍎 | Upload zip 82MB / tunggu review |
 | 01 | · klasifikasi-gambar | TF Flowers — **Dafina** | 📤 | target ⭐⭐⭐ | 🎮 | Upload zip (⚠️ zip cuma di Victus) |
 | 01 | · klasifikasi-gambar | Garbage 12-kelas EffNetV2 — **Fareynaldi** | 📤 | target ⭐⭐⭐⭐⭐ | ⛅🍎 | Upload zip 96MB ke Drive → submit link |
+| 01 | · klasifikasi-gambar | Fruits-360 10 kelas — **Bimo** | 📤 | target ⭐⭐⭐ (Train/Test 100%) | 🎮 | Upload zip 38.5MB (⚠️ zip cuma di Victus) |
 | 01 | fundamental-deep-learning · **analisis-sentimen** | PLN Mobile 4-skema — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ | 🍎🎮 | **SELESAI** |
 | 01 | · analisis-sentimen | Shopee 4-skema — **Bimo** | 📤 | ⭐⭐⭐⭐ (Skilled) | ⛅🍎 | Upload zip / tunggu review |
 | 01 | · analisis-sentimen | DANA SVM+TF-IDF — **Dafina** | 📤 | target ⭐⭐⭐ | 🍎 | Upload zip (⚠️ zip cuma di Victus) |
@@ -89,6 +90,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 05 Asclepius (Nazhif) | Model TF.js graph (~14MB) + test images | Git-ignored lokal; re-download dari release Dicoding. Target GCS `gs://submissionmlgc-nazhifsetya-model` |
 | 01-klasifikasi (Nazhif) | SavedModel/TFLite/TFJS (~82MB zip) | Lokal di `submission/` + zip di root (git-ignored). Dataset via `kagglehub` on-the-fly |
 | 01-klasifikasi (Dafina) | Zip 45MB + saved_model/tfjs | **HANYA di Victus** (`d:\`) — belum ada di Mac ⚠️ |
+| 01-klasifikasi (Bimo) | Zip 38.5MB + saved_model/tflite/tfjs | **HANYA di Victus** (`d:\`) — belum ada di Mac ⚠️. Dataset Fruits-360 via git sparse-checkout on-the-fly di notebook |
 | 01-klasifikasi (Fareynaldi) | Zip 96MB + saved_model/tflite/tfjs | Lokal `submission/`; belum di-upload ke Drive |
 | 01-analisis (Nazhif) | *.keras/*.joblib + IndoBERT + CSV | Lokal `submission/` (git-ignored, tak ada mirror). IndoBERT dilatih di Victus |
 | 01-analisis (Dafina) | Zip final 1.5MB | **HANYA di Victus** — belum di Mac ⚠️ |
@@ -123,6 +125,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 - **01 klasifikasi / Nazhif** — Animals-10 CNN, notebook Colab 0-error (Test 96.61%), zip 82MB siap.
 - **01 klasifikasi / Dafina** — TF Flowers 5 kelas (Test 86.72%), lokal Victus CPU. ⚠️ zip cuma di Victus.
 - **01 klasifikasi / Fareynaldi** — Garbage 12 kelas EfficientNetV2B0 (Test 95.64%), zip 96MB perlu upload Drive.
+- **01 klasifikasi / Bimo** — Fruits-360 10 kelas buah (Train/Test 100%), lokal Victus CPU, MobileNetV2 frozen + Conv2D. Split anti-bocor (Test folder bawaan). 3 format + zip 38.5MB. ⚠️ zip cuma di Victus.
 - **01 analisis / Bimo** — Shopee 4-skema, dapat ⭐⭐⭐⭐ Skilled (target 5, test 90.66%). IndoBERT di Colab.
 - **01 analisis / Dafina** — DANA SVM+TF-IDF (Test 91.41%). ⚠️ zip cuma di Victus.
 - **01 analisis / Fareynaldi** — MyTelkomsel 4-skema (IndoBERT test 92.78%), zip 6.6MB. IndoBERT di Victus.
