@@ -1,0 +1,52 @@
+# ===========================================================
+# .gitignore — Proyek Image Generation BFGAI (Dafina Meira Rizkia)
+# ===========================================================
+
+# --- File sementara / lokal ---------------------------------
+scratchpad/
+streamlit.log
+*.log
+*.tmp
+*.bak
+.env
+.env.local
+
+# --- Python -------------------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Jupyter ------------------------------------------------
+.ipynb_checkpoints/
+
+# --- IDE / editor -------------------------------------------
+.vscode/
+.idea/
+*.swp
+
+# --- Metadata OS --------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Gambar berat (hasil eksperimen lokal) ------------------
+# Semua image di-ignore; referensi Dicoding hidup di folder artifact/ (di luar folder ini)
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# --- Video: hanya deliverable final yang boleh masuk --------
+*.mp4
+*.mov
+*.avi
+!submission/video_demo_aplikasi_BFGAI.mp4
+
+# --- Arsip (zip dibuat fresh sebelum submit) ----------------
+*.zip
+*.tar.gz
+*.rar
