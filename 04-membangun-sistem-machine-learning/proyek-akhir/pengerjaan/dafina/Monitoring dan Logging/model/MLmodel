@@ -1,0 +1,29 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.9
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.5.2
+mlflow_version: 2.19.0
+model_size_bytes: 556822
+model_uuid: 229fad56ce0a44c7be69afc0875ca6b8
+run_id: 3685a7fc6e794999831c3578ffbd5d72
+signature:
+  inputs: '[{"type": "double", "name": "bill_length_mm", "required": true}, {"type":
+    "double", "name": "bill_depth_mm", "required": true}, {"type": "double", "name":
+    "flipper_length_mm", "required": true}, {"type": "double", "name": "body_mass_g",
+    "required": true}, {"type": "long", "name": "sex", "required": true}, {"type":
+    "long", "name": "island_Biscoe", "required": true}, {"type": "long", "name": "island_Dream",
+    "required": true}, {"type": "long", "name": "island_Torgersen", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2026-07-19 07:54:30.170875'

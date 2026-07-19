@@ -1,0 +1,36 @@
+name: CI Penguins - Re-training Model
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-model:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ambil kode repository
+        uses: actions/checkout@v4
+
+      - name: Siapkan Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Pasang dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow==2.19.0 scikit-learn==1.5.2 pandas==2.2.3 "numpy<2.2"
+
+      - name: Latih ulang model via MLflow Project
+        working-directory: MLProject
+        run: |
+          mlflow run . --env-manager=local --experiment-name "Penguins_Species_CI"
+
+      - name: Arsipkan artefak hasil training
+        uses: actions/upload-artifact@v4
+        with:
+          name: penguins-mlruns
+          path: MLProject/mlruns
+          if-no-files-found: warn

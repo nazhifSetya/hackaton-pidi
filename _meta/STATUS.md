@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
 
-**Terakhir di-update:** `2026-07-19` · **oleh device:** `Victus (Windows)` · **oleh:** 03 PGABL (Dafina) — skeleton 2 notebook dibuat (Qwen2.5-1.5B + e5 + FAISS + input()-loop), siap Run All
+**Terakhir di-update:** `2026-07-19` · **oleh device:** `Victus (Windows)` · **oleh:** 04 SMSML (Dafina) — proyek akhir SELESAI dijalankan penuh lokal (K1–K4 terverifikasi), tinggal push 2 repo publik + upload
 
 ---
 
@@ -11,7 +11,7 @@
 
 > Isi ulang bagian ini tiap akhir sesi: apa yang barusan dikerjakan, di device apa, dan apa langkah berikutnya untuk device yang lanjut. Ini yang pertama dibaca device berikutnya.
 
-- **Device terakhir aktif:** Victus (Windows) — **03 PGABL (Dafina) skeleton dibuat** (2026-07-19): submission Basic independen — base Qwen2.5-1.5B-Instruct (ChatML, Apache-2.0) + embedder e5-base + FAISS + chunker berbasis-kalimat + interface `input()` loop. 2 notebook ter-generate & terverifikasi (JSON/syntax/HR-14/anti-plagiarisme/chunker), **belum Run All**. Sebelumnya: 01 klasifikasi-gambar (Bimo) SELESAI (2026-07-18).
+- **Device terakhir aktif:** Victus (Windows) — **04 SMSML (Dafina) DIBUAT & DIJALANKAN PENUH LOKAL** (2026-07-19): proyek akhir MLOps 4 kriteria, target Basic. Dataset **Palmer Penguins** + **GradientBoosting** + MLflow autolog + Flask serving + Prometheus + Grafana (Docker) — sengaja beda dari Nazhif (Pima/RF) & Fareynaldi (Titanic/LogReg) untuk anti-plagiarisme. K1 notebook Run All 0-error, K2 model dilatih + 2 screenshot MLflow (auto-browser), K3 Workflow-CI lengkap (belum push), K4 stack jalan + 6 screenshot (serving/Prometheus×4/Grafana dashboard "Dafina Meira Rizkia"). Zip 798KB siap. **SISA: user push 2 repo publik (`bash panduan/push_repos.sh`) + Actions hijau + ganti `<USERNAME-GITHUB>` di 2 .txt + regen zip + upload.** Detail: `pengerjaan/dafina/panduan/PANDUAN.md`. Sebelumnya: 03 PGABL (Dafina) skeleton (2026-07-19).
 - **Yang paling mendesak (open action, urut prioritas):**
   1. **02 BFGAI (Nazhif)** — DITOLAK reviewer, revisi v3 sudah siap. Perlu **Run All notebook di Colab T4** → regenerate zip → **re-submit**. ⛅ butuh online.
   2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
@@ -42,11 +42,11 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ## Ringkasan cepat
 
-- **Total:** 20 folder pengerjaan (9 course, 4 anggota) — +1: `03 PGABL (Dafina)` dibuat 2026-07-19.
+- **Total:** 21 folder pengerjaan (9 course, 4 anggota) — +1: `04 SMSML (Dafina)` dibuat 2026-07-19.
 - **✅ Diterima:** 3 (semua Nazhif, semua ⭐⭐⭐⭐⭐) — `01 analisis-sentimen`, `03 PGABL`, `08 BMLP`.
 - **🔁 Ditolak→siap resubmit:** 2 — `02 BFGAI`, `06 RootFacts`.
 - **📤 Menunggu review / upload:** 10.
-- **🚧 Sedang dikerjakan:** 3 — `03 PGABL (Fareynaldi)`, `03 PGABL (Dafina)` (skeleton done, tinggal user Run All), `06 RootFacts (Fareynaldi)`.
+- **🚧 Sedang dikerjakan:** 4 — `03 PGABL (Fareynaldi)`, `03 PGABL (Dafina)` (skeleton done, tinggal user Run All), `04 SMSML (Dafina)` (jalan penuh lokal, tinggal user push repo + upload), `06 RootFacts (Fareynaldi)`.
 - **⛔ Terblokir:** 1 — `05 Asclepius GCP` (gcloud auth + billing).
 
 ---
@@ -69,6 +69,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 03 | pengembangan-generative-ai-llm | PGABL versi Basic (Qwen+FAISS) — **Dafina** | 🚧 | target ⭐⭐⭐ | ⛅ | Akun HF Dafina + Colab Secret + upload 4 PDF → Run All 2 notebook |
 | 04 | membangun-sistem-machine-learning | SMSML Pima diabetes — **Nazhif** | 📤 | — | 🍎 | Cek status review di dashboard Dicoding |
 | 04 | membangun-sistem-machine-learning | SMSML Titanic — **Fareynaldi** | 📤 | — | 🍎 | Cek review; pastikan `Workflow-CI` ke-push GitHub |
+| 04 | membangun-sistem-machine-learning | SMSML Palmer Penguins — **Dafina** | 🚧 | target ⭐⭐⭐ (Basic) | 🎮 | K1–K4 jalan penuh lokal + zip siap. User: push 2 repo publik + Actions hijau + ganti username di 2 .txt + regen zip + upload |
 | 05 | penerapan-machine-learning-google-cloud | Asclepius Hapi TF.js GCP — **Nazhif** | ⛔ | target ⭐⭐⭐⭐⭐ | ⛅🍎 | `gcloud auth login` + billing → deploy Phase 3-7 |
 | 06 | penerapan-ai-aplikasi-web | RootFacts PWA TF.js — **Nazhif** | 🔁 | target ⭐⭐⭐ (Basic) | 🍎 | **Re-submit** (koreksi-2 sudah beres, live sehat) |
 | 06 | penerapan-ai-aplikasi-web | RootFacts PWA (LaMini-Flan-T5) — **Fareynaldi** | 🚧 | target ⭐⭐⭐ (Basic) | 🍎 | Kode Basic done+verified lokal. **User deploy Netlify → STUDENT.txt → zip → upload** |
@@ -116,6 +117,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ### 🚧 Sedang dikerjakan
 - **03 PGABL / Fareynaldi** — target Basic. 2 notebook skeleton lolos syntax, **belum Run All**. Butuh akun HF sendiri + Colab Secret (HF_TOKEN, HF_USERNAME) + upload 4 PDF ke Drive, lalu Run All (SFT ~90-120mnt, baru RAG). Victus 4GB VRAM TIDAK cukup → wajib Colab T4.
+- **04 SMSML / Dafina** — target Basic (⭐⭐⭐). Proyek MLOps 4 kriteria, dibuat & dijalankan penuh lokal di Victus (2026-07-19). Stack sengaja dibedakan dari Nazhif (Pima diabetes, RandomForest) & Fareynaldi (Titanic, LogisticRegression): dataset **Palmer Penguins** (klasifikasi 3 spesies), model **GradientBoostingClassifier**, `pathlib`+`main()`, experiment `Penguins_Species_Classification`, exporter metrik `penguin_*` di port 8501. K1 notebook Run All 0-error → `penguins_preprocessing.csv` (333×9). K2 autolog, akurasi uji 1.0, 2 screenshot MLflow. K3 `Workflow-CI` (MLProject+ci.yml) belum push. K4 Flask serving + Prometheus (4 metrik) + Grafana (Docker, dashboard "Dafina Meira Rizkia" 5 panel) — 6 screenshot auto-browser. Zip 798KB di `submission/`. **SISA (butuh akun):** `bash panduan/push_repos.sh` (2 repo PUBLIC) → Actions hijau → ganti `<USERNAME-GITHUB>` di 2 .txt → (opsional) samakan nama dashboard ke username Dicoding → regen zip → upload. Detail: `dafina/panduan/PANDUAN.md` & `dafina/CLAUDE.md`.
 - **03 PGABL / Dafina** — target Basic, submission independen. Stack sengaja dibedakan dari Nazhif & Fareynaldi (anti-plagiarisme): base **Qwen2.5-1.5B-Instruct** (ChatML, Apache-2.0) + embedder **multilingual-e5-base** + **FAISS** + chunker **berbasis-kalimat** (700/120) + interface **loop `input()`**. 2 notebook skeleton terverifikasi (JSON/syntax/HR-14/anti-plagiarisme/chunker), **belum Run All**. Butuh akun HF Dafina + Colab Secret + upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/data/raw/`, lalu Run All di Colab T4 (SFT ~60-90mnt, baru RAG). Detail lengkap + matriks diferensiasi di `dafina/CLAUDE.md`.
 
 ### 📤 Baru selesai — siap upload

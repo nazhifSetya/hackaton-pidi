@@ -1,0 +1,16 @@
+=== Bukti Serving Model — Layanan Klasifikasi Spesies Penguin (port 8501) ===
+Waktu uji: sesi pelatihan Dafina Meira Rizkia
+
+-- GET /health --
+{"model":"gradient_boosting_penguins","status":"ok"}
+
+
+-- POST /predict (Gentoo-like sample) --
+{"labels":["Gentoo"],"predictions":[2]}
+
+-- POST /predict (Adelie-like sample) --
+{"labels":["Adelie"],"predictions":[0]}
+
+-- POST /predict (Chinstrap-like sample) --
+{"labels":["Chinstrap"],"predictions":[1]}
+

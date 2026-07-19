@@ -1,0 +1,11 @@
+# Artefak berat & lokal — jangan masuk monorepo (lihat root CLAUDE.md aturan 6)
+.venv/
+**/mlruns/
+**/mlartifacts/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+
+# Zip submission (regenerate dari submission/SMSML_Dafina-Meira-Rizkia/)
+submission/*.zip

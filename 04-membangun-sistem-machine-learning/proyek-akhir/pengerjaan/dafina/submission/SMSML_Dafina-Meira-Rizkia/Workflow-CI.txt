@@ -1,0 +1,11 @@
+Kriteria 3 — Workflow CI (MLflow Project + GitHub Actions)
+
+Tautan repository GitHub (WAJIB publik):
+https://github.com/<USERNAME-GITHUB>/Workflow-CI
+
+Catatan:
+- Ganti <USERNAME-GITHUB> dengan username GitHub yang dipakai (mis. akun Dafina).
+- Pastikan visibilitas repository disetel PUBLIC sebelum submit.
+- Isi repository: MLProject/ (modelling.py, conda.yaml, MLProject, penguins_preprocessing.csv)
+  dan .github/workflows/ci.yml.
+- Pastikan Actions minimal satu kali berhasil (hijau) sebelum submit.

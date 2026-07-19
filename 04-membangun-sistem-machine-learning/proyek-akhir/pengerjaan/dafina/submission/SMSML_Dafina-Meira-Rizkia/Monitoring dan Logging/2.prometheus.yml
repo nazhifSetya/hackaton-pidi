@@ -1,0 +1,13 @@
+# Konfigurasi Prometheus untuk memantau layanan model spesies penguin.
+# Prometheus melakukan scrape endpoint /metrics milik eksporter Flask tiap 5 detik.
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "penguin_model_service"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:8501"]
+        labels:
+          service: "penguin-species-api"
