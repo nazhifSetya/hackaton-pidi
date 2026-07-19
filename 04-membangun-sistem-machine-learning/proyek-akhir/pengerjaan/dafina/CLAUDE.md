@@ -63,7 +63,7 @@ dafina/
 - **2026-07-19 (Victus):** Proyek dibuat dari nol & dijalankan penuh lokal.
   - K1: notebook eksperimen Run All 0-error → `penguins_preprocessing.csv` (333×9). ✅
   - K2: `modelling.py` autolog GradientBoosting, akurasi uji 1.0, mlruns + 2 screenshot MLflow (auto via browser). ✅
-  - K3: `Workflow-CI` (MLProject + ci.yml) lengkap — **belum push** ke GitHub. ⏳
+  - K3: `Workflow-CI` (MLProject + ci.yml) lengkap. **PUSH ✅** → https://github.com/dafina1907/Workflow-CI (PUBLIC), **GitHub Actions SUCCESS** (hijau, 1m8s). K1 repo juga push: https://github.com/dafina1907/Eksperimen_SML_Dafina-Meira-Rizkia (PUBLIC).
   - K4: exporter Flask (5 metrik `penguin_*`, port 8501) + Prometheus + Grafana (Docker) jalan; target scrape UP; 6 screenshot (serving, 4 Prometheus, Grafana dashboard "Dafina Meira Rizkia" 5 panel terisi). ✅
   - Zip `submission/SMSML_Dafina-Meira-Rizkia.zip` (798KB, 39 file) dibuat.
-  - **SISA (butuh akun):** push 2 repo publik (`bash panduan/push_repos.sh`), pastikan Actions hijau, ganti `<USERNAME-GITHUB>` di 2 .txt, (opsional) samakan nama dashboard ke username Dicoding, regenerate zip, upload. Detail: `panduan/PANDUAN.md`.
+  - **2 repo GitHub `dafina1907` PUBLIC + push + CI hijau ✅**, 2 .txt sudah berisi URL asli, zip di-regen (798KB). **SISA: user upload `submission/SMSML_Dafina-Meira-Rizkia.zip` ke Dicoding** + (opsional) samakan nama dashboard Grafana ke username Dicoding bila beda dari "Dafina Meira Rizkia". Token GitHub Dafina yang dipakai untuk push sebaiknya sudah di-revoke user (pernah terekspos di chat).

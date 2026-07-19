@@ -1,9 +1,8 @@
 Kriteria 1 — Eksperimen & Preprocessing Dataset
 
 Tautan repository GitHub (WAJIB publik):
-https://github.com/<USERNAME-GITHUB>/Eksperimen_SML_Dafina-Meira-Rizkia
+https://github.com/dafina1907/Eksperimen_SML_Dafina-Meira-Rizkia
 
 Catatan:
-- Ganti <USERNAME-GITHUB> dengan username GitHub yang dipakai (mis. akun Dafina).
 - Pastikan visibilitas repository disetel PUBLIC sebelum submit.
 - Isi repository: penguins_raw.csv + preprocessing/ (notebook eksperimen + penguins_preprocessing.csv).
