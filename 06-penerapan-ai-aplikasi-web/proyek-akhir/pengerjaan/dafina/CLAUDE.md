@@ -31,11 +31,12 @@ Starter Dicoding **identik** untuk semua (model TM 18 sayuran fixed; HTML/CSS/`u
 | Aspek | Nazhif | Fareynaldi | **Dafina (folder ini)** |
 |---|---|---|---|
 | Model LLM (K2) | `SmolLM2-135M-Instruct`, `text-generation`, chat, q4 | `LaMini-Flan-T5-248M`, `text2text`, q8 | **`Xenova/flan-t5-base`**, `text2text-generation`, **q8**, prompt gaya **tanya-jawab** |
-| Gaya kelas | `this.x` publik | `this.x` publik | **ES2022 `#private` fields** (`#model`, `#labels`, `#busy`, `#factReady`, …) |
+| Gaya kelas | `this.x` publik | `this.x` publik | **ES2022 `#private` fields** (`#model`, `#labels`, `#busy`, `#scanHandle`, …) |
 | Argmax deteksi | for-loop manual | `scores.indexOf(Math.max)` | **operasi tensor `tf.argMax(-1)` + `tf.max`** (di dalam `tf.tidy`) |
 | Preprocess | `resizeNearestNeighbor` + `.div(127.5).sub(1)` | `resizeBilinear` + `.mul(1/127.5)` via `toInputTensor()` | **draw ke kanvas luar-layar (`drawImage` = resize) → `fromPixels` → `.div(255).mul(2).sub(1)`** via `#toTensor()` |
 | Loop deteksi (app.js) | `while` + `createDelay` | rekursif `setTimeout` (`runScan`) | **`setInterval` + guard re-entrant `#busy`** (`detectLoop` per-tick) |
-| Muat model | await keduanya baru enable tombol | await keduanya baru enable tombol | **app-first: TF.js dulu → tombol AKTIF; LLM dimuat di LATAR (`#factReady`)**, fun fact muncul saat siap |
+| Muat model | await keduanya, tanpa indikator persen | await keduanya, tanpa indikator persen | **await keduanya + indikator "Memuat Model... X%" dari `progress_callback`** → "Siap" hanya saat 100% (fix penolakan_1) |
+| Prompt & decoding (K2) | chat, sampling | instruksi tunggal, sampling | **instruksi "the vegetable {name}" + greedy (`do_sample:false`)** — deterministik, relevan, tetap unik per sayuran |
 | Kamera | probe getUserMedia | `buildConstraints` facingMode + `waitUntilReady` | **enumerasi device → `deviceId {exact}` bila >1 kamera** (fallback facingMode), `#awaitFirstFrame` via `loadedmetadata` |
 | Sanitasi label | strip non-alfanumerik, cap 50, lowercase | NFKD + whitelist `[a-zA-Z\s]`, cap 40, lowercase | **NFKC + Unicode `\p{L}\p{N}`, cap 32, `Title Case`** (`#cleanLabel`) |
 | Ekstraksi output | `.at(-1).content` (chat) | `generated_text` string | **`#extractText()`** tahan dua bentuk (string / array pesan) |
@@ -91,7 +92,7 @@ dafina/
 ## 🔑 CATATAN TEKNIS
 
 - **TF.js:** `tf@4.22.0` (CDN jsdelivr, di `<head>`). `tf.loadLayersModel('./model/model.json')`, metadata untuk labels + imageSize. Normalisasi ke [-1,1]: `x/255*2-1`.
-- **Transformers.js:** `@huggingface/transformers@3.7.5` (ESM import). `pipeline('text2text-generation','Xenova/flan-t5-base',{dtype:'q8'})`. Prompt tanya-jawab, `max_new_tokens:70, temperature:0.7, top_p:0.95, do_sample:true, repetition_penalty:1.3`. Unduhan awal ~250 MB dari HF (sekali, lalu tercache Transformers.js). **Load pertama bisa 1–3 menit** di mesin nyata (WASM single-thread karena Netlify/`serve` tak set COOP/COEP) — makanya app-first: kamera jalan dulu, fun fact menyusul.
+- **Transformers.js:** `@huggingface/transformers@3.7.5` (ESM import). `pipeline('text2text-generation','Xenova/flan-t5-base',{dtype:'q8', progress_callback})`. Prompt `Tell me an interesting fun fact about the vegetable ${name}.` + **greedy** `max_new_tokens:60, do_sample:false, repetition_penalty:1.4, no_repeat_ngram_size:3`. (Sampling bikin model kecil mengarang → greedy 17/18 sebut sayuran vs 3/8.) Unduhan awal ~250 MB dari HF (sekali, lalu tercache Transformers.js). **Load pertama bisa 1–3 menit** di mesin nyata (WASM single-thread karena Netlify/`serve` tak set COOP/COEP) — makanya init pakai `progress_callback` → header **"Memuat Model... X%"** sampai 100%, baru "Siap".
 - **Workbox 7** (`workbox-sw` CDN googleapis). `setCacheNameDetails({prefix:'rootfacts-dmr'})`. Precache 17 file (app shell + 4 ikon + 3 model TF.js). Runtime: NetworkFirst (navigasi), SWR (font css), CacheFirst (font files, vendor CDN, HF model), SWR (fallback same-origin).
 - **Dev server:** `npx serve@14 . -l 5190 --cors` dari `submission/root-facts`.
 
@@ -114,10 +115,15 @@ dafina/
 - **Tahap 3 — K3 (PWA + SW Workbox): ✅ (2026-07-19)**
   - `manifest.json`: `start_url ./index.html` + `scope ./`, 4 ikon (192/512, any+maskable), field lang/dir/categories.
   - `sw.js` (BARU): `setCacheNameDetails({prefix:'rootfacts-dmr'})`, helper `withRev`, REV `dmr-2026-07-19`, precache 17 file (app shell + 4 ikon + 3 model TF.js), 6 route runtime.
-  - `app.js`: `[RootFacts·DMR]`, `registerServiceWorker()`, init **app-first** (TF.js → enable → LLM di latar via `#factReady`), `detectLoop` via `setInterval`+`#busy`, regenerate fun fact hanya saat label berubah.
+  - `app.js`: `[RF-Dafina]`, `registerServiceWorker()`, `detectLoop` via `setInterval`+`#busy`, regenerate fun fact hanya saat label berubah. (Init awalnya app-first, lalu DIREVISI di Tahap 5 → lihat bawah.)
   - Ikon daun (Pillow, `scratchpad/make_icons.py`) di `assets/icons/` (192/512/apple-touch/favicon), hijau `#15803d` full-bleed maskable-safe. **Verifikasi visual: motif daun jelas.**
   - **Verifikasi (CDP):** manifest 200, 4 ikon, `display standalone`, scope root ✅; SW `active` scope root, `controller=true` ✅; precache `rootfacts-dmr-precache-v2-v1` = **17 file** ✅; runtime cache `df-cdn`(TF.js/lucide/transformers)/`df-google-fonts`/`df-font-files` terisi setelah reload. **OFFLINE (emulate Offline → reload) → app shell render penuh + TF.js tersedia + DETEKSI jalan (Soybean 93% dari precache)** ✅ (mendekati K3 Advanced offline-AI). SW tidak memblok fetch HF/CDN (config.json 200). Konsol 0 error (cuma warn kosmetik apple-mobile-web-app-capable). App-first: tombol scan aktif seketika (msUntilEnabled=0), header "Siap" tanpa nunggu LLM ✅.
 
-- **Tahap 4 — Deploy + Packaging: ⏳ MENUNGGU USER**
-  - Kode siap & terverifikasi lokal. `STUDENT.txt` masih kosong (`APP_URL=`).
-  - **NEXT (user Dafina):** deploy Netlify Drop (akun sendiri) → isi `STUDENT.txt` `APP_URL=` → zip flat `RootFacts_Dafina_Meira_Rizkia.zip` (lihat [`panduan/Deploy_Netlify.md`](panduan/Deploy_Netlify.md)) → upload Dicoding. ⚠️ Pastikan `_*test*.html` scratch TIDAK ikut zip (sudah dihapus).
+- **Tahap 4 — Deploy + Packaging: ✅ (2026-07-19)** — user deploy Netlify (`https://cerulean-lolly-3c6913.netlify.app`), `STUDENT.txt` terisi, zip flat dibuat. Live terverifikasi (12 aset 200, SW active, manifest, precache 17). Submit ke Dicoding.
+
+- **Tahap 5 — REVISI setelah DITOLAK reviewer (K2): ✅ (2026-07-19)**
+  - **Penolakan** (`penolakan_1.md`): K2 — "Hasil deskripsi tidak muncul dan selalu tampil 'Memuat fakta menarik...'". Reviewer cek: model Transformers.js masih diunduh di **latar** padahal header sudah "Siap". **Root cause = desain app-first saya** (tombol aktif sebelum LLM siap). Reviewer minta alur: **"Memuat Model... X%"** (persen unduhan) → **"Siap" hanya saat 100%** → scan langsung tampil fakta tanpa nunggu.
+  - **Fix `app.js`:** BUANG app-first + `#factReady`. `init()` sekarang muat TF.js → muat LLM **sampai tuntas** dengan callback progress → header **"Memuat Model... X%"** → baru "Siap" + enable tombol. Tombol scan nonaktif sepanjang unduhan (fun fact tak akan menggantung).
+  - **Fix `facts.service.js`:** `loadModel(onProgress)` teruskan `progress_callback` → agregasi byte terunduh jadi persen. **Plus perbaikan kualitas:** prompt jadi `Tell me an interesting fun fact about the vegetable ${name}.` + **greedy** (`do_sample:false`, rep 1.4, no_repeat_ngram 3). Sampling lama bikin flan-t5-base mengarang (Onion→nonsense, Corn→"amount of time in a day") = 3/8 sebut sayuran; greedy = **17/18 sebut sayuran, relevan & koheren**, deterministik tapi unik per sayuran.
+  - **Verifikasi live (CDP, model tercache):** header berjalan mulus `6% → 99% → "Siap"`, tombol **nonaktif** s/d Siap ✅; setelah Siap, detect→generate→DOM: spinner "Memuat fakta menarik" sebentar → **fun fact muncul** (`fun-fact-text` terisi) → spinner **hilang** (tak stuck) ✅; generateFunFact 7-8/8 relevan, deterministik ✅. 0 error.
+  - **NEXT (user Dafina):** **REDEPLOY** kode baru ke Netlify (situs sama `cerulean-lolly-3c6913` atau baru) → kalau URL baru update `STUDENT.txt` → re-zip → **RE-SUBMIT**. Panduan: [`panduan/Deploy_Netlify.md`](panduan/Deploy_Netlify.md).

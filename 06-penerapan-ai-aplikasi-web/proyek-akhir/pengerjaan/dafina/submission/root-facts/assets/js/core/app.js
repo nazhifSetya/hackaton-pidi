@@ -14,7 +14,6 @@ class RootFactsApp {
 	#scanHandle = null;   // id dari setInterval
 	#busy = false;        // penjaga agar tick tak tumpang tindih
 	#activeLabel = null;  // label yang sedang tampil (hindari regenerasi)
-	#factReady = null;    // promise kesiapan model bahasa (dimuat di latar belakang)
 
 	constructor() {
 		this.detector = null;
@@ -47,20 +46,24 @@ class RootFactsApp {
 			this.detector = new DetectionService();
 			this.funFactGenerator = new FunFactService();
 
-			// Model penglihatan (ringan) dimuat lebih dulu, lalu tombol scan
-			// langsung diaktifkan supaya kamera bisa dipakai tanpa menunggu.
+			// (1) Model penglihatan (ringan) dimuat lebih dulu.
 			await this.detector.loadModel();
 			console.log(`${LOG_TAG} TensorFlow.js siap. Label:`, this.detector.labelList);
 
+			// (2) Model bahasa (lebih berat) diunduh SAMPAI TUNTAS sebelum aplikasi
+			//     dinyatakan "Siap". Persentase unduhan ditampilkan di header agar
+			//     pengguna tahu progresnya. Tombol scan sengaja tetap nonaktif di
+			//     tahap ini supaya fun fact tak pernah menggantung menunggu unduhan.
+			this.ui.updateHeaderStatus('Memuat Model... 0%', false);
+			await this.funFactGenerator.loadModel((percent) => {
+				this.ui.updateHeaderStatus(`Memuat Model... ${percent}%`, false);
+				console.log(`${LOG_TAG} Unduh model bahasa: ${percent}%`);
+			});
+			console.log(`${LOG_TAG} Transformers.js (FLAN-T5-base) siap.`);
+
+			// (3) Kedua model siap → barulah tombol diaktifkan & status jadi "Siap".
 			this.ui.updateHeaderStatus('Siap', false);
 			this.ui.enableButton();
-
-			// Model bahasa (lebih berat) dimuat di latar belakang; fun fact akan
-			// muncul begitu model siap — kamera & label tetap jalan lebih dulu.
-			this.#factReady = this.funFactGenerator
-				.loadModel()
-				.then(() => { console.log(`${LOG_TAG} Transformers.js (FLAN-T5-base) siap.`); return true; })
-				.catch((err) => { logError('Model fun fact gagal dimuat', err); return false; });
 		} catch (error) {
 			logError('Gagal menginisialisasi aplikasi', error);
 			this.ui.updateHeaderStatus('Error', false);
@@ -173,15 +176,8 @@ class RootFactsApp {
 		this.currentFunFact = '';
 		try {
 			// Tampilkan nama sayuran dulu dengan placeholder (spinner) fun fact.
+			// Model sudah dimuat penuh saat init, jadi generasi ini singkat saja.
 			this.ui.showResults(detectionResult, null);
-
-			// Bila model bahasa belum selesai dimuat, tunggu dulu (spinner tetap
-			// tampil). Bila gagal dimuat permanen, tampilkan error tanpa spam retry.
-			const ready = this.#factReady ? await this.#factReady : this.funFactGenerator.isReady();
-			if (!ready) {
-				this.ui.updateFunFactState('error');
-				return;
-			}
 
 			const { funFact } = await this.funFactGenerator.generateFunFact(detectionResult.className);
 			this.currentFunFact = funFact;

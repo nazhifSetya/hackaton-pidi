@@ -4,9 +4,9 @@ import { logError } from '../core/utils.js';
  * FunFactService — penghasil fun fact berbasis model bahasa untuk RootFacts.
  * Menjalankan FLAN-T5-base lokal di peramban via Transformers.js. Model ini
  * encoder-decoder (seq2seq), jadi dijalankan lewat pipeline
- * 'text2text-generation': satu prompt masuk, satu kalimat keluar. FLAN-T5
- * merespons baik pada instruksi format tanya-jawab; varian q8 menekan ukuran
- * unduhan agar wajar dijalankan di perangkat pengguna.
+ * 'text2text-generation': satu prompt masuk, satu kalimat keluar. Keluaran
+ * diambil dengan decoding greedy agar tetap fokus pada sayuran; varian q8
+ * menekan ukuran unduhan agar wajar dijalankan di perangkat pengguna.
  */
 
 const HF_LIB = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5';
@@ -23,15 +23,37 @@ class FunFactService {
 		this.currentBackend = null;
 	}
 
-	async loadModel() {
+	/*
+	 * Muat pipeline. `onProgress(percent)` dipanggil selama pengunduhan berkas
+	 * model dari Hub sehingga pemanggil bisa menampilkan persentase ke pengguna.
+	 * Persen dihitung dari total byte terunduh / total byte semua berkas.
+	 */
+	async loadModel(onProgress) {
 		try {
 			const lib = await import(HF_LIB);
 			// Nonaktifkan pencarian berkas lokal supaya model diunduh dari Hub.
 			lib.env.allowLocalModels = false;
 
-			this.generator = await lib.pipeline(LLM_TASK, LLM_ID, { dtype: 'q8' });
+			const files = new Map();
+			const track = (event) => {
+				if (event.status !== 'progress' || !event.file) return;
+				files.set(event.file, { loaded: event.loaded || 0, total: event.total || 0 });
+				let loaded = 0;
+				let total = 0;
+				for (const f of files.values()) {
+					loaded += f.loaded;
+					total += f.total;
+				}
+				// Batasi ke 99% selama mengunduh; 100% baru setelah pipeline siap.
+				if (total > 0 && typeof onProgress === 'function') {
+					onProgress(Math.min(99, Math.round((loaded / total) * 100)));
+				}
+			};
+
+			this.generator = await lib.pipeline(LLM_TASK, LLM_ID, { dtype: 'q8', progress_callback: track });
 			this.currentBackend = 'wasm';
 			this.isModelLoaded = true;
+			if (typeof onProgress === 'function') onProgress(100);
 		} catch (error) {
 			logError('Error loading Transformers.js model', error);
 			throw new Error(`Failed to load FunFact model: ${error.message}`);
@@ -80,19 +102,18 @@ class FunFactService {
 
 		this.isGenerating = true;
 		try {
-			// Disusun sebagai pasangan Question/Answer karena FLAN-T5 paling patuh
-			// pada pola itu. Nama muncul di pertanyaan sekaligus di instruksi
-			// jawaban supaya keluaran tidak melenceng ke sayuran lain.
-			const prompt =
-				`Question: What is one surprising and true fun fact about ${name}, a vegetable? ` +
-				`Answer with one full sentence that mentions ${name}.`;
+			// FLAN-T5-base menjawab paling relevan ketika sayuran dibingkai sebagai
+			// "the vegetable <nama>". Decoding dipakai greedy (do_sample:false)
+			// karena sampling pada model sekecil ini cenderung mengarang; greedy
+			// membuat keluaran lebih fokus & masuk akal. Deterministik per sayuran,
+			// namun tetap unik antar sayuran (bukan teks statis yang sama semua).
+			const prompt = `Tell me an interesting fun fact about the vegetable ${name}.`;
 
 			const output = await this.generator(prompt, {
-				max_new_tokens: 70,
-				temperature: 0.7,
-				top_p: 0.95,
-				do_sample: true,
-				repetition_penalty: 1.3
+				max_new_tokens: 60,
+				do_sample: false,
+				repetition_penalty: 1.4,
+				no_repeat_ngram_size: 3
 			});
 
 			let funFact = this.#extractText(output);
