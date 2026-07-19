@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as im;
-import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:flutter_litert/flutter_litert.dart';
 
 import '../models/scan_result.dart';
 

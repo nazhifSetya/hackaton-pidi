@@ -7,7 +7,7 @@ Aplikasi Flutter yang mengklasifikasikan gambar makanan menggunakan model TFLite
 ## Fitur (Target: Basic pada 3 kriteria)
 
 1. **Pengambilan gambar** dari kamera atau galeri (`image_picker`).
-2. **Inferensi ML** on-device menggunakan LiteRT (`tflite_flutter`).
+2. **Inferensi ML** on-device menggunakan LiteRT (`flutter_litert`).
 3. **Halaman hasil** menampilkan foto, nama makanan, dan persentase confidence.
 
 ## Struktur
