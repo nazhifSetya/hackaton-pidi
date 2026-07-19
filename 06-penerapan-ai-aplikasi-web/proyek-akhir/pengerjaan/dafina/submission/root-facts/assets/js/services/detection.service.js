@@ -1,13 +1,13 @@
 import { logError, validateModelMetadata } from '../core/utils.js';
 
 /*
- * DetectionService — modul penglihatan ("Si Mata") untuk RootFacts.
- * Membungkus model Teachable Machine (TensorFlow.js Layers) dan mengubah
- * satu frame kamera menjadi { className, confidence } sayuran teratas.
+ * DetectionService — pembungkus klasifikasi gambar RootFacts.
+ * Memuat model Teachable Machine (TensorFlow.js Layers), menyiapkan frame
+ * kamera, lalu memilih satu label sayuran dengan skor tertingginya.
  *
- * Catatan gaya: state disimpan pada #private class fields agar tidak bocor
- * keluar objek, dan preprocessing dilakukan lewat kanvas luar-layar
- * (drawImage sekaligus me-resize) sebelum dibaca menjadi tensor.
+ * Keputusan desain: seluruh state internal memakai #private class fields,
+ * dan frame di-resize lewat kanvas off-screen (drawImage) sebelum diubah
+ * menjadi tensor input model.
  */
 
 const GRAPH_URL = './model/model.json';
@@ -64,9 +64,9 @@ class DetectionService {
 	}
 
 	/*
-	 * Salin frame ke kanvas berukuran tetap (resize implisit via drawImage),
-	 * lalu ubah menjadi tensor batch ternormalisasi ke rentang [-1, 1]:
-	 *   x/255 -> [0,1], *2 -> [0,2], -1 -> [-1,1].
+	 * Gambar frame ke kanvas ukuran-tetap (drawImage sekaligus me-resize),
+	 * lalu petakan piksel [0,255] ke skala [-1,1] yang diminta model:
+	 * rumusnya x/255*2 - 1.
 	 */
 	#toTensor(source) {
 		const size = this.#inputSize;

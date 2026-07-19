@@ -9,10 +9,16 @@
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js');
 
-if (!self.workbox) {
-	console.error('[SW] Workbox gagal dimuat dari CDN.');
-} else {
-	const { core, precaching, routing, strategies, expiration, cacheableResponse } = self.workbox;
+// Cocokkan host milik ekosistem Hugging Face (termasuk CDN xet & subdomain).
+const HF_HOST_PATTERN = /(^|\.)(huggingface\.co|hf\.co)$/;
+const VENDOR_ORIGINS = new Set([
+	'https://cdn.jsdelivr.net',
+	'https://unpkg.com',
+	'https://storage.googleapis.com'
+]);
+
+function bootServiceWorker(wb) {
+	const { core, precaching, routing, strategies, expiration, cacheableResponse } = wb;
 
 	// Nama cache diberi awalan khas agar mudah dibedakan di DevTools.
 	core.setCacheNameDetails({ prefix: 'rootfacts-dmr', suffix: 'v1' });
@@ -77,22 +83,16 @@ if (!self.workbox) {
 
 	// (d) Pustaka CDN: TensorFlow.js, Transformers.js loader, Workbox, Lucide.
 	routing.registerRoute(
-		({ url }) =>
-			url.origin === 'https://cdn.jsdelivr.net' ||
-			url.origin === 'https://unpkg.com' ||
-			url.origin === 'https://storage.googleapis.com',
+		({ url }) => VENDOR_ORIGINS.has(url.origin),
 		new strategies.CacheFirst({
 			cacheName: 'df-cdn',
 			plugins: [acceptOpaque(), keepFor(30, 60)]
 		})
 	);
 
-	// (e) Bobot & tokenizer model bahasa dari Hugging Face Hub (Qwen2.5).
+	// (e) Bobot & tokenizer model bahasa dari Hugging Face Hub (FLAN-T5).
 	routing.registerRoute(
-		({ url }) =>
-			url.hostname === 'huggingface.co' ||
-			url.hostname.endsWith('.huggingface.co') ||
-			url.hostname.endsWith('.hf.co'),
+		({ url }) => HF_HOST_PATTERN.test(url.hostname),
 		new strategies.CacheFirst({
 			cacheName: 'df-hf-hub',
 			plugins: [acceptOpaque(), keepFor(90, 60)]
@@ -108,4 +108,10 @@ if (!self.workbox) {
 	// Segera aktifkan SW versi baru tanpa menunggu tab lama tertutup.
 	self.addEventListener('install', () => self.skipWaiting());
 	self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+}
+
+if (self.workbox) {
+	bootServiceWorker(self.workbox);
+} else {
+	console.error('[SW] Pustaka Workbox tidak tersedia; caching dilewati.');
 }

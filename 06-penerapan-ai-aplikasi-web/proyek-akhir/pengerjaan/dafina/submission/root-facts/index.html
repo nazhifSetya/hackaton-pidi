@@ -19,6 +19,10 @@
 
 	<script src="https://unpkg.com/lucide@0.562.0"></script>
 
+	<!-- [Basic] Muat TensorFlow.js lebih awal di <head>. Modul app.js berjalan
+	     setelah dokumen siap, jadi objek global tf pasti sudah ada saat dipakai. -->
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
@@ -154,8 +158,6 @@
 	</div>
 
 	<script type="module" src="./assets/js/core/app.js"></script>
-	<!-- TODO [Basic] Tambahkan script TensorFlow.js sebelum menggunakannya -->
-	<!-- TODO [Advanced] Tambahkan script backend webgpu sebelum menggunakannya -->
 </body>
 
 </html>

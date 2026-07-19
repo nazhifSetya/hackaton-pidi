@@ -1,16 +1,17 @@
 import { logError } from '../core/utils.js';
 
 /*
- * FunFactService — modul bahasa ("Si Otak") untuk RootFacts.
- * Menjalankan model bahasa kecil Qwen2.5-0.5B-Instruct secara lokal di
- * peramban lewat Transformers.js. Model ini instruction-tuned dan memakai
- * template chat (ChatML), jadi prompt disusun sebagai daftar pesan
- * system + user, lalu balasan asisten diambil dari pesan terakhir.
+ * FunFactService — penghasil fun fact berbasis model bahasa untuk RootFacts.
+ * Menjalankan FLAN-T5-base lokal di peramban via Transformers.js. Model ini
+ * encoder-decoder (seq2seq), jadi dijalankan lewat pipeline
+ * 'text2text-generation': satu prompt masuk, satu kalimat keluar. FLAN-T5
+ * merespons baik pada instruksi format tanya-jawab; varian q8 menekan ukuran
+ * unduhan agar wajar dijalankan di perangkat pengguna.
  */
 
 const HF_LIB = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5';
-const LLM_ID = 'onnx-community/Qwen2.5-0.5B-Instruct';
-const LLM_TASK = 'text-generation';
+const LLM_ID = 'Xenova/flan-t5-base';
+const LLM_TASK = 'text2text-generation';
 const LABEL_MAX = 32;
 
 class FunFactService {
@@ -25,10 +26,10 @@ class FunFactService {
 	async loadModel() {
 		try {
 			const lib = await import(HF_LIB);
-			// Ambil bobot dari Hugging Face Hub, bukan dari berkas lokal.
+			// Nonaktifkan pencarian berkas lokal supaya model diunduh dari Hub.
 			lib.env.allowLocalModels = false;
 
-			this.generator = await lib.pipeline(LLM_TASK, LLM_ID, { dtype: 'q4' });
+			this.generator = await lib.pipeline(LLM_TASK, LLM_ID, { dtype: 'q8' });
 			this.currentBackend = 'wasm';
 			this.isModelLoaded = true;
 		} catch (error) {
@@ -52,7 +53,8 @@ class FunFactService {
 		return base.replace(/\b\p{L}/gu, (ch) => ch.toUpperCase());
 	}
 
-	// Ambil teks balasan dari keluaran pipeline (mode chat -> pesan terakhir).
+	// Ambil teks jawaban dari keluaran pipeline.
+	// text2text -> { generated_text: 'kalimat' }; tetap tahan bila berupa array pesan.
 	#extractText(output) {
 		const first = Array.isArray(output) ? output[0] : output;
 		const generated = first?.generated_text;
@@ -78,30 +80,24 @@ class FunFactService {
 
 		this.isGenerating = true;
 		try {
-			// Prompt bahasa Inggris (anjuran modul). Nama disebut dua kali agar
-			// model kecil tetap fokus pada sayuran yang dimaksud.
-			const messages = [
-				{
-					role: 'system',
-					content: 'You are a friendly botanist. Reply with exactly one short, surprising fun fact.'
-				},
-				{
-					role: 'user',
-					content: `Share one surprising fun fact about the vegetable ${name}. Mention ${name} and keep it under 30 words.`
-				}
-			];
+			// Disusun sebagai pasangan Question/Answer karena FLAN-T5 paling patuh
+			// pada pola itu. Nama muncul di pertanyaan sekaligus di instruksi
+			// jawaban supaya keluaran tidak melenceng ke sayuran lain.
+			const prompt =
+				`Question: What is one surprising and true fun fact about ${name}, a vegetable? ` +
+				`Answer with one full sentence that mentions ${name}.`;
 
-			const output = await this.generator(messages, {
-				max_new_tokens: 80,
-				temperature: 0.6,
-				top_p: 0.92,
+			const output = await this.generator(prompt, {
+				max_new_tokens: 70,
+				temperature: 0.7,
+				top_p: 0.95,
 				do_sample: true,
-				repetition_penalty: 1.15
+				repetition_penalty: 1.3
 			});
 
 			let funFact = this.#extractText(output);
 			if (!funFact) {
-				funFact = `${name} is a vegetable enjoyed in many dishes around the world.`;
+				funFact = `${name} is a nutritious vegetable worth adding to your plate.`;
 			}
 
 			return { vegetable: name, funFact, tone };
