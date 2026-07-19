@@ -154,9 +154,10 @@ cells.append(md("""
 
 cells.append(code("""
     from google.colab import drive
-    # force_remount=True: paksa baca-ulang Drive supaya folder/berkas yang baru
-    # diunggah pasti terlihat (menghindari tampilan mount basi dari sesi sebelumnya).
-    drive.mount("/content/drive", force_remount=True)
+    # Mount Drive sekali. Pastikan 4 PDF sudah diunggah ke Drive SEBELUM menjalankan
+    # sel ini. Kalau muncul "mount failed", jalankan ulang sel ini lalu selesaikan
+    # popup izin Google Drive sampai tuntas (pilih akun -> Allow semua -> tunggu).
+    drive.mount("/content/drive")
 
     FOLDER_PDF = "/content/drive/MyDrive/PGABL_Dafina"
     DAFTAR_PDF = [
