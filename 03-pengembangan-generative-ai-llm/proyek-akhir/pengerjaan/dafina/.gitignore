@@ -1,0 +1,38 @@
+# ==== Python ====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ==== Env & Secrets ====
+.env
+.env.local
+*.env
+!.env.example
+
+# ==== Data berat (upload ke Drive, bukan Git) ====
+data/raw/*.pdf
+data/processed/
+data/faiss_store/
+!**/.gitkeep
+
+# ==== Model & bobot (di Colab/Drive, bukan Git) ====
+models/
+*.safetensors
+*.bin
+*.gguf
+*.pt
+
+# ==== Output (regenerate saat run) ====
+outputs/logs/
+!outputs/**/.gitkeep
+
+# ==== OS / IDE ====
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# ==== Zip artifact (dibuat saat packaging) ====
+PGABL_*.zip

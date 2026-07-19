@@ -1,0 +1,56 @@
+# PGABL (Dafina, BASIC) - konfigurasi RAG
+# Load: yaml.safe_load(open("configs/rag_config.yaml"))
+# BASIC: loader -> chunker (berbasis-kalimat + overlap eksplisit) -> e5 embedder
+#        -> FAISS (indeks lokal) -> retriever top-k -> generator (model K1).
+#        TANPA ensemble/parent-child/HyDE/reranker/fallback/metadata-filter.
+
+seed: 42
+
+# ==================== Chunker (berbasis-kalimat + overlap EKSPLISIT) ====================
+chunker:
+  chunk_size: 700            # char maksimum per chunk (rubric max 5000)
+  chunk_overlap: 120         # EKSPLISIT (HARD RULE) - dibawa dari ekor chunk sebelumnya
+  strategy: sentence_greedy  # rangkai kalimat utuh sampai mendekati chunk_size
+
+# ==================== Embedder ====================
+embedder:
+  model_id: intfloat/multilingual-e5-base   # open-source (HARD RULE no OpenAI)
+  device: cuda
+  batch_size: 32
+  normalize_embeddings: true
+  query_prefix: "query: "                   # e5 wajib prefix
+  passage_prefix: "passage: "
+
+# ==================== Vector Store (FAISS lokal) ====================
+vector_store:
+  backend: faiss
+  index_type: IndexFlatIP    # inner-product atas vektor ter-normalisasi = cosine
+  persist_directory: data/faiss_store
+
+# ==================== Retriever (Basic top-k) ====================
+retriever:
+  top_k: 3
+
+# ==================== Generator (model K1 fine-tuned) ====================
+generator:
+  # model_id di-set runtime = repo HF SFT Dafina
+  max_new_tokens: 400
+  temperature: 0.2
+  top_p: 0.9
+  repetition_penalty: 1.15
+  system_prompt: |
+    Anda adalah asisten hukum untuk tim legal perusahaan. Jawab pertanyaan hanya
+    berdasarkan kutipan regulasi pada bagian KONTEKS. Bila konteks tidak memuat
+    jawabannya, nyatakan bahwa informasi tidak tersedia pada dokumen.
+  context_template: |
+    KONTEKS:
+    {context}
+
+    PERTANYAAN: {question}
+
+# ==================== 4 PDF sumber ====================
+pdfs:
+  - PP_5_2021
+  - PP_35_2021
+  - PP_51_2023
+  - UU_6_2023

@@ -1,0 +1,23 @@
+# Dependencies notebook Fine-tuning + RAG (PGABL Basic, Dafina).
+# Pipreqs-style: hanya library yang benar-benar di-import notebook, bukan
+# hasil pip freeze. Versi tidak dipin agar resolver Colab terkini memilih
+# kombinasi yang saling kompatibel (Unsloth 2026.7.x menuntut transformers >= 4.51).
+
+# Fine-tuning (K1)
+unsloth
+transformers
+trl
+peft
+bitsandbytes
+accelerate
+datasets
+torch
+
+# RAG (K2)
+pypdf
+sentence-transformers
+faiss-cpu
+
+# Utilitas umum
+huggingface_hub
+numpy

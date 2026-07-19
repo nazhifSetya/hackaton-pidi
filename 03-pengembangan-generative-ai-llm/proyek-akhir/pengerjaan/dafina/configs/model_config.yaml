@@ -1,0 +1,32 @@
+# PGABL (Dafina, BASIC) - konfigurasi SLM + LoRA
+# Load: yaml.safe_load(open("configs/model_config.yaml"))
+
+base_model_id: unsloth/Qwen2.5-1.5B-Instruct   # Apache-2.0, keluarga Qwen (ChatML)
+max_seq_length: 1024
+dtype: null                 # auto (bfloat16 di T4)
+load_in_4bit: true          # QLoRA
+
+# QLoRA (double quantization) - HARD RULE
+quant:
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_compute_dtype: bfloat16
+
+# LoRA - target MHA + FFN
+lora:
+  r: 8
+  alpha: 32
+  dropout: 0.05
+  bias: none
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  use_gradient_checkpointing: unsloth
+
+# Chat template
+chat_template: qwen-2.5      # ChatML; special token <|im_start|> / <|im_end|>

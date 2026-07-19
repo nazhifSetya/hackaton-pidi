@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
 
-**Terakhir di-update:** `2026-07-18` · **oleh device:** `Victus (Windows)` · **oleh:** 01 klasifikasi-gambar (Bimo) SELESAI — Fruits-360 10 kelas, Train/Test 100%, zip 38.5MB siap upload
+**Terakhir di-update:** `2026-07-19` · **oleh device:** `Victus (Windows)` · **oleh:** 03 PGABL (Dafina) — skeleton 2 notebook dibuat (Qwen2.5-1.5B + e5 + FAISS + input()-loop), siap Run All
 
 ---
 
@@ -11,14 +11,15 @@
 
 > Isi ulang bagian ini tiap akhir sesi: apa yang barusan dikerjakan, di device apa, dan apa langkah berikutnya untuk device yang lanjut. Ini yang pertama dibaca device berikutnya.
 
-- **Device terakhir aktif:** Victus (Windows) — **01 klasifikasi-gambar (Bimo) SELESAI** (2026-07-18): Fruits-360 10 kelas buah, MobileNetV2 frozen + Conv2D, Train/Test 100%, 3 format + zip 38.5MB siap. Sebelumnya: scaffold 07 Food Scan App untuk Fareynaldi (2026-07-16).
+- **Device terakhir aktif:** Victus (Windows) — **03 PGABL (Dafina) skeleton dibuat** (2026-07-19): submission Basic independen — base Qwen2.5-1.5B-Instruct (ChatML, Apache-2.0) + embedder e5-base + FAISS + chunker berbasis-kalimat + interface `input()` loop. 2 notebook ter-generate & terverifikasi (JSON/syntax/HR-14/anti-plagiarisme/chunker), **belum Run All**. Sebelumnya: 01 klasifikasi-gambar (Bimo) SELESAI (2026-07-18).
 - **Yang paling mendesak (open action, urut prioritas):**
   1. **02 BFGAI (Nazhif)** — DITOLAK reviewer, revisi v3 sudah siap. Perlu **Run All notebook di Colab T4** → regenerate zip → **re-submit**. ⛅ butuh online.
   2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
   3. **05 Asclepius GCP (Nazhif)** — ⛔ TERBLOKIR: butuh `gcloud auth login` + billing account sebelum deploy Phase 3-7. Backend sudah OK lokal.
   4. **03 PGABL (Fareynaldi)** — skeleton notebook siap, belum pernah Run All. Perlu akun HF + Colab Secret → Run All di Colab T4.
-  5. **06 RootFacts (Fareynaldi)** — kode Basic SELESAI & terverifikasi lokal (Mac). Tinggal **user deploy Netlify (akun Fareynaldi)** → isi `STUDENT.txt` → zip `RootFacts_Fareynaldi_Affan.zip` → upload. Panduan di folder proyek.
-  6. **07 Food Scan App (Fareynaldi)** — ✅ FULLY VERIFIED di HP Samsung SM-S721B (Android 16). Kamera + galeri + inferensi TFLite jalan (prediksi "Rendang" 18% untuk foto nasi rendang, "Ramen" 5.5% untuk Sedaap — kategori tepat). **Zip siap:** `submission/food_scan_app_Fareynaldi.zip` = 19.02 MB. Tinggal user **upload ke Dicoding**.
+  5. **03 PGABL (Dafina)** — skeleton 2 notebook siap (Qwen2.5-1.5B + e5 + FAISS + input()-loop), belum Run All. Perlu akun HF Dafina + Colab Secret (HF_TOKEN, HF_USERNAME) + upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/data/raw/` → Run All di Colab T4 (SFT dulu ~60-90mnt, baru RAG).
+  6. **06 RootFacts (Fareynaldi)** — kode Basic SELESAI & terverifikasi lokal (Mac). Tinggal **user deploy Netlify (akun Fareynaldi)** → isi `STUDENT.txt` → zip `RootFacts_Fareynaldi_Affan.zip` → upload. Panduan di folder proyek.
+  7. **07 Food Scan App (Fareynaldi)** — ✅ FULLY VERIFIED di HP Samsung SM-S721B (Android 16). Kamera + galeri + inferensi TFLite jalan (prediksi "Rendang" 18% untuk foto nasi rendang, "Ramen" 5.5% untuk Sedaap — kategori tepat). **Zip siap:** `submission/food_scan_app_Fareynaldi.zip` = 19.02 MB. Tinggal user **upload ke Dicoding**.
 - **Menunggu review Dicoding (jangan submit ulang):** 01-klasifikasi (Nazhif, Dafina, Fareynaldi), 01-analisis (Dafina, Fareynaldi, Bimo), 04 (Nazhif, Fareynaldi), 07 (Nazhif), 09 (Nazhif).
 - **⚠️ Artefak yang cuma ada di SATU device (risiko sync):** zip final **01-klasifikasi/dafina**, **01-klasifikasi/bimo**, & **01-analisis/dafina** hanya ada di **Victus** (belum di Mac). Kalau mau upload dari Mac → regenerate dulu. Lihat tabel artefak di bawah.
 <!-- HANDOFF:END -->
@@ -41,11 +42,11 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ## Ringkasan cepat
 
-- **Total:** 19 folder pengerjaan (9 course, 4 anggota) — +1: `07 Food Scan App (Fareynaldi)` dibuat 2026-07-16.
+- **Total:** 20 folder pengerjaan (9 course, 4 anggota) — +1: `03 PGABL (Dafina)` dibuat 2026-07-19.
 - **✅ Diterima:** 3 (semua Nazhif, semua ⭐⭐⭐⭐⭐) — `01 analisis-sentimen`, `03 PGABL`, `08 BMLP`.
 - **🔁 Ditolak→siap resubmit:** 2 — `02 BFGAI`, `06 RootFacts`.
 - **📤 Menunggu review / upload:** 10.
-- **🚧 Sedang dikerjakan:** 2 — `03 PGABL (Fareynaldi)`, `06 RootFacts (Fareynaldi)` (kode done, tinggal user deploy).
+- **🚧 Sedang dikerjakan:** 3 — `03 PGABL (Fareynaldi)`, `03 PGABL (Dafina)` (skeleton done, tinggal user Run All), `06 RootFacts (Fareynaldi)`.
 - **⛔ Terblokir:** 1 — `05 Asclepius GCP` (gcloud auth + billing).
 
 ---
@@ -65,6 +66,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 | 02 | fundamental-generative-ai | BFGAI Streamlit SD1.5 — **Nazhif** | 🔁 | target ⭐⭐⭐⭐⭐ | ⛅ | Run All v3 di Colab → regen zip → **re-submit** |
 | 03 | pengembangan-generative-ai-llm | PGABL chatbot legal RAG — **Nazhif** | ✅ | ⭐⭐⭐⭐⭐ | ⛅ | **SELESAI** |
 | 03 | pengembangan-generative-ai-llm | PGABL versi Basic — **Fareynaldi** | 🚧 | target ⭐⭐⭐ | ⛅ | Akun HF + Colab Secret → Run All 2 notebook |
+| 03 | pengembangan-generative-ai-llm | PGABL versi Basic (Qwen+FAISS) — **Dafina** | 🚧 | target ⭐⭐⭐ | ⛅ | Akun HF Dafina + Colab Secret + upload 4 PDF → Run All 2 notebook |
 | 04 | membangun-sistem-machine-learning | SMSML Pima diabetes — **Nazhif** | 📤 | — | 🍎 | Cek status review di dashboard Dicoding |
 | 04 | membangun-sistem-machine-learning | SMSML Titanic — **Fareynaldi** | 📤 | — | 🍎 | Cek review; pastikan `Workflow-CI` ke-push GitHub |
 | 05 | penerapan-machine-learning-google-cloud | Asclepius Hapi TF.js GCP — **Nazhif** | ⛔ | target ⭐⭐⭐⭐⭐ | ⛅🍎 | `gcloud auth login` + billing → deploy Phase 3-7 |
@@ -114,6 +116,7 @@ Device: 🍎 = jalan cukup di Mac lokal · 🎮 = butuh Victus (GPU lokal) · �
 
 ### 🚧 Sedang dikerjakan
 - **03 PGABL / Fareynaldi** — target Basic. 2 notebook skeleton lolos syntax, **belum Run All**. Butuh akun HF sendiri + Colab Secret (HF_TOKEN, HF_USERNAME) + upload 4 PDF ke Drive, lalu Run All (SFT ~90-120mnt, baru RAG). Victus 4GB VRAM TIDAK cukup → wajib Colab T4.
+- **03 PGABL / Dafina** — target Basic, submission independen. Stack sengaja dibedakan dari Nazhif & Fareynaldi (anti-plagiarisme): base **Qwen2.5-1.5B-Instruct** (ChatML, Apache-2.0) + embedder **multilingual-e5-base** + **FAISS** + chunker **berbasis-kalimat** (700/120) + interface **loop `input()`**. 2 notebook skeleton terverifikasi (JSON/syntax/HR-14/anti-plagiarisme/chunker), **belum Run All**. Butuh akun HF Dafina + Colab Secret + upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/data/raw/`, lalu Run All di Colab T4 (SFT ~60-90mnt, baru RAG). Detail lengkap + matriks diferensiasi di `dafina/CLAUDE.md`.
 
 ### 📤 Baru selesai — siap upload
 - **07 Food Scan App / Fareynaldi** — target Basic (⭐⭐⭐). Flutter app di `submission/food_scan_app/`, package `com.fareynaldi.foodscan`, tema hijau. **Sengaja dibedakan struktur** dari `food_recognizer` (Nazhif) untuk anti-plagiarisme (folder `ml/models/screens/widgets`, kelas `TfliteFoodDetector.analyze()` + `ScanResult`, tanpa provider). Fully verified 2026-07-17 di HP Samsung SM-S721B: kamera OK, galeri OK, inferensi TFLite jalan (Rendang → "Rendang" 18%, Sedaap → "Ramen" 5.5%). Screenshot bukti di `scratchpad/`. Zip siap: `submission/food_scan_app_Fareynaldi.zip` (19.02 MB).

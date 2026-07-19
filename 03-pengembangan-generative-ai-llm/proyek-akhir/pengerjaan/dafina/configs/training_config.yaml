@@ -1,0 +1,30 @@
+# PGABL (Dafina, BASIC) - konfigurasi SFT (single run, tanpa eval split / eksperimen ke-2)
+# Load: yaml.safe_load(open("configs/training_config.yaml"))
+
+seed: 42
+
+dataset:
+  id: Ichsan2895/alpaca-gpt4-indonesian   # LOCKED rubric; 2 kolom: input + output
+  input_col: input
+  output_col: output
+  min_input_len: 8
+  min_output_len: 25
+  subset_size: 8000          # cukup untuk 800 step effective batch 16
+
+sft:
+  max_steps: 800              # HARD RULE min 800
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8     # effective batch 16
+  learning_rate: 0.0002              # 2e-4
+  lr_scheduler_type: cosine
+  warmup_ratio: 0.03
+  logging_steps: 25
+  optim: paged_adamw_8bit
+  weight_decay: 0.01
+  # BASIC: TIDAK pakai eval split / eval_strategy (itu Skilled)
+
+push:
+  # repo_id di-set saat runtime dari HF_USERNAME (akun Dafina) + nama repo
+  repo_name: PGABL-Qwen2.5-1.5B-SFT-Dafina
+  save_method: merged_16bit          # HARD RULE
+  private: false                     # HARD RULE public
