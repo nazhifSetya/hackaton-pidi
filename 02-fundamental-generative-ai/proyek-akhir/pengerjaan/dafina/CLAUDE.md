@@ -129,7 +129,15 @@ Sumber: `../../artifact/instruksi/6.lainnya.md`, `4.ketentuan_berkas.md`.
   - Via `scratchpad/fill_streamlit_dafina.py`: cell 6 (ID model → mirror + `safety_checker=None`), cell 7 (Basic generate, 2 blank), cell 9 (Skilled: flush/scheduler/batch, 8 blank), cell 11 (Advanced: run_inpainting/prepare_outpainting, 9 blank). `logic.py` gabungan 166 baris, `ast.parse` bersih.
   - Patch infra: cell 2 pin `streamlit==1.29.0` + `streamlit-drawable-canvas==0.9.3` + accelerate; cell 16 launch headless + `time.sleep(20)` + log; cell 21 `ngrok.kill()` dinonaktifkan.
   - **Patch app.py (cell 13) — 2 fix kompat WAJIB** (diizinkan cell 0): `use_container_width`→`use_column_width` (3×, karena streamlit 1.29 belum punya param baru → kalau tidak, tampilan gambar Basic CRASH) + `canvas_result.image_data[:,:,3].copy()` (array canvas 0.9.3 read-only). app.py sisanya utuh.
-- **Tahap 3 — Run All Colab + verifikasi visual: ⏳ SIAP (butuh Dafina)**
-  - Panduan lengkap di `panduan/Instruksi_Colab.md`. Dafina: Run Pipeline → screenshot img_simple/advanced/inpaint → kirim ke Claude untuk verifikasi vs image-13/14/15 (+ tabel tuning bila belum pas). Lalu Streamlit → isi token ngrok → Run → rekam video Basic.
-  - ⚠️ **Titik risiko utama = K1 advanced** (recipe guidance-10 belum diverifikasi Dicoding — Nazhif pakai 12, juga belum lolos). Wajib cek visual; tuning guidance 10→12→14 bila masih flat.
+- **Tahap 3a — Pipeline Run All + verifikasi visual K1+K2: ✅ SELESAI (2026-07-19, ~7 iterasi Colab)**
+  - **PELAJARAN PENTING (biar tak ulang kesalahan):** target RESMI Dafina = **image-3/image-4** (bukan image-13/14 koreksi Nazhif yang ekstrem). image-3/4 itu **astronot ber-outline BERDIRI di bulan + bumi, WIDE SHOT, semi-realistis** — simple & advanced **mirip**, beda tipis. BUKAN "flat cartoon vs foto".
+  - **Jebakan yang ditemukan:** setiap kata gaya (`cartoon/illustration/bold outlines/comic`) di prompt bikin SD1.5 menghasilkan **portrait/bust**, bukan scene. Guidance rendah (1.5) → **berantakan**, bukan realistis. Menukar negative prompt **tak** mengubah gaya (prompt yang dominan).
+  - **RESEP FINAL YANG BERHASIL (v6/v7):**
+    - Prompt K1 (cell 6, SAMA utk simple & advanced): `"a lone astronaut standing on the surface of the moon, planet earth in the dark starry sky background, full body, wide shot"` — **TANPA kata gaya** (biar wide-shot, bukan portrait).
+    - Negative K1 (SAMA keduanya) = negative tetap dari soal.
+    - simple: guidance default (7.5), steps 50. advanced: `guidance_scale=9.0, num_inference_steps=60` (beda tipis, tunjukkan efek hyperparameter). Hasil: dua-duanya astronot realistis di bulan + bayangan (≈image-3/4). Catatan: bumi biru tak sejelas contoh (jadi nebula) — cukup untuk Basic.
+    - K2 inpaint (cell 29): `guidance_scale=20.0, num_inference_steps=60` + **negative menolak tanah kosong** (`"empty, bare ground, plain lunar surface, ..."`) → **satelit muncul jelas**. Prompt satelit: `"a large broken satellite spacecraft crashed on the moon, big metallic body, broken solar panel wings, antenna dish, ..."`.
+    - K2 mask (cell 27): base advanced menaruh astronot di KIRI → mask di **kanan** (`x0=0.50W..0.96W, y0=0.40H..0.88H`) = tanah kosong, tak nimpa astronot. Hasil: satelit + panel surya biru di kanan (≈image-15).
+  - Pipeline notebook: 7 sel exec 1–7, gambar tertanam cell 6/8/27/29, 0 error, 3.12 MB. **SIAP.**
+- **Tahap 3b — Streamlit Run (K3) + video: ⏳ SIAP (butuh Dafina)** — isi token ngrok (cell 16) → Run All → buka URL → rekam video Basic (prompt+slider+Generate+gambar tampil). Panduan: `panduan/Instruksi_Colab.md` Bagian B.
 - **Tahap 4 — Packaging: ⏳ belum** (sanitasi token ngrok + requirements.txt + zip flat 4 file + audit + commit)
