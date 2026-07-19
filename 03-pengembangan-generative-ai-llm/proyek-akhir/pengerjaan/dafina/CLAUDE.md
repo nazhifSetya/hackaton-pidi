@@ -194,22 +194,21 @@ dafina/
   - [x] **DONE (2026-07-19)**: user Run All di Colab T4 (akun HF `dafina1907`, HF_USERNAME=`dafina1907`). Training 800 step sukses, merge + push `merged_16bit` ke HF public terverifikasi via UI HF (model.safetensors 3.09 GB, tag qwen2, VERIFIED).
   - [ ] **USER TODO tersisa**: download notebook SFT (yang SUDAH ada output) dari Colab → timpa file lokal `submission/` (Colab "Save failed" = gagal autosave ke Drive, BUKAN gagal training; wajib download manual).
 
-- **Tahap 2 — Notebook RAG Basic + input() loop: ✅ SKELETON SELESAI (2026-07-19) — PENDING Colab Run All (setelah SFT).**
+- **Tahap 2 — Notebook RAG Basic + input() loop: ✅ RUN & VERIFIED (2026-07-19).** Notebook RAG di-Run All di Colab T4 (380 KB, 13/13 code cell tereksekusi, output ter-embed). Terverifikasi: tak ada token bocor, tak ada sel error, semua tahap ada bukti (PDF [OK]→chunk→embed e5→FAISS→retrieval skor→jawaban→antarmuka input() 4× tanya-jawab), HR-14 bersih.
   - [x] `submission/RAG_submission_PGABL_Dafina_Meira_Rizkia.ipynb` di-generate via `scripts/build_rag_notebook.py` (28 cell: 15 md + 13 code, JSON valid, syntax 0-error).
   - [x] Alur: setup + secrets → mount Drive & verify 4 PDF di `MyDrive/PGABL_Dafina/` → pypdf per-halaman → **chunker berbasis-kalimat `700/120` (EKSPLISIT)** + sel bukti overlap → embed `e5-base` (prefix passage/query) → **FAISS `IndexFlatIP` disimpan lokal** → retriever top-3 → generator = Qwen SFT dari HF (4-bit) → demo batch 4 query (Markdown) → **loop `input()` interaktif** (EOFError-safe).
   - [x] Chunker di-VERIFY lokal (`scratchpad/verify_dafina.py`): 3 kasus (normal/kalimat-panjang/kosong) → overlap terbukti, tidak infinite-loop, chunk terbatas.
   - [x] Anti-plagiarisme: e5 vs bge-m3, FAISS vs ChromaDB, chunker kalimat vs char-window/regex, `input()` loop vs Gradio, penamaan Indonesia. HR-14 scan CLEAN.
-  - [ ] **USER TODO**: upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/` (dari `data/raw/*.pdf` lokal) → buka notebook di Colab T4 → **Run All** setelah SFT selesai. Saat sel `input()` loop, ketik beberapa pertanyaan lalu `keluar` (output ter-embed).
+  - [x] **DONE (2026-07-19)**: user upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/` + Run All di Colab T4. Sel `input()` loop diisi 3-4 pertanyaan hukum + `keluar` → transkrip ter-embed.
+  - **Gotcha lapangan (teratasi, catat untuk sibling):** (1) mount Drive basi → butuh runtime fresh; (2) `force_remount=True` malah `ValueError: mount failed` di runtime fresh → dikembalikan ke `drive.mount("/content/drive")` biasa (paling andal); (3) **BIANG UTAMA = nama folder Drive ketik dgn SPASI di belakang (`PGABL_Dafina `)** → `os.path.exists` gagal padahal folder "kelihatan" → rename hapus spasi → langsung kebaca. Cek spasi tersembunyi lebih awal!
 
-- **Tahap 3 — Packaging & Submission: ⏸️ SIAP EKSEKUSI setelah notebook run.**
-  - [x] `submission/link_huggingface.txt` placeholder (di-overwrite otomatis oleh notebook SFT saat Run All).
-  - [x] `submission/requirements.txt` pipreqs-style (13 lib: unsloth/transformers/trl/peft/bitsandbytes/accelerate/datasets/torch + pypdf/sentence-transformers/faiss-cpu + huggingface_hub/numpy). **No gradio, no chromadb** (beda stack dari Fareynaldi).
-  - [ ] **USER TODO** (setelah kedua notebook Run All):
-    1. Download 2 notebook `.ipynb` (output ter-embed) dari Colab → lokal `submission/`.
-    2. Download `link_huggingface.txt` dari Colab → replace lokal.
-    3. Verify HR-10 (output ter-embed) + HR-5 (repo HF public, ada `model-*.safetensors` merged, bukan cuma adapter).
-    4. Zip flat 4 file: `PGABL_Dafina_Meira_Rizkia.zip`. Verify no subfolder.
-    5. Upload ke Dicoding.
+- **Tahap 3 — Packaging & Submission: ✅ SELESAI (2026-07-19) — ZIP SIAP UPLOAD.**
+  - [x] 2 notebook tereksekusi (output ter-embed) di `submission/`: Fine-tuning (198 KB) + RAG (380 KB). Catatan: Colab download SFT pakai underscore (`Fine_tuning`) → di-rename ke hyphen (`Fine-tuning`) sesuai rubrik.
+  - [x] `link_huggingface.txt` = URL asli `https://huggingface.co/dafina1907/PGABL-Qwen2.5-1.5B-SFT-Dafina`.
+  - [x] `submission/requirements.txt` pipreqs-style (13 lib). **No gradio, no chromadb** (beda stack dari Fareynaldi).
+  - [x] Audit HR1-14 SEMUA PASS: HR-5 model merged_16bit public (model.safetensors 3.09 GB, tag qwen2, verified via UI HF), HR-9 no token leak (scan bersih), HR-10 output ter-embed (kedua notebook), HR-14 meta-conversation bersih, HR-11 requirements pipreqs.
+  - [x] **Zip flat dibuat**: `dafina/PGABL_Dafina_Meira_Rizkia.zip` (49 KB) — verified 4 file di root, NOL subfolder (HR-12).
+  - [ ] **USER TODO tersisa**: upload `PGABL_Dafina_Meira_Rizkia.zip` ke Dicoding.
 
 ---
-**Status ringkas:** Skeleton 2 notebook + deliverable file siap & terverifikasi (JSON/syntax/HR-14/anti-plagiarisme/chunker). Blocker = user (Dafina): setup akun HF + Colab Secret + upload 4 PDF ke Drive + Run All di T4.
+**Status ringkas:** ✅ SELESAI DIKERJAKAN. K1 SFT + K2 RAG + K3 antarmuka semua Run All di Colab & terverifikasi (output ter-embed, HR1-14 pass, anti-plagiarisme aman vs Nazhif/Fareynaldi). Model publik di HF (`dafina1907`). Zip flat `PGABL_Dafina_Meira_Rizkia.zip` (49 KB) siap. Blocker terakhir = user upload zip ke Dicoding.
