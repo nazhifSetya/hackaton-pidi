@@ -154,7 +154,9 @@ cells.append(md("""
 
 cells.append(code("""
     from google.colab import drive
-    drive.mount("/content/drive", force_remount=False)
+    # force_remount=True: paksa baca-ulang Drive supaya folder/berkas yang baru
+    # diunggah pasti terlihat (menghindari tampilan mount basi dari sesi sebelumnya).
+    drive.mount("/content/drive", force_remount=True)
 
     FOLDER_PDF = "/content/drive/MyDrive/PGABL_Dafina"
     DAFTAR_PDF = [
