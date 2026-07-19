@@ -187,11 +187,12 @@ dafina/
   - [x] Verifikasi base model: `unsloth/Qwen2.5-1.5B-Instruct` **Apache-2.0**, ungated, ChatML, kompatibel Unsloth 4-bit (via WebFetch HF). Dipilih varian **1.5B** (bukan 3B yang berlisensi qwen-research/non-komersial) demi lisensi bersih untuk push repo publik + lebih ringan/cepat di T4.
   - [x] Config skeleton (`configs/{model,training,rag}_config.yaml`) — nilai Basic Dafina (LoRA r8/α32, SFT 800 step LR 2e-4 cosine, e5-base, FAISS, chunk 700/overlap 120, top-k 3).
 
-- **Tahap 1 — Notebook Fine-tuning SFT Basic: ✅ SKELETON SELESAI (2026-07-19) — PENDING Colab Run All.**
+- **Tahap 1 — Notebook Fine-tuning SFT Basic: ✅ RUN & VERIFIED (2026-07-19).** Model live & public di HF: `dafina1907/PGABL-Qwen2.5-1.5B-SFT-Dafina` — file `model.safetensors` **3.09 GB** (merged_16bit penuh, BUKAN adapter) + config/tokenizer/chat_template.jinja, tag `qwen2`, VERIFIED. HR-5 terpenuhi. `link_huggingface.txt` lokal sudah diisi URL asli.
   - [x] `submission/Fine-tuning_submission_PGABL_Dafina_Meira_Rizkia.ipynb` di-generate via `scripts/build_sft_notebook.py` (24 cell: 13 md + 11 code, JSON valid, syntax 0-error).
   - [x] Alur linear single-experiment: setup → auth → load Qwen 4-bit (QLoRA nf4 + double quant) → LoRA MHA+FFN 7 target → load alpaca-id (subset 8k) → `get_chat_template("qwen-2.5")` + `datasets.map()` + **print bukti `<|im_start|>`/`<|im_end|>`** → `SFTTrainer` 800 step (eff batch 16, cosine, paged_adamw_8bit) → push pola 2-langkah `merged_16bit` → tulis `link_huggingface.txt`.
   - [x] Anti-plagiarisme diverifikasi (lihat matriks): Qwen vs Llama, ChatML vs Llama-3, r8/α32, cosine, paged_adamw, penamaan variabel Indonesia. HR-14 scan CLEAN.
-  - [ ] **USER TODO**: buka notebook di Colab T4 → set 2 Colab Secret (`HF_TOKEN` role Write + `HF_USERNAME`) → **Run All** (~60-90 menit). `link_huggingface.txt` di-generate otomatis oleh notebook.
+  - [x] **DONE (2026-07-19)**: user Run All di Colab T4 (akun HF `dafina1907`, HF_USERNAME=`dafina1907`). Training 800 step sukses, merge + push `merged_16bit` ke HF public terverifikasi via UI HF (model.safetensors 3.09 GB, tag qwen2, VERIFIED).
+  - [ ] **USER TODO tersisa**: download notebook SFT (yang SUDAH ada output) dari Colab → timpa file lokal `submission/` (Colab "Save failed" = gagal autosave ke Drive, BUKAN gagal training; wajib download manual).
 
 - **Tahap 2 — Notebook RAG Basic + input() loop: ✅ SKELETON SELESAI (2026-07-19) — PENDING Colab Run All (setelah SFT).**
   - [x] `submission/RAG_submission_PGABL_Dafina_Meira_Rizkia.ipynb` di-generate via `scripts/build_rag_notebook.py` (28 cell: 15 md + 13 code, JSON valid, syntax 0-error).

@@ -1,1 +1,1 @@
-https://huggingface.co/<HF_USERNAME>/PGABL-Qwen2.5-1.5B-SFT-Dafina
+https://huggingface.co/dafina1907/PGABL-Qwen2.5-1.5B-SFT-Dafina

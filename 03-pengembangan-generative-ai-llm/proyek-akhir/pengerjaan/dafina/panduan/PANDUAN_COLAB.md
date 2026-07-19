@@ -112,7 +112,7 @@ Ini **normal** untuk Unsloth. Lakukan:
 Rubrik mensyaratkan **satu baris dataset terformat dengan token spesial tercetak**. Di notebook ini itu di Section 6 — pastikan kamu lihat `<|im_start|>` dan `<|im_end|>`. Kalau bagian ini error, jangan lanjut — beri tahu saya.
 
 ### 🔎 Verifikasi hasil push
-Setelah Section 9, buka URL yang tercetak (`https://huggingface.co/<username>/PGABL-Qwen2.5-1.5B-SFT-Dafina`). Di tab **Files** harus ada file **`model-00001-of-....safetensors`** (bobot model utuh), **bukan** cuma `adapter_model.safetensors`.
+Setelah Section 9, buka URL yang tercetak (`https://huggingface.co/<username>/PGABL-Qwen2.5-1.5B-SFT-Dafina`). Di tab **Files** harus ada file bobot model utuh: untuk model 1,5 B ini biasanya **satu file `model.safetensors` (~3 GB)** (model lebih besar bisa terpecah `model-00001-of-000XX.safetensors`). Yang penting **BUKAN** cuma `adapter_model.safetensors` (itu berarti gagal merge).
 - **Kenapa penting?** Rubrik wajib model `merged_16bit` (bobot penuh), bukan cuma adapter LoRA. Notebook sudah mengurus ini otomatis (pola dua langkah + hapus adapter).
 
 ---
