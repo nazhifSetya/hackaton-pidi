@@ -23,7 +23,7 @@ memakai **SLM fine-tuned (Qwen2.5-1.5B-Instruct) + RAG**.
 ## Menjalankan
 Notebook fine-tuning & RAG dijalankan di **Google Colab GPU T4**. Set Colab Secret
 `HF_TOKEN` + `HF_USERNAME` (akun Dafina) lebih dulu. 4 PDF sumber diletakkan di
-Google Drive `MyDrive/PGABL_Dafina/data/raw/`.
+Google Drive `MyDrive/PGABL_Dafina/`.
 
 ---
 _Submission independen. Bukan turunan/salinan submission peserta lain._

@@ -121,16 +121,18 @@ Setelah Section 9, buka URL yang tercetak (`https://huggingface.co/<username>/PG
 
 Notebook RAG membaca 4 PDF regulasi dari **Drive** (bukan dari repo).
 
-1. Buka **https://drive.google.com** (login akun Google yang sama dengan Colab).
-2. Buat folder bertingkat: **`PGABL_Dafina`** → di dalamnya **`data`** → di dalamnya **`raw`**.
-   Jadi path akhirnya: `MyDrive/PGABL_Dafina/data/raw/`
-3. Upload **4 PDF** ke folder `raw` tersebut. Ambil dari laptop di:
-   `...\pengerjaan\dafina\data\raw\` — yaitu:
+Cukup **satu folder** (tidak perlu bertingkat):
+
+1. Buka **https://drive.google.com** (login akun Google yang **sama** dengan yang dipakai di Colab).
+2. Di **My Drive**, klik **+ New → New folder** → beri nama **persis** `PGABL_Dafina` → **Create**.
+   - ⚠️ Nama persis `PGABL_Dafina` (huruf besar/kecil diperhatikan). Pastikan folder ada di **My Drive**, **bukan** di dalam "Colab Notebooks" atau "Shared with me".
+3. **Klik dua kali** masuk ke folder `PGABL_Dafina`, lalu upload **4 PDF langsung ke dalamnya** (klik **+ New → File upload**, atau seret-lepas). Ambil dari laptop di `...\pengerjaan\dafina\data\raw\`:
    - `PP_5_2021.pdf`
    - `PP_35_2021.pdf`
    - `PP_51_2023.pdf`
    - `UU_6_2023.pdf`
    - ⚠️ Nama file **harus persis** seperti di atas (notebook mencarinya berdasarkan nama ini).
+4. Hasil akhir: keempat PDF berada langsung di `MyDrive/PGABL_Dafina/` (tanpa subfolder).
 
 > **Kenapa lewat Drive?** File PDF besar (UU 6/2023 ~82 MB) tidak disimpan di Git. Drive tempat paling praktis agar Colab bisa membacanya.
 
@@ -213,7 +215,7 @@ Cara di Windows: masuk folder `submission/`, **pilih ke-4 file** (Ctrl+klik), kl
 | `CUDA out of memory` | Runtime → Restart, jalankan ulang. Kalau tetap: turunkan `BATCH_PER_GPU` ke 1 di Section 2 — **JANGAN** turunkan `JUMLAH_LANGKAH` (minimal 800) |
 | Download model dari HF **stall/lama** | Restart runtime & ulang; koneksi HF kadang lambat. Pastikan `HF_TOKEN` benar |
 | Sesi Colab terputus saat training | Harus **Run all ulang** (versi Basic tanpa checkpoint). Jalankan saat koneksi stabil, tab jangan ditutup |
-| `PDF hilang: ...` di Notebook 2 | Cek folder Drive persis `MyDrive/PGABL_Dafina/data/raw/` + nama file persis |
+| `PDF hilang: ...` di Notebook 2 | Cek folder Drive persis `MyDrive/PGABL_Dafina/` (4 PDF langsung di dalamnya, tanpa subfolder) + nama file persis |
 | Repo HF isinya cuma `adapter_*` | Ulangi Section 9 SFT (notebook sudah pakai pola merge + `delete_patterns`). Kalau masih, beri tahu saya |
 
 ---
@@ -223,7 +225,7 @@ Cara di Windows: masuk folder `submission/`, **pilih ke-4 file** (Ctrl+klik), kl
 1. Daftar HF → catat **username** + buat token **Write** (`hf_...`).
 2. Colab: upload Notebook 1 → **T4 GPU** → set Secret `HF_TOKEN` + `HF_USERNAME`.
 3. **Run all** Notebook 1 (~60–90 mnt) → cek model muncul di HF.
-4. Upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/data/raw/`.
+4. Upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/` (satu folder, tanpa subfolder).
 5. **Run all** Notebook 2 → di sel `input()` ketik 2–3 pertanyaan lalu `keluar`.
 6. Download 2 notebook (ada output) + link → **zip flat 4 file** → upload Dicoding.
 

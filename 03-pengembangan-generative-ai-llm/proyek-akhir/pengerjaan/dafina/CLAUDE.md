@@ -196,10 +196,10 @@ dafina/
 
 - **Tahap 2 — Notebook RAG Basic + input() loop: ✅ SKELETON SELESAI (2026-07-19) — PENDING Colab Run All (setelah SFT).**
   - [x] `submission/RAG_submission_PGABL_Dafina_Meira_Rizkia.ipynb` di-generate via `scripts/build_rag_notebook.py` (28 cell: 15 md + 13 code, JSON valid, syntax 0-error).
-  - [x] Alur: setup + secrets → mount Drive & verify 4 PDF di `MyDrive/PGABL_Dafina/data/raw/` → pypdf per-halaman → **chunker berbasis-kalimat `700/120` (EKSPLISIT)** + sel bukti overlap → embed `e5-base` (prefix passage/query) → **FAISS `IndexFlatIP` disimpan lokal** → retriever top-3 → generator = Qwen SFT dari HF (4-bit) → demo batch 4 query (Markdown) → **loop `input()` interaktif** (EOFError-safe).
+  - [x] Alur: setup + secrets → mount Drive & verify 4 PDF di `MyDrive/PGABL_Dafina/` → pypdf per-halaman → **chunker berbasis-kalimat `700/120` (EKSPLISIT)** + sel bukti overlap → embed `e5-base` (prefix passage/query) → **FAISS `IndexFlatIP` disimpan lokal** → retriever top-3 → generator = Qwen SFT dari HF (4-bit) → demo batch 4 query (Markdown) → **loop `input()` interaktif** (EOFError-safe).
   - [x] Chunker di-VERIFY lokal (`scratchpad/verify_dafina.py`): 3 kasus (normal/kalimat-panjang/kosong) → overlap terbukti, tidak infinite-loop, chunk terbatas.
   - [x] Anti-plagiarisme: e5 vs bge-m3, FAISS vs ChromaDB, chunker kalimat vs char-window/regex, `input()` loop vs Gradio, penamaan Indonesia. HR-14 scan CLEAN.
-  - [ ] **USER TODO**: upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/data/raw/` (dari `data/raw/*.pdf` lokal) → buka notebook di Colab T4 → **Run All** setelah SFT selesai. Saat sel `input()` loop, ketik beberapa pertanyaan lalu `keluar` (output ter-embed).
+  - [ ] **USER TODO**: upload 4 PDF ke Drive `MyDrive/PGABL_Dafina/` (dari `data/raw/*.pdf` lokal) → buka notebook di Colab T4 → **Run All** setelah SFT selesai. Saat sel `input()` loop, ketik beberapa pertanyaan lalu `keluar` (output ter-embed).
 
 - **Tahap 3 — Packaging & Submission: ⏸️ SIAP EKSEKUSI setelah notebook run.**
   - [x] `submission/link_huggingface.txt` placeholder (di-overwrite otomatis oleh notebook SFT saat Run All).

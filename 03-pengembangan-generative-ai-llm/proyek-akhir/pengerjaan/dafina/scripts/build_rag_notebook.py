@@ -84,8 +84,9 @@ cells.append(md("""
         - `HF_TOKEN` (peran Read cukup untuk menarik model), aktifkan *Notebook access*.
         - `HF_USERNAME` — pemilik repositori model K1 hasil fine-tuning.
     - Empat PDF regulasi sudah diunggah ke Google Drive pada folder
-      `MyDrive/PGABL_Dafina/data/raw/` dengan nama `PP_5_2021.pdf`,
-      `PP_35_2021.pdf`, `PP_51_2023.pdf`, `UU_6_2023.pdf`.
+      `MyDrive/PGABL_Dafina/` (langsung di dalam folder itu, tanpa subfolder)
+      dengan nama `PP_5_2021.pdf`, `PP_35_2021.pdf`, `PP_51_2023.pdf`,
+      `UU_6_2023.pdf`.
     - **Jalankan notebook K1 lebih dulu** sehingga repositori model SFT tersedia.
 """))
 
@@ -155,7 +156,7 @@ cells.append(code("""
     from google.colab import drive
     drive.mount("/content/drive", force_remount=False)
 
-    FOLDER_PDF = "/content/drive/MyDrive/PGABL_Dafina/data/raw"
+    FOLDER_PDF = "/content/drive/MyDrive/PGABL_Dafina"
     DAFTAR_PDF = [
         ("PP_5_2021",  "PP_5_2021.pdf"),
         ("PP_35_2021", "PP_35_2021.pdf"),
