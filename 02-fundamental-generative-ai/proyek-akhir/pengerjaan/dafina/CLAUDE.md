@@ -139,5 +139,13 @@ Sumber: `../../artifact/instruksi/6.lainnya.md`, `4.ketentuan_berkas.md`.
     - K2 inpaint (cell 29): `guidance_scale=20.0, num_inference_steps=60` + **negative menolak tanah kosong** (`"empty, bare ground, plain lunar surface, ..."`) → **satelit muncul jelas**. Prompt satelit: `"a large broken satellite spacecraft crashed on the moon, big metallic body, broken solar panel wings, antenna dish, ..."`.
     - K2 mask (cell 27): base advanced menaruh astronot di KIRI → mask di **kanan** (`x0=0.50W..0.96W, y0=0.40H..0.88H`) = tanah kosong, tak nimpa astronot. Hasil: satelit + panel surya biru di kanan (≈image-15).
   - Pipeline notebook: 7 sel exec 1–7, gambar tertanam cell 6/8/27/29, 0 error, 3.12 MB. **SIAP.**
-- **Tahap 3b — Streamlit Run (K3) + video: ⏳ SIAP (butuh Dafina)** — isi token ngrok (cell 16) → Run All → buka URL → rekam video Basic (prompt+slider+Generate+gambar tampil). Panduan: `panduan/Instruksi_Colab.md` Bagian B.
-- **Tahap 4 — Packaging: ⏳ belum** (sanitasi token ngrok + requirements.txt + zip flat 4 file + audit + commit)
+- **Tahap 3b — Streamlit Run (K3) + video: ✅ SELESAI (2026-07-19)**
+  - Dafina Run All Streamlit di Colab (token ngrok pribadi) → app "StudioAI" jalan via ngrok. 10/10 sel exec, 0 error, app.py utuh.
+  - Video demo direkam (.mov 106 MB, 2878×1740, 2:06). Verifikasi via ekstraksi frame: menampilkan SEMUA komponen Basic K3 (prompt+negative input, slider Quality Steps & CFG, tombol Generate, gambar hasil tampil) + BONUS Skilled (dropdown Scheduler Euler A/DPM++/DDIM, batch 4 → grid 2×2, prompt earthrise menghasilkan astronot+bumi biru).
+  - Video dikonversi + kompres via imageio-ffmpeg (libx264 CRF 28, scale 1600, faststart, -an): **106 MB → 3.12 MB**, `video_demo_aplikasi_BFGAI.mp4`.
+  - Token ngrok di cell 16 di-**sanitasi** ke placeholder (output/exec tetap = bukti run) sebelum commit (repo publik).
+- **Tahap 4 — Packaging: ✅ SELESAI (2026-07-19) — SIAP UPLOAD**
+  - `requirements.txt` pipreqs-style (scan import 2 notebook): torch/diffusers/transformers/accelerate + pillow/numpy + streamlit==1.29.0/streamlit-drawable-canvas==0.9.3/pyngrok. Tanpa matplotlib (Dafina tak pakai — beda dari Nazhif).
+  - **Zip flat `BFGAI_Dafina_Meira_Rizkia.zip` (5.04 MB, 4 file)** di `pengerjaan/dafina/` (gitignored). Struktur flat verified (tak ada subfolder).
+  - **AUDIT FINAL ALL PASS:** 4 file wajib ✅ · Pipeline 19/19 exec + gambar tertanam ✅ · Streamlit 10/10 exec ✅ · video .mp4 2:06 ✅ · SD1.5 (bukan SDXL/GAN) ✅ · secret scan bersih ✅ · K1 (simple/advanced ≈image-3/4) + K2 (satelit ≈image-15) + K3 (interface jalan + gambar tampil) ✅.
+  - **SISA: user tinggal UPLOAD `BFGAI_Dafina_Meira_Rizkia.zip` ke Dicoding.**
