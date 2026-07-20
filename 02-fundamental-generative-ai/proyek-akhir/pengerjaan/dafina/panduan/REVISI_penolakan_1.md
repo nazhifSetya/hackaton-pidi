@@ -24,7 +24,25 @@ Kalau kamu lihat error `401 Unauthorized` / `Repository Not Found` / `User Acces
 
 ---
 
-## 🎯 GRID-TEST (langkah sekarang — berhenti menebak, mulai mengukur)
+## ✅ FINAL — Kandidat 1 terkunci, tinggal Run All
+
+Dari grid-test, **Kandidat 1** dipilih (tanah halus-matte, flat 2D, bukan realistis bukan chibi). Sudah kupasang ke cell 6 & **sel grid sudah kuhapus**. `MOON_PROMPT` final:
+> `"a lone astronaut standing on the moon surface, earth in the background, cartoon style, soft cel shading, smooth matte ground"`
+
+**Yang kamu lakukan sekarang:**
+1. Colab (T4) → **Runtime → Run all** (sekarang penuh, karena cell 8/27/29 ikut regenerate dari prompt baru).
+2. Kirim screenshot **4 sel** (6/8/27/29). Yang kucek:
+   - **cell 6** → sama seperti Kandidat 1 (tanah halus-matte flat) ✓ (sudah pasti, deterministik)
+   - **cell 8** → astronot **realistis** (mestinya tetap, karena negative-nya menolak kartun) — *ini yang utama kucek*
+   - **cell 27** → mask kanan tak kena astronot
+   - **cell 29** → astronot + satelit
+3. Kalau semua OK → download `.ipynb` → aku re-zip → **submit**.
+
+> Kalau cell 8 (advanced) berubah jadi kurang realistis gara-gara prompt baru, aku punya penyesuaian kecil di negative-nya. Tapi mestinya aman.
+
+---
+
+## 🎯 GRID-TEST (sudah selesai — arsip)
 
 Setelah 4× run kita paham: di seed 222, **kata sekecil apa pun mengubah hasil drastis** (tanah halus ↔ berbatu ↔ chibi bola). Menebak satu prompt per run itu lambat & meleset. Jadi sekarang kita **uji 6 kandidat prompt SEKALIGUS dalam 1 run**.
 
