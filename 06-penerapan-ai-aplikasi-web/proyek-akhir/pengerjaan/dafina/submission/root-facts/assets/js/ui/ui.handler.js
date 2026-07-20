@@ -49,6 +49,9 @@ class UIHandler {
 		this.funFactText = document.getElementById('fun-fact-text');
 		this.btnCopy = document.getElementById('btn-copy');
 
+		// Tombol "Scan Lagi" — muncul saat kamera auto-stop setelah deteksi berhasil.
+		this.btnScanAgain = document.getElementById('btn-scan-again');
+
 		// Cache input elements for enabling/disabling
 		this.inputElements = [
 			this.btnToggle,
@@ -106,6 +109,7 @@ class UIHandler {
 			this.btnToggleIcon.innerHTML = '<i data-lucide="square" width="24" height="24"></i>';
 			if (this.cameraOverlay) this.cameraOverlay.classList.add('active');
 			if (this.cameraPlaceholder) hideElement(this.cameraPlaceholder);
+			if (this.btnScanAgain) hideElement(this.btnScanAgain);
 			this.updateHeaderStatus('Scanning...', true);
 		} else {
 			this.btnToggle.classList.remove('scanning');
@@ -114,6 +118,22 @@ class UIHandler {
 			if (this.cameraPlaceholder) showElement(this.cameraPlaceholder);
 			this.updateHeaderStatus('Siap', false);
 		}
+
+		if (typeof lucide !== 'undefined') {
+			lucide.createIcons();
+		}
+	}
+
+	// Kamera berhenti OTOMATIS setelah deteksi berhasil (saran reviewer): kartu HASIL
+	// + fun fact dibiarkan tampil stabil/mudah dibaca, tombol utama kembali ke ikon
+	// scan, status jadi "Selesai", dan tombol "Scan Lagi" dimunculkan.
+	freezeScan() {
+		this.btnToggle.classList.remove('scanning');
+		this.btnToggleIcon.innerHTML = '<i data-lucide="scan-line" width="24" height="24"></i>';
+		if (this.cameraOverlay) this.cameraOverlay.classList.remove('active');
+		if (this.cameraPlaceholder) showElement(this.cameraPlaceholder);
+		if (this.btnScanAgain) showElement(this.btnScanAgain);
+		this.updateHeaderStatus('Selesai', false);
 
 		if (typeof lucide !== 'undefined') {
 			lucide.createIcons();
@@ -283,6 +303,12 @@ class UIHandler {
 		if (this.btnCopy && callbacks.onCopy) {
 			this.btnCopy.addEventListener('click', () => {
 				callbacks.onCopy();
+			}, { signal });
+		}
+
+		if (this.btnScanAgain && callbacks.onScanAgain) {
+			this.btnScanAgain.addEventListener('click', () => {
+				callbacks.onScanAgain();
 			}, { signal });
 		}
 	}

@@ -7,6 +7,12 @@ import { logError } from './utils.js';
 
 // Jeda antar pemindaian (ms) — dikelola lewat setInterval berulang.
 const SCAN_INTERVAL_MS = 1800;
+// Ambang kepercayaan agar sebuah deteksi dianggap "berhasil" → kamera auto-stop.
+// Nilai sedang: cukup tinggi untuk mengabaikan bingkai kosong/ragu, cukup rendah
+// agar sayuran nyata (biasanya 60–90%) pasti membekukan hasil. Ambang ini HANYA
+// menggerbang auto-stop, BUKAN tampilan (label teratas tetap tampil tiap tick →
+// UI tak pernah macet menunggu).
+const AUTO_STOP_CONFIDENCE = 55;
 const LOG_TAG = '[RF-Dafina]';
 
 class RootFactsApp {
@@ -34,7 +40,8 @@ class RootFactsApp {
 	bindEvents() {
 		this.ui.bindEvents({
 			onToggleCamera: () => this.toggleCamera(),
-			onCameraChange: () => this.onCameraChange()
+			onCameraChange: () => this.onCameraChange(),
+			onScanAgain: () => this.#restartScan()
 		});
 	}
 
@@ -160,15 +167,38 @@ class RootFactsApp {
 			if (prediction.className !== this.#activeLabel) {
 				this.#activeLabel = prediction.className;
 				await this.generateAndShowResults(prediction);
-			} else if (this.currentFunFact) {
-				// Label sama & fakta sudah ada → cukup segarkan kartu (tanpa regenerasi).
-				this.ui.showResults(prediction, { funFact: this.currentFunFact });
+			}
+
+			// Auto-stop (saran reviewer): begitu satu deteksi berhasil — fun fact
+			// sudah tampil DAN kepercayaan cukup — kamera dihentikan otomatis supaya
+			// hasil + fun fact STABIL & mudah dibaca, sekaligus mencegah deteksi
+			// berulang yang boros daya. Pengguna menekan "Scan Lagi" untuk memindai
+			// sayuran berikutnya.
+			if (this.isRunning && this.currentFunFact &&
+				prediction.confidence >= AUTO_STOP_CONFIDENCE) {
+				this.#finishScan();
 			}
 		} catch (error) {
 			logError('Kesalahan saat memindai', error);
 		} finally {
 			this.#busy = false;
 		}
+	}
+
+	// Hentikan siklus deteksi + kamera TANPA kembali ke idle: kartu hasil & fun fact
+	// dibiarkan tampil stabil, dan tombol "Scan Lagi" dimunculkan. (Beda dari
+	// stopCamera() yang menyembunyikan hasil saat pengguna berhenti manual.)
+	#finishScan() {
+		this.stopDetection();
+		this.camera.stopCamera();
+		this.ui.freezeScan();
+		console.log(`${LOG_TAG} Deteksi selesai → kamera auto-stop, hasil dibekukan.`);
+	}
+
+	// Dari kondisi beku (kamera mati, hasil tampil) → mulai memindai lagi.
+	async #restartScan() {
+		if (this.isRunning) return;
+		await this.#activateScan();
 	}
 
 	async generateAndShowResults(detectionResult) {
