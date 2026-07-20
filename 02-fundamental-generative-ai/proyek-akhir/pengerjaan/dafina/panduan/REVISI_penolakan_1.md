@@ -4,6 +4,19 @@ Notebook **Pipeline** sudah kuperbaiki sesuai saran reviewer. Sekarang giliranmu
 
 ---
 
+## 🔁 UPDATE — PUTARAN 2 (setelah cek hasil Run #1)
+
+Run pertamamu sudah kucek. Hasilnya: **advanced ✅ realistis**, **satelit ✅ jelas** — bagus! Tapi 2 hal kubetulkan lagi:
+
+1. **cell 6 (simple)** kemarin **kelewat kartun** (jadi chibi/vektor super-flat = justru contoh yang DITOLAK reviewer). Sudah kuperbaiki: kata `"flat 2d"` & `"full body, wide shot"` dibuang, sisakan `"cartoon style"` → harusnya jadi **kartun moderat** (astronot ber-outline di permukaan bulan, mirip `image-3`).
+2. **cell 27 (mask)** kemarin **menimpa astronot** (astronot ternyata di tengah), jadi di cell 29 astronotnya hilang, cuma satelit. Mask sudah kugeser ke kanan (`x0=0.57`) → harusnya **astronot + satelit dua-duanya tampak** (mirip `image-6`).
+
+> **Karena prompt cell 6 berubah, cell 8 (advanced) ikut ter-generate ulang** — mestinya tetap realistis (malah lebih aman). **Tolong Run All lagi**, lalu kirim screenshot 4 sel yang sama. Ekspektasi baru ada di tabel bawah (sudah kuupdate).
+
+---
+
+---
+
 ## 1. Apa yang salah & apa yang kuubah
 
 Reviewer menolak **2 hal** (K3 Streamlit **LOLOS**, tidak diapa-apakan):
@@ -27,19 +40,19 @@ Reviewer menolak **2 hal** (K3 Streamlit **LOLOS**, tidak diapa-apakan):
 
 | Sel | Yang harus terlihat | ✅ Lolos kalau… |
 |---|---|---|
-| **Cell 6** (`img_simple`) | Astronot **KARTUN FLAT** (outline tegas, tanah rata/halus, bukan berpasir realistis) + bumi | mirip `image-3` (kartun, bukan foto) |
+| **Cell 6** (`img_simple`) | Astronot **KARTUN MODERAT** (ber-outline) **berdiri di permukaan bulan**, bumi kecil di latar | mirip `image-3` — kartun **tapi masih pemandangan** (bukan chibi/emoji, bukan foto) |
 | **Cell 8** (`img_advanced`) | Astronot **REALISTIS / 3D** di bulan berbatu + bumi | mirip `image-4` (realistis) |
-| **Cell 27** (preview mask) | Kotak **merah** menandai area kanan — **TIDAK menimpa badan astronot** | kalau menimpa astronot → lihat langkah 3 |
-| **Cell 29** (`img_inpaint`) | **Satelit rusak BESAR & jelas** (badan logam + panel surya + kaki) di area mask | mirip `image-6` (satelit jelas, bukan tanah kosong) |
+| **Cell 27** (preview mask) | Kotak **merah** di kanan — **TIDAK menyentuh badan astronot** | kalau masih kena astronot → langkah 3 (naikkan `x0`) |
+| **Cell 29** (`img_inpaint`) | **Astronot (kiri) + satelit rusak besar (kanan)** dua-duanya tampak | mirip `image-6` (astronot & satelit, bukan cuma satelit / bukan tanah kosong) |
 
 ---
 
 ## 3. Kalau hasil belum pas (tuning cepat, tak perlu tanya dulu)
 
-- **Cell 27 — kotak merah menimpa astronot:** ubah baris `x0 = int(W * 0.45)` jadi `0.50` atau `0.55`, lalu **run ulang cell 27 + 29**.
-- **Cell 6 — malah jadi wajah/portrait (bukan pemandangan):** di `MOON_PROMPT`, hapus `, flat 2d` (sisakan `cartoon style` saja), run ulang cell 6.
-- **Cell 6 — masih terlihat realistis:** tambahkan `2d illustration` di akhir prompt.
-- **Cell 29 — satelit masih samar:** naikkan `x1`/`y1` di cell 27 (mask lebih besar), atau ganti kata `mid-ground` jadi `foreground` di prompt.
+- **Cell 27 — kotak merah masih menyentuh astronot:** ubah baris `x0 = int(W * 0.57)` jadi `0.60` atau `0.63`, lalu **run ulang cell 27 + 29**.
+- **Cell 6 — malah jadi chibi/emoji lagi (kelewat kartun):** di `MOON_PROMPT`, ganti `cartoon style` jadi `simple cartoon illustration`, run ulang cell 6.
+- **Cell 6 — masih terlihat realistis (kurang kartun):** tambahkan `, 2d illustration` di akhir prompt, run ulang.
+- **Cell 29 — satelit kurang besar:** turunkan `y0` di cell 27 (mis. `0.38`) atau turunkan `x0` sedikit (mis. `0.54`) asal tak kena astronot.
 
 > Setiap kali ganti sesuatu, **cukup run ulang sel yang berubah + sel di bawahnya** (mask & inpaint saling nyambung).
 
