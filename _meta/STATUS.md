@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran status semua proyek.** Baca ini tiap **awal sesi** (setelah `git pull`), update tiap **akhir sesi** (sebelum `git push`). Protokol lengkap: [`/CLAUDE.md`](../CLAUDE.md).
 
-**Terakhir di-update:** `2026-07-19` · **oleh device:** `Victus (Windows)` · **oleh:** 06 RootFacts (Dafina) — **DITOLAK (K2) → DIPERBAIKI & re-verified.** Fun fact stuck "Memuat fakta menarik" krn model diunduh di latar (desain app-first) → fix: init muat model penuh + header "Memuat Model... X%" → "Siap", prompt+greedy (17/18 relevan). Zip regen; sisa user REDEPLOY + RE-SUBMIT
+**Terakhir di-update:** `2026-07-20` · **oleh device:** `Victus (Windows)` · **oleh:** 02 BFGAI (Dafina) — **DITOLAK (K1+K2) → REVISI notebook siap.** K1 simple harus **kartun flat 2D** (bukan realistis) → prompt +"cartoon style, flat 2d" + negative wajib persis; advanced tetap realistis via **negative anti-cartoon + guidance 12** (resep final Nazhif yg lolos). K2 satelit dipertegas ukuran+realistis, mask diperbesar, CFG 20/60. **Sisa: Dafina Run All Pipeline di Colab → verifikasi visual → re-zip → resubmit.**
 
 ---
 
@@ -15,7 +15,7 @@
 - **Yang paling mendesak (open action, urut prioritas):**
   0. **06 RootFacts (Dafina)** — 🔁 **DITOLAK (K2) → DIPERBAIKI, siap RE-SUBMIT** (2026-07-19), target Basic. Penolakan: fun fact stuck "Memuat fakta menarik" (model diunduh di latar/app-first). Fix: init muat LLM tuntas + header **"Memuat Model... X%"** → "Siap" + prompt/greedy (kualitas 17/18). Verified CDP. Zip regen. **Sisa: user REDEPLOY kode baru ke Netlify (`cerulean-lolly-3c6913` atau baru) → kalau URL baru update `STUDENT.txt` → re-zip → RE-SUBMIT.** 🍎 Panduan: `dafina/panduan/Deploy_Netlify.md`.
   1. **02 BFGAI (Nazhif)** — DITOLAK reviewer, revisi v3 sudah siap. Perlu **Run All notebook di Colab T4** → regenerate zip → **re-submit**. ⛅ butuh online.
-  2. **02 BFGAI (Dafina)** — ✅ **SELESAI DIKERJAKAN** (2026-07-19), target Basic. K1+K2 (Pipeline) + K3 (Streamlit) semua Run di Colab & **terverifikasi visual** (astronot wide-shot ≈image-3/4, satelit ≈image-15, app Streamlit jalan). Video demo 2:06 → `.mp4` 3.12 MB. **Zip flat `BFGAI_Dafina_Meira_Rizkia.zip` (5.04 MB, 4 file) SIAP — sisa: user tinggal UPLOAD ke Dicoding.**
+  2. **02 BFGAI (Dafina)** — 🔁 **DITOLAK reviewer (penolakan_1.md) → REVISI notebook SIAP** (2026-07-20), target Basic. Penolakan: **K1** `generate_simple_image()` terlalu realistis (harus **kartun flat 2D**, image-3); **K2** satelit inpaint belum jelas (image-6). K3 Streamlit **LOLOS** (tak disentuh). Fix Pipeline (cell 6/8/27/29 via `scratchpad/fix_penolakan1_pipeline.py`): simple +"cartoon style, flat 2d" + negative wajib persis; advanced negative anti-cartoon + `guidance 12/50 step` → realistis (resep final Nazhif yg LOLOS); inpaint satelit dipertegas ukuran+realistis, mask diperbesar, CFG 20/60. Output 4 sel dikosongkan. **Sisa (butuh Dafina, ⛅ Colab): Run All Pipeline → screenshot cell 6 (kartun) / 8 (realistis) / 27 (mask tak nimpa astronot) / 29 (satelit jelas) → kirim Claude verifikasi → download ber-output → re-zip → resubmit.** Zip lama belum diregenerate.
   2. **06 RootFacts (Nazhif)** — DITOLAK 2×, kedua koreksi sudah beres & live terverifikasi. Tinggal **re-submit zip** ke Dicoding.
   3. **05 Asclepius GCP (Nazhif)** — ⛔ TERBLOKIR: butuh `gcloud auth login` + billing account sebelum deploy Phase 3-7. Backend sudah OK lokal.
   4. **03 PGABL (Fareynaldi)** — skeleton notebook siap, belum pernah Run All. Perlu akun HF + Colab Secret → Run All di Colab T4.
