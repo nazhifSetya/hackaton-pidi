@@ -1,0 +1,15 @@
+unsloth
+transformers
+trl
+peft
+bitsandbytes
+accelerate
+datasets
+torch
+huggingface_hub
+pypdf
+langchain-text-splitters
+sentence-transformers
+chromadb
+gradio
+ipython

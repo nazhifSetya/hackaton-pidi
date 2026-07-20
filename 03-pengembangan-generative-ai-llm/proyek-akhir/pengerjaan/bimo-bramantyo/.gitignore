@@ -1,0 +1,14 @@
+# Rahasia
+.env
+
+# Artefak berat (tidak ikut Git — ada di Drive/HF)
+*.pdf
+data/raw/
+models/
+checkpoints/
+chroma_db/
+
+# Cache Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
