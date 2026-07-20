@@ -39,17 +39,35 @@ Buka **Chrome/Edge** di `http://localhost:5190/`.
 
 ---
 
-## LANGKAH 2 — Deploy ke Netlify (drag-drop)
+## LANGKAH 2 — Deploy ke Netlify (⚠️ pakai ZIP, jangan drag folder)
 
-1. Buka **https://app.netlify.com/drop** (login/register — email atau GitHub, pakai **akun Dafina**).
-2. File Explorer → folder:
-   `d:\Kalachakra\hackaton-pidi\06-penerapan-ai-aplikasi-web\proyek-akhir\pengerjaan\dafina\submission\root-facts`
-3. **Drag folder `root-facts`** ke area Netlify Drop.
-4. Tunggu ±20 detik → dapat URL `https://<nama-acak>.netlify.app`.
-5. Klik URL → cek app buka & jalan (HTTPS Netlify = kamera bisa jalan). Sabar tunggu model bahasa di kunjungan pertama.
-6. (Opsional) Site settings → rename mis. `rootfacts-dafina`.
+> **KENAPA ZIP, BUKAN FOLDER:** penolakan sebelumnya bukan salah kode — **deploy-nya parsial**: folder `assets/` & `model/` **tidak ikut ter-upload** saat drag folder → di server `/assets/css/styles.css`, `/assets/js/*`, `/model/*` semua **404** → CSS/JS hilang (tampak "polos"/hitam di browser fresh) & Service Worker gagal precache. **Deploy pakai file ZIP** = atomik: Netlify meng-ekstrak SEMUA isi, mustahil ada subfolder ketinggalan.
 
-**Verifikasi post-deploy (incognito):** Manifest OK · Service Worker activated · Offline reload tetap muncul · kamera minta izin · label + fun fact muncul.
+**File zip sudah dibuat & diverifikasi lengkap (19 file, index.html di root, assets+model utuh):**
+`d:\Kalachakra\hackaton-pidi\06-penerapan-ai-aplikasi-web\proyek-akhir\pengerjaan\dafina\RootFacts_Dafina_Meira_Rizkia.zip`
+
+### Cara A — update situs yang SAMA (URL tetap `cerulean-lolly-3c6913`, disarankan)
+1. Login **https://app.netlify.com** (akun Dafina).
+2. Pilih situs **`cerulean-lolly-3c6913`** → tab **Deploys**.
+3. **Drag file `RootFacts_Dafina_Meira_Rizkia.zip`** ke area "Drag and drop your site output folder here". Tunggu ±20 dtk.
+4. URL tetap sama → **STUDENT.txt tak perlu diubah**, zip yang sama langsung jadi berkas submission.
+
+### Cara B — situs baru (kalau tak bisa login / lupa akun)
+1. Buka **https://app.netlify.com/drop**.
+2. **Drag file ZIP** (bukan folder) ke area drop → dapat URL `https://<nama-acak>.netlify.app`.
+3. URL **baru** → lanjut LANGKAH 3 (update STUDENT.txt) → LANGKAH 4 (re-zip) → deploy ulang zip baru itu sekali lagi (biar STUDENT.txt di situs ikut baru — opsional, yang wajib cuma zip submission).
+
+### ✅ VERIFIKASI WAJIB setelah deploy (jangan skip — ini yang gagal kemarin)
+Buka **PowerShell**, ganti `<URL>` dengan URL situsmu:
+```powershell
+$u="<URL>"   # mis. https://cerulean-lolly-3c6913.netlify.app
+"/assets/css/styles.css","/assets/js/core/app.js","/model/model.json" | % {
+  $r = Invoke-WebRequest "$u$_" -Method Head -SkipHttpErrorCheck
+  "{0}  ->  HTTP {1}" -f $_, $r.StatusCode
+}
+```
+**Semua harus `HTTP 200`.** Kalau ada `404` → deploy masih parsial, ulangi pakai ZIP.
+Lalu buka situs di **jendela Incognito** → harus **ber-CSS** (hijau, rapi), kamera minta izin, deteksi → fun fact → **kamera auto-stop** + tombol **"Scan Lagi"**.
 
 ---
 
