@@ -37,7 +37,7 @@ Starter Dicoding **identik** untuk semua (model TM 18 sayuran fixed; HTML/CSS/`u
 | Loop deteksi (app.js) | `while` + `createDelay` | rekursif `setTimeout` (`runScan`) | **`setInterval` + guard re-entrant `#busy`** (`detectLoop` per-tick) |
 | Muat model | await keduanya, tanpa indikator persen | await keduanya, tanpa indikator persen | **await keduanya + indikator "Memuat Model... X%" dari `progress_callback`** → "Siap" hanya saat 100% (fix penolakan_1) |
 | Prompt & decoding (K2) | chat, sampling | instruksi tunggal, sampling | **instruksi "the vegetable {name}" + greedy (`do_sample:false`)** — deterministik, relevan, tetap unik per sayuran |
-| Kamera | probe getUserMedia | `buildConstraints` facingMode + `waitUntilReady` | **enumerasi device → `deviceId {exact}` bila >1 kamera** (fallback facingMode), `#awaitFirstFrame` via `loadedmetadata` |
+| Kamera | probe getUserMedia | `buildConstraints` facingMode + `waitUntilReady` | **`#openStream`: pilih kamera via LABEL device (bukan indeks) → cascade facingMode exact→ideal**, `#awaitFirstFrame` via `loadedmetadata` |
 | Sanitasi label | strip non-alfanumerik, cap 50, lowercase | NFKD + whitelist `[a-zA-Z\s]`, cap 40, lowercase | **NFKC + Unicode `\p{L}\p{N}`, cap 32, `Title Case`** (`#cleanLabel`) |
 | Ekstraksi output | `.at(-1).content` (chat) | `generated_text` string | **`#extractText()`** tahan dua bentuk (string / array pesan) |
 | sw.js | default cache, REVISION `v2.0.0` | `rf-*`, BUILD `ff-2026-07-16`, helper `stamp()` | **`setCacheNameDetails({prefix:'rootfacts-dmr'})`**, REV `dmr-2026-07-19`, helper `withRev`, cache `df-navigation/df-cdn/df-hf-hub/...` |
@@ -104,7 +104,7 @@ dafina/
 
 - **Tahap 1 — K1 (Camera + TF.js): ✅ (2026-07-19)**
   - `detection.service.js`: `#private` fields, `#fetchMetadata()`, preprocessing `#toTensor()` (kanvas `drawImage` resize → `fromPixels` → `.div(255).mul(2).sub(1)`), argmax `tf.argMax(-1)`/`tf.max` di `tf.tidy`, getter `labelList`, dispose input di `finally`.
-  - `camera.service.js`: `#pickConstraints()` (deviceId eksak bila >1 kamera, fallback facingMode), `#awaitFirstFrame()` (`loadedmetadata`), `isActive/isReady`.
+  - `camera.service.js`: `#openStream()` (pilih kamera via **label** device → cascade facingMode exact→ideal), `#awaitFirstFrame()` (`loadedmetadata`), `isActive/isReady`. ⚠️ Awalnya pakai deviceId-by-indeks → BUG (di HP indeks 0 = kamera depan) → diperbaiki di Tahap 5.
   - `index.html`: script `tfjs@4.22.0` di `<head>`.
   - **Verifikasi (Chrome DevTools MCP, Victus):** TF.js `4.22.0` backend `webgl`; model load, 18 label; predict canvas sintetis → `{Carrot, 44%, isValid:true}`; **8× predict berturut → tensor 789→789 (0 leak)** ✅.
 
@@ -126,4 +126,5 @@ dafina/
   - **Fix `app.js`:** BUANG app-first + `#factReady`. `init()` sekarang muat TF.js → muat LLM **sampai tuntas** dengan callback progress → header **"Memuat Model... X%"** → baru "Siap" + enable tombol. Tombol scan nonaktif sepanjang unduhan (fun fact tak akan menggantung).
   - **Fix `facts.service.js`:** `loadModel(onProgress)` teruskan `progress_callback` → agregasi byte terunduh jadi persen. **Plus perbaikan kualitas:** prompt jadi `Tell me an interesting fun fact about the vegetable ${name}.` + **greedy** (`do_sample:false`, rep 1.4, no_repeat_ngram 3). Sampling lama bikin flan-t5-base mengarang (Onion→nonsense, Corn→"amount of time in a day") = 3/8 sebut sayuran; greedy = **17/18 sebut sayuran, relevan & koheren**, deterministik tapi unik per sayuran.
   - **Verifikasi live (CDP, model tercache):** header berjalan mulus `6% → 99% → "Siap"`, tombol **nonaktif** s/d Siap ✅; setelah Siap, detect→generate→DOM: spinner "Memuat fakta menarik" sebentar → **fun fact muncul** (`fun-fact-text` terisi) → spinner **hilang** (tak stuck) ✅; generateFunFact 7-8/8 relevan, deterministik ✅. 0 error.
+  - **Fix bug kamera (lapangan, HP Samsung):** pilih "Belakang" malah buka kamera **depan**. Sebab: `#pickConstraints` lama pilih kamera by **indeks** (`device[0]` diasumsi belakang), padahal urutan `enumerateDevices()` tak dijamin (di HP itu indeks 0 = depan). Ganti `#openStream()`: pilih via **label** device (`/back|belakang|rear|environment/i` vs `/front|depan|user|selfie/i`) → fallback `facingMode` exact→ideal. Uji logika: label Android "facing back/front" → terpilih benar.
   - **NEXT (user Dafina):** **REDEPLOY** kode baru ke Netlify (situs sama `cerulean-lolly-3c6913` atau baru) → kalau URL baru update `STUDENT.txt` → re-zip → **RE-SUBMIT**. Panduan: [`panduan/Deploy_Netlify.md`](panduan/Deploy_Netlify.md).

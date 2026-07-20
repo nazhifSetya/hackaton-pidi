@@ -48,25 +48,43 @@ class CameraService {
 	}
 
 	/*
-	 * Susun constraints. Jika ada lebih dari satu kamera fisik, kunci ke
-	 * deviceId eksak (asumsi indeks pertama = belakang, terakhir = depan);
-	 * jika hanya satu, cukup andalkan facingMode.
+	 * Buka aliran kamera sesuai pilihan depan/belakang. Pemilihan diutamakan
+	 * lewat LABEL perangkat karena urutan enumerateDevices() TIDAK dijamin
+	 * (indeks tak bisa dipercaya — di sebagian ponsel indeks 0 justru kamera
+	 * depan). Bila label tak membantu, jatuh ke facingMode: dicoba "exact"
+	 * dulu (memaksa sisi kamera yang benar di ponsel), lalu "ideal" sebagai
+	 * jaring pengaman untuk perangkat berkamera tunggal (mis. laptop).
 	 */
-	#pickConstraints() {
+	async #openStream() {
 		const wantFront = this.#select?.value === 'front';
-		const video = { width: { ideal: 1280 }, height: { ideal: 720 } };
+		const size = { width: { ideal: 1280 }, height: { ideal: 720 } };
+		const facing = wantFront ? 'user' : 'environment';
 
-		if (this.#videoDevices.length > 1) {
-			const idx = wantFront ? this.#videoDevices.length - 1 : 0;
-			const deviceId = this.#videoDevices[idx]?.deviceId;
-			if (deviceId) {
-				video.deviceId = { exact: deviceId };
-				return { audio: false, video };
-			}
+		// (1) Cocokkan label perangkat, mis. "camera2 0, facing back".
+		const rx = wantFront ? /front|depan|user|selfie/i : /back|belakang|rear|environment/i;
+		const match = this.#videoDevices.find((device) => rx.test(device.label));
+		if (match?.deviceId) {
+			try {
+				return await navigator.mediaDevices.getUserMedia({
+					audio: false,
+					video: { deviceId: { exact: match.deviceId }, ...size }
+				});
+			} catch (_) { /* jatuh ke facingMode */ }
 		}
 
-		video.facingMode = wantFront ? 'user' : 'environment';
-		return { audio: false, video };
+		// (2) facingMode "exact" — paling tegas memilih sisi kamera di ponsel.
+		try {
+			return await navigator.mediaDevices.getUserMedia({
+				audio: false,
+				video: { facingMode: { exact: facing }, ...size }
+			});
+		} catch (_) { /* jatuh ke fallback longgar */ }
+
+		// (3) Fallback longgar untuk perangkat berkamera tunggal.
+		return await navigator.mediaDevices.getUserMedia({
+			audio: false,
+			video: { facingMode: { ideal: facing }, ...size }
+		});
 	}
 
 	// Selesai ketika metadata frame pertama sudah tersedia.
@@ -84,7 +102,7 @@ class CameraService {
 		try {
 			if (this.#stream) this.stopCamera();
 
-			this.#stream = await navigator.mediaDevices.getUserMedia(this.#pickConstraints());
+			this.#stream = await this.#openStream();
 			if (!this.video) throw new Error('Elemen <video> tidak ditemukan.');
 
 			this.video.srcObject = this.#stream;
