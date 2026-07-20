@@ -4,6 +4,18 @@ Notebook **Pipeline** sudah kuperbaiki sesuai saran reviewer. Sekarang giliranmu
 
 ---
 
+## 🔁 UPDATE — PUTARAN 4 (poles simple)
+
+Run #3 sudah **benar semua secara struktur**: advanced ✅ realistis, mask ✅ tak kena astronot, inpaint ✅ astronot+satelit (≈image-6), simple ✅ kartun & komposisi ≈image-3. Cuma **tanah simple masih agak realistis** → aku poles supaya lebih aman.
+
+**Yang kuubah (cuma cell 6):** `MOON_PROMPT` ditambah `"flat 2d illustration"` → tanah & langit ikut jadi flat/kartun. Ini **aman untuk advanced** (negative advanced sudah menolak flat/2d/illustration, jadi advanced tetap realistis).
+
+➡️ **Run All lagi (#4)**, kirim screenshot 4 sel. Yang kucari: **cell 6 tanahnya lebih flat/kartun** (mirip image-3), sel lain tetap seperti run #3.
+
+> **Fallback:** kalau cell 6 malah kelewat flat / balik jadi chibi, di `MOON_PROMPT` **hapus** `, flat 2d illustration` (balik ke versi run #3 yang sudah OK), run ulang cell 6.
+
+---
+
 ## 🩹 CATATAN — error 401 saat load model (sudah kubetulkan)
 
 Kalau kamu lihat error `401 Unauthorized` / `Repository Not Found` / `User Access Token "RAG_PIDI" is expired` di cell load model: itu bukan salah kode gambar, tapi **Colab-mu punya HF token expired** yang otomatis ikut terkirim. Sudah kutambahkan `token=False` di cell 4 & 25 (paksa unduh anonim, model-nya publik) → sekarang tinggal **Run All** lagi.
