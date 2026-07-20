@@ -24,6 +24,26 @@ Kalau kamu lihat error `401 Unauthorized` / `Repository Not Found` / `User Acces
 
 ---
 
+## 🎯 GRID-TEST (langkah sekarang — berhenti menebak, mulai mengukur)
+
+Setelah 4× run kita paham: di seed 222, **kata sekecil apa pun mengubah hasil drastis** (tanah halus ↔ berbatu ↔ chibi bola). Menebak satu prompt per run itu lambat & meleset. Jadi sekarang kita **uji 6 kandidat prompt SEKALIGUS dalam 1 run**.
+
+**Diagnosis yang sudah pasti** (diverifikasi, termasuk ukur "grain" tanah piksel demi piksel):
+- Target = **kartun dengan tanah HALUS/MATTE** (seperti `image-3`/`image.png` yang ✓ hijau di kolase reviewer).
+- run #3 gagal karena tanahnya **paling berbatu/realistis** (grain 20.8 vs target 3.7) — malah lebih parah dari contoh ✗ reviewer.
+- run #4 gagal karena **kelewat flat → chibi**.
+- Sasaran = titik tengah: **flat tapi halus, belum chibi**.
+
+**Yang harus kamu lakukan:**
+1. Buka notebook di Colab (T4). Model sudah pakai `token=False` (aman dari error 401).
+2. Jalankan **cell 1** (setup) → **cell 4** (load model) → lalu **scroll ke sel PALING BAWAH** (berlabel `[SEMENTARA -- HAPUS SEBELUM SUBMIT] GRID TEST`) dan jalankan sel itu. *(Tidak perlu Run All — cukup 3 sel ini, ~2 menit.)*
+3. Sel itu menghasilkan **1 gambar grid berisi 6 kandidat berlabel**. **Screenshot grid itu** → kirim ke aku.
+4. Aku pilih kandidat yang tanahnya paling halus-matte (mirip `image-3`) → kunci jadi prompt final → kamu Run All sekali lagi untuk hasil akhir → aku hapus sel grid → re-zip → submit.
+
+> Kalau semua kandidat masih kurang pas, aku sudah punya lever cadangan (mis. perbesar/ dekatkan astronot untuk memangkas foreground tanah). Tapi kemungkinan besar salah satu dari 6 ini kena.
+
+---
+
 ## 🔁 UPDATE — PUTARAN 3 (setelah cek hasil Run #2)
 
 Run #2 belum berhasil: **cell 6 masih chibi** (astronot berdiri di "bola" oranye), dan **cell 8 malah kehilangan astronot** (jadi lanskap bulan kosong) → cell 29 pun kosong.
