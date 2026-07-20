@@ -4,6 +4,14 @@ Notebook **Pipeline** sudah kuperbaiki sesuai saran reviewer. Sekarang giliranmu
 
 ---
 
+## 🩹 CATATAN — error 401 saat load model (sudah kubetulkan)
+
+Kalau kamu lihat error `401 Unauthorized` / `Repository Not Found` / `User Access Token "RAG_PIDI" is expired` di cell load model: itu bukan salah kode gambar, tapi **Colab-mu punya HF token expired** yang otomatis ikut terkirim. Sudah kutambahkan `token=False` di cell 4 & 25 (paksa unduh anonim, model-nya publik) → sekarang tinggal **Run All** lagi.
+
+> Alternatif (tak wajib): di sidebar kiri Colab → ikon 🔑 **Secrets** → matikan/hapus token itu.
+
+---
+
 ## 🔁 UPDATE — PUTARAN 3 (setelah cek hasil Run #2)
 
 Run #2 belum berhasil: **cell 6 masih chibi** (astronot berdiri di "bola" oranye), dan **cell 8 malah kehilangan astronot** (jadi lanskap bulan kosong) → cell 29 pun kosong.
