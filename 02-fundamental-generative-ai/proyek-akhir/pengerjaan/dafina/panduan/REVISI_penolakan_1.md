@@ -4,6 +4,20 @@ Notebook **Pipeline** sudah kuperbaiki sesuai saran reviewer. Sekarang giliranmu
 
 ---
 
+## 🔁 UPDATE — PUTARAN 3 (setelah cek hasil Run #2)
+
+Run #2 belum berhasil: **cell 6 masih chibi** (astronot berdiri di "bola" oranye), dan **cell 8 malah kehilangan astronot** (jadi lanskap bulan kosong) → cell 29 pun kosong.
+
+**Ketemu akar masalahnya:** frasa `"planet earth ... starry background sky"` di prompt bikin model menganggapnya *pemandangan luar angkasa* → bulan jadi bola (di simple) & astronot dibuang (di advanced). Resep Nazhif yang lolos justru pakai frasa **minimal**.
+
+**Fix v3:** prompt disederhanakan jadi `"a lone astronaut standing on the moon surface, earth in the background, cartoon style"` (buang planet/starry sky/full body/wide shot). Ini persis struktur yang **terbukti** menghasilkan image-13 (simple kartun) & image-17 (advanced realistis). Mask cell 27 di `x0=0.56`.
+
+➡️ **Tolong Run All lagi (#3)**, kirim screenshot 4 sel. Ekspektasi sama seperti tabel di bawah.
+
+> **Fallback kalau cell 8 masih tanpa astronot:** di `MOON_PROMPT`, sisipkan `, full body` sebelum `, cartoon style` — lalu run ulang. (Tapi mestinya prompt minimal ini sudah cukup.)
+
+---
+
 ## 🔁 UPDATE — PUTARAN 2 (setelah cek hasil Run #1)
 
 Run pertamamu sudah kucek. Hasilnya: **advanced ✅ realistis**, **satelit ✅ jelas** — bagus! Tapi 2 hal kubetulkan lagi:
