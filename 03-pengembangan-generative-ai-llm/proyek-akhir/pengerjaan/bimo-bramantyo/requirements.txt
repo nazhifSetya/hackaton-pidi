@@ -9,7 +9,6 @@ torch
 huggingface_hub
 pypdf
 langchain-text-splitters
-sentence-transformers
 chromadb
 gradio
 ipython

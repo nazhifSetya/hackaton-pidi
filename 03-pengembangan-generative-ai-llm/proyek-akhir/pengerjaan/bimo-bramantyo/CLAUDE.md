@@ -40,10 +40,10 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 
 | Aspek | Nazhif (Advanced) | Fareynaldi (Basic) | Dafina (Basic) | **Bimo (Basic)** |
 |---|---|---|---|---|
-| Base model | Llama-3.2-3B | Llama-3.2-3B | Qwen2.5-1.5B | **Gemma-2-2B-it** |
-| Chat template | Llama-3 | Llama-3 | ChatML | **Gemma** (`get_chat_template("gemma2")`) |
-| Bukti special token | `<\|begin_of_text\|>` | `<\|begin_of_text\|>` | `<\|im_start\|>` `<\|im_end\|>` | **`<start_of_turn>` `<end_of_turn>`** |
-| LoRA | r=16/32 | r=16 α=16 drop=0 | r=8 α=32 drop=0.05 | **r=8 α=16 drop=0.05** |
+| Base model | Llama-3.2-3B | Llama-3.2-3B | Qwen2.5-1.5B | **Phi-3.5-mini-instruct** |
+| Chat template | Llama-3 | Llama-3 | ChatML | **Phi-3.5** (`get_chat_template("phi-3.5")`) |
+| Bukti special token | `<\|begin_of_text\|>` | `<\|begin_of_text\|>` | `<\|im_start\|>` `<\|im_end\|>` | **`<\|user\|>` `<\|assistant\|>` `<\|end\|>`** |
+| LoRA | r=16/32 | r=16 α=16 drop=0 | r=8 α=32 drop=0.05 | **r=8 α=16 drop=0.05** (target fused `qkv_proj`/`gate_up_proj`) |
 | LR / scheduler | 2e-4 linear | 3e-4 linear | 2e-4 cosine | **2e-4 linear + warmup_ratio 0.03** |
 | Optimizer | adamw_8bit | adamw_8bit | paged_adamw_8bit | **adamw_8bit** |
 | Subset dataset / seed | full / 42 | 12k / — | 8k / 42 | **10k / 3407** |
@@ -52,7 +52,7 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 | Chunker | per-pasal regex | sliding window char | kalimat greedy + overlap ekor | **`RecursiveCharacterTextSplitter`** (langchain-text-splitters) |
 | chunk / overlap / top_k | 1200 / 100 / 5 | 1000 / 100 / 4 | 700 / 120 / 3 | **1000 / 150 / 4** |
 | Interface (K2) | Gradio Blocks + citation | `gr.Interface` | loop `input()` | **`gr.Interface`** (+ sel contoh Q&A tercetak) |
-| Repo HF | `PGABL-Llama-3.2-3B-SFT` | `...-SFT-Fareynaldi` | `PGABL-Qwen2.5-1.5B-SFT-Dafina` | **`PGABL-Gemma-2-2B-SFT-Bimo`** |
+| Repo HF | `PGABL-Llama-3.2-3B-SFT` | `...-SFT-Fareynaldi` | `PGABL-Qwen2.5-1.5B-SFT-Dafina` | **`PGABL-Phi-3.5-mini-SFT-Bimo`** |
 | Gaya penamaan | campuran | Inggris (`retrieve`,`trainer`) | Indonesia (`cari`,`pelatih`) | **Indonesia lain** (`muat_pdf`,`potong_teks`,`buat_embedding`,`ambil_konteks`,`hasilkan_jawaban`,`tanya`) |
 
 - **Catatan overlap yang SAH:** `gr.Interface` (juga dipakai Fareynaldi) & ChromaDB (juga dipakai Nazhif/Fareynaldi) adalah **pilihan biner/terbatas yang disediakan rubrik**. Dibedakan lewat: ChromaDB **in-memory** (bukan persistent) + `hnsw:space=cosine` + penamaan Indonesia berbeda + sel contoh Q&A tercetak. Bukan copy kode.
@@ -71,9 +71,9 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 ## 🎯 YANG DIBANGUN — hanya tier BASIC tiap kriteria
 
 ### K1 — SLM Fine-tuning (BASIC, 2 pts)
-- Load `unsloth/gemma-2-2b-it-bnb-4bit` **4-bit** (QLoRA nf4 + **double quantization**, compute `bfloat16`, `max_seq_length=1024`).
-- LoRA di target **MHA+FFN** (`q,k,v,o,gate,up,down`), **r=8 α=16 dropout=0.05**.
-- Chat template **Gemma** (`get_chat_template(tokenizer, "gemma2")`) ke dataset `Ichsan2895/alpaca-gpt4-indonesian` via `datasets.map()`, lalu **PRINT satu contoh baris terformat** (harus terlihat `<start_of_turn>` & `<end_of_turn>`) → **BUKTI WAJIB**.
+- Load `unsloth/Phi-3.5-mini-instruct-bnb-4bit` **4-bit** (QLoRA nf4 + **double quantization**, `max_seq_length=1024`).
+- LoRA di target **MHA+FFN** — Phi-3.5 pakai proyeksi ter-fusi: `qkv_proj`, `o_proj` (attention) + `gate_up_proj`, `down_proj` (FFN), **r=8 α=16 dropout=0.05**.
+- Chat template **Phi-3.5** (`get_chat_template(tokenizer, "phi-3.5")`) ke dataset `Ichsan2895/alpaca-gpt4-indonesian` via `datasets.map()`, lalu **PRINT satu contoh baris terformat** (harus terlihat `<|user|>`, `<|assistant|>`, `<|end|>`) → **BUKTI WAJIB**.
 - `SFTTrainer` **800 steps** (eff batch 8, LR 2e-4 linear + warmup 0.03, adamw_8bit) tanpa OOM.
 - Push model ke HF **PUBLIC** (akun Bimo) dengan `merged_16bit` → link di `submission/link_huggingface.txt`.
 - **CUKUP 1 eksperimen.** ❌ JANGAN train/val split + `eval_strategy` + eksperimen ke-2 (Skilled). ❌ JANGAN GRPO (Advanced).
@@ -83,7 +83,7 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 - Chunker **`RecursiveCharacterTextSplitter`** (dari `langchain-text-splitters`), `chunk_size=1000`, `chunk_overlap=150` — **EKSPLISIT**, didokumentasikan.
 - Embedder `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (open-source, no OpenAI, **tanpa prefix** query/passage).
 - **ChromaDB in-memory** (`chromadb.Client()`), 1 collection `regulasi_ciptaker_bimo`, `metadata={"hnsw:space":"cosine"}`.
-- Retriever **top-4** → prompt `{konteks}` + `{pertanyaan}` → generate pakai **model K1 Bimo** (bukan model proprietary/baru).
+- Retriever **top-4** → prompt `{konteks}` + `{pertanyaan}` (format chat Phi-3.5) → generate pakai **model K1 Bimo** (bukan model proprietary/baru). Load via `transformers` + BitsAndBytesConfig 4-bit fp16 (Phi stabil fp16, tak butuh eager).
 - ❌ JANGAN: metadata filtering, ensemble BM25, parent-child, HyDE, reranker, threshold, DDG fallback (semua Skilled/Advanced).
 
 ### K3 — Antarmuka (bagian dari K2 Basic)
@@ -99,9 +99,9 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 |---|---|
 | Target nilai | **BASIC (⭐⭐⭐ lulus)** — K1 & K2 cukup Basic |
 | Environment berat | **Google Colab T4 16 GB** (free tier) |
-| SLM base | `unsloth/gemma-2-2b-it-bnb-4bit` (lisensi gemma, ungated, 4-bit QLoRA) |
+| SLM base | `unsloth/Phi-3.5-mini-instruct-bnb-4bit` (lisensi MIT, ungated, 4-bit QLoRA, stabil fp16) |
 | Dataset SFT | `Ichsan2895/alpaca-gpt4-indonesian` (LOCKED rubric; **2 kolom** `input`+`output`) |
-| Chat template | Gemma via `get_chat_template(tokenizer, "gemma2")` + `datasets.map()` + print bukti |
+| Chat template | Phi-3.5 via `get_chat_template(tokenizer, "phi-3.5")` + `datasets.map()` + print bukti |
 | SFT | SFTTrainer 800 steps (linear+warmup, eff batch 8), push `merged_16bit` HF public |
 | Embedding | `paraphrase-multilingual-MiniLM-L12-v2` (open-source, tanpa prefix) |
 | Vector DB | ChromaDB in-memory, `hnsw:space=cosine`, 1 collection |
@@ -115,7 +115,7 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 ## 🔴 HARD RULES — AUTO-REJECT KALAU DILANGGAR
 
 1. Dataset SFT WAJIB `Ichsan2895/alpaca-gpt4-indonesian`.
-2. Chat template Gemma via `datasets.map()` + **print output ter-format** (bukti `<start_of_turn>`/`<end_of_turn>`).
+2. Chat template Phi-3.5 via `datasets.map()` + **print output ter-format** (bukti `<|user|>`/`<|assistant|>`/`<|end|>`).
 3. QLoRA **4-bit double quantization** (bukan 8-bit/fp16 penuh).
 4. SFTTrainer **min 800 steps** tanpa OOM (kalau OOM: turunkan batch/max_seq, JANGAN turunkan step).
 5. Model WAJIB `save`/`push` **merged_16bit** ke HF **Public** (akun Bimo), link di `link_huggingface.txt`.
@@ -152,14 +152,19 @@ Ada **TIGA** versi sibling di repo yang harus dijaga jaraknya:
 
 ## 🔑 GOTCHA TEKNIS (warisan pengalaman sibling — hemat berjam-jam)
 
-- **Gemma verified (2026-07-20):** `unsloth/gemma-2-2b-it-bnb-4bit` = ungated, prequant nf4+double-quant, lisensi gemma (boleh fine-tune + push public). Chat template key Unsloth = **`"gemma2"`**; token turn = `<start_of_turn>` / `<end_of_turn>`; template map role `assistant`→`model` otomatis (kirim messages role user/assistant).
+- **⛔ GEMMA-2 GAGAL DI T4 — DITINGGALKAN (2026-07-21). Ganti ke Phi-3.5-mini.** Riwayat: awalnya pakai `unsloth/gemma-2-2b-it-bnb-4bit`. SFT "selesai" 800 langkah + merged_16bit ke HF, TAPI hasil generate = **word-salad lalu kolaps jadi koma**. Diagnosis pasti (tes penentu): model BASE gemma jalan koheren di setup inference yang sama, tapi model **hasil fine-tune/merge Bimo rusak** → bukan bug inference. Penyebab: **Gemma-2 tidak stabil dilatih/di-merge fp16 di T4** (T4 tak punya bf16). Tambalan inference (add_special_tokens, `attn_implementation="eager"`, compute fp32) SEMUA tak menolong (output identik) karena bobotnya memang korup. **Pelajaran: JANGAN fine-tune Gemma-2 di T4/fp16.** Qwen/Llama/Phi stabil fp16 → aman.
+- **Phi-3.5 verified (2026-07-21):** `unsloth/Phi-3.5-mini-instruct-bnb-4bit` = ungated, prequant nf4+double-quant, **lisensi MIT**, stabil fp16. Chat template key Unsloth = **`"phi-3.5"`**; token = `<|user|>` / `<|assistant|>` / `<|end|>`; **tanpa BOS** (Phi-3.5 sengaja hapus BOS). LoRA target = proyeksi ter-fusi `qkv_proj`, `o_proj`, `gate_up_proj`, `down_proj` (BUKAN q/k/v terpisah). Inference via `transformers` fp16 biasa (tak butuh eager/fp32 seperti Gemma). Stop token = `<|end|>`.
 - **Unsloth 2026.7.x butuh transformers ≥4.51.3** → install Unsloth **unpinned** (jangan pin manual transformers/trl/datasets → ImportError `CompileConfig`).
+- **TRL `padding_free` default berubah (KETEMU 2026-07-21):** SFTTrainer lempar `ValueError: When padding_free=True without packing, max_length is not enforced`. TRL baru default `padding_free=True`; kombinasi dgn `packing=False` + `max_seq_length` di-set → error. **Fix:** `SFTConfig(..., padding_free=False)`. Juga `warmup_ratio` deprecated → pakai `warmup_steps`. (Muncul di run Phi tapi bukan soal model — pergeseran API TRL krn install unpinned ketarik versi lebih baru.)
 - **`push_to_hub_merged` bug** (`TypeError: safe_serialization`) → pakai pola 2 langkah: `save_pretrained_merged(DIR, tokenizer, save_method="merged_16bit")` lalu `HfApi().upload_folder(..., delete_patterns=["adapter_*"])`.
 - **Dataset `alpaca-gpt4-indonesian` = 2 kolom** (`input`, `output`), BUKAN 3 kolom Alpaca klasik. Map: input→user turn, output→assistant turn.
 - **Gemma double-BOS:** pakai `get_chat_template("gemma2")` + `apply_chat_template(tokenize=False)` lalu SFTTrainer `dataset_text_field="text"`. Kalau curiga double `<bos>`, set `SFTTrainer`/tokenizer tidak menambah special token lagi. Cek sel bukti (harus 1 `<bos>` di awal).
 - **Download model HF di Colab kadang stall** (LFS) → set Colab Secret `HF_TOKEN` + `login()`; kalau parah unduh via `aria2c` / cache ke Drive (lihat log Nazhif Tahap 3).
 - **Colab pola 2× Run All** (sel install → restart session → Run All lagi).
 - **Nama folder Drive jangan ada SPASI di belakang** (`os.path.exists` gagal padahal folder "kelihatan") — gotcha Dafina. Cek spasi tersembunyi lebih awal.
+- **sentence-transformers vs transformers 5.x (KETEMU 2026-07-21):** `SentenceTransformer("...MiniLM...")` di Colab lempar `ValueError: Unrecognized processing class ... Can't instantiate a processor/tokenizer` (ST versi baru manggil `AutoProcessor` yang gagal di transformers 5.x untuk model teks lama). **Fix (dipakai di notebook RAG):** buang sentence-transformers, embed langsung via `transformers` `AutoModel` + **mean pooling** (rata token ditimbang attention mask) + normalisasi L2 — deterministik, tak ketergantung versi ST. Embedder tetap MiniLM. `sentence-transformers` dihapus dari requirements.
+- **DOUBLE-BOS Gemma saat inferensi RAG (KETEMU 2026-07-21):** jawaban keluar sebagai karakter berulang (`,,,,,,`/`"""""`). Penyebab: `apply_chat_template` sudah menambah `<bos>`, lalu `tok(prompt, return_tensors="pt")` menambah `<bos>` KEDUA (default `add_special_tokens=True`). **Fix:** `tok(prompt, ..., add_special_tokens=False)`. (Di SFT tidak kena karena SFTTrainer yang urus tokenisasi.)
+- **GEMMA-2 SOFT-CAPPING wajib `attn_implementation="eager"` (KETEMU 2026-07-21):** setelah fix double-BOS, jawaban masih **word-salad** (kata Indonesia nyambung tapi tak bermakna & tak nyambung konteks). Penyebab: Gemma-2 punya *logit soft-capping* (attn + final) yang TIDAK aktif pada attention default `sdpa` → logit meledak → generasi ngawur. **Fix:** `AutoModelForCausalLM.from_pretrained(..., attn_implementation="eager")`. Sekalian turunkan `repetition_penalty` 1.3→1.15 & buang `no_repeat_ngram_size` (1.3 terlalu agresif, bikin ngelantur pada model bingung). Qwen/Llama tak kena (tak ada soft-capping) — makanya sibling aman.
 
 ## 📁 STRUKTUR FOLDER
 
@@ -189,27 +194,29 @@ bimo-bramantyo/
 > WAJIB diupdate tiap tahap selesai.
 
 - **Tahap 0 — Setup: ✅ SELESAI (2026-07-20).**
-  - [x] Verifikasi base model `unsloth/gemma-2-2b-it-bnb-4bit` (ungated, nf4+double-quant, chat template key `gemma2`, token `<start_of_turn>`/`<end_of_turn>`) via WebFetch HF + source Unsloth `chat_templates.py`.
+  - [x] Verifikasi base model (final = **Phi-3.5-mini**, MIT, ungated, chat template key `phi-3.5`, token `<|user|>`/`<|assistant|>`/`<|end|>`, LoRA target fused `qkv_proj`/`gate_up_proj`) via WebFetch HF + source Unsloth `chat_templates.py`. (Awalnya Gemma-2 — ditinggalkan krn tak stabil fp16 di T4, lihat GOTCHA.)
   - [x] Folder scaffold + CLAUDE.md (matriks diferensiasi) + `.env.example` + `.gitignore` + README + `panduan/PANDUAN_COLAB.md`.
   - [x] Copy 4 PDF `../nazhif-setya-nugroho/artifacts/document_knowledge_RAG/*.pdf` → `data/raw/*.pdf` (rename path-safe: PP_5_2021 16.3MB, PP_35_2021 2.4MB, PP_51_2023 2.6MB, UU_6_2023 81.4MB).
 
-- **Tahap 1 — Notebook Fine-tuning SFT Basic: ✅ DIBANGUN & TERVALIDASI LOKAL (2026-07-20). PENDING Colab Run-All (Bimo).**
-  - [x] `scripts/build_sft_notebook.py` → generate `submission/Fine-tuning_submission_PGABL_Bimo_Bramantyo.ipynb` (24 sel: 13 md + 11 kode). Validasi: JSON valid, `ast.parse` semua sel lolos, scan token-bocor NONE, scan meta-conversation/nama-rekan CLEAN.
-  - [x] Alur: install (unsloth unpinned) → auth Colab Secret → konfigurasi → load Gemma-2-2B 4-bit (+print `quantization_config` bukti double-quant) → LoRA r8/α16/drop0.05 MHA+FFN → load alpaca-id (saring + subset 10k, seed 3407) → `get_chat_template("gemma2")` + `datasets.map()` + **print bukti `<start_of_turn>`/`<end_of_turn>`** + hitung `<bos>` → SFTTrainer 800 langkah (eff batch 8, LR 2e-4 linear+warmup, adamw_8bit) → push pola 2-langkah `merged_16bit` ke `PGABL-Gemma-2-2B-SFT-Bimo` (public) → tulis `link_huggingface.txt`.
-  - [x] API SFTTrainer/SFTConfig disesuaikan dgn env Colab Juli-2026 (referensi metodologi sibling: `tokenizer=` masih dipakai; `max_seq_length`/`dataset_text_field`/`packing` di dalam SFTConfig; push 2-langkah hindari bug `safe_serialization`).
-  - [ ] **USER TODO:** Bimo Run-All di Colab T4 (akun HF sendiri + Secret HF_TOKEN/HF_USERNAME) → model public + link.
+- **⚠️ PIVOT MODEL Gemma-2 → Phi-3.5 (2026-07-21).** Percobaan pertama pakai Gemma-2-2B: SFT + RAG jalan tanpa error, TAPI generate = word-salad (bobot rusak krn Gemma-2 tak stabil fp16 di T4 — lihat GOTCHA). Diagnosis pasti via tes base-model. **Solusi: ganti base ke Phi-3.5-mini (MIT, stabil fp16).** Kedua build script + notebook + CLAUDE + link di-update ke Phi. Repo Gemma lama (`bimo2107/PGABL-Gemma-2-2B-SFT-Bimo`) DITINGGALKAN.
 
-- **Tahap 2 — Notebook RAG Basic + gr.Interface: ✅ DIBANGUN & TERVALIDASI LOKAL (2026-07-20). PENDING Colab Run-All (Bimo).**
-  - [x] **VERIFY-FIRST chunker lokal** (`scripts/verify_chunker.py`): `RecursiveCharacterTextSplitter(1000,150)` — overlap AKTIF (total char 17400 > 15005 asli, irisan chunk[0]→[1] terdeteksi, max chunk 998 ≤1000). pypdf buka 4 PDF (739/56/27/1127 hal), PP_51 → 47 chunk. LULUS.
-  - [x] `scripts/build_rag_notebook.py` → generate `submission/RAG_submission_PGABL_Bimo_Bramantyo.ipynb` (20 sel: 11 md + 9 kode). Validasi JSON/ast/HR-scan CLEAN.
-  - [x] Alur: install → auth+config → mount Drive + verifikasi 4 PDF (`MyDrive/PGABL_Bimo/`) → `muat_pdf` (pypdf) + `potong_teks` (Recursive 1000/150 eksplisit) + metadata → `buat_embedding` MiniLM (normalize) → **ChromaDB in-memory cosine** (add bertahap) → load generator = Gemma SFT Bimo via transformers+BitsAndBytesConfig 4-bit (bukan unsloth — code path beda) → `ambil_konteks` top-4 / `rakit_prompt` {konteks}+{pertanyaan} chat Gemma / `hasilkan_jawaban` greedy stop `<end_of_turn>` / `tanya` → **sel contoh 3 Q&A tercetak (Markdown)** → `gr.Interface` share=True.
-  - [x] Anti-plagiarisme: Gemma vs Llama/Qwen, MiniLM vs bge-m3/e5, ChromaDB in-memory vs FAISS/persistent, Recursive vs regex/sliding/kalimat, penamaan Indonesia berbeda (`muat_pdf`/`potong_teks`/`ambil_konteks`/`hasilkan_jawaban`). Overlap gr.Interface+ChromaDB = pilihan biner rubrik (SAH).
-  - [ ] **USER TODO:** Bimo upload 4 PDF ke Drive + Run-All di Colab T4 (model SFT sudah public).
+- **Tahap 1 — Notebook Fine-tuning SFT Basic (Phi-3.5): ✅ RUN & VERIFIED (2026-07-21).** Model public `bimo2107/PGABL-Phi-3.5-mini-SFT-Bimo` (4B, BF16, merged penuh BUKAN adapter, WebFetch-verified). Notebook ber-output 11/11 sel (265.7 KB), 0 error, 0 token bocor, bukti token `<|user|>`/`<|assistant|>`/`<|end|>`, Langkah=800. Gotcha teratasi: TRL `padding_free=True` default → set `padding_free=False` + `warmup_steps`. Nama file di-rename underscore→hyphen.
+  - [x] `scripts/build_sft_notebook.py` (Phi-3.5) → generate `submission/Fine-tuning_submission_PGABL_Bimo_Bramantyo.ipynb` (24 sel: 13 md + 11 kode). Validasi lokal: JSON valid, `ast.parse` lolos, token-bocor NONE, meta-conversation/nama-rekan CLEAN, tak ada sisa "gemma".
+  - [x] Alur: install (unsloth unpinned) → auth Colab Secret → konfigurasi → load `unsloth/Phi-3.5-mini-instruct-bnb-4bit` (+print `quantization_config`) → LoRA r8/α16/drop0.05 target fused `qkv_proj,o_proj,gate_up_proj,down_proj` → load alpaca-id (saring + subset 10k, seed 3407) → `get_chat_template("phi-3.5")` + `datasets.map()` + **print bukti `<|user|>`/`<|assistant|>`/`<|end|>`** → SFTTrainer 800 langkah (eff batch 8, LR 2e-4 linear+warmup, adamw_8bit) → push pola 2-langkah `merged_16bit` ke `PGABL-Phi-3.5-mini-SFT-Bimo` → tulis `link_huggingface.txt`.
+  - Akun HF Bimo = **`bimo2107`** (LOCKED). HF_USERNAME di Colab Secret WAJIB `bimo2107`.
+  - [ ] **USER TODO:** Bimo Run-All ULANG di Colab T4 → model Phi public + link. (Retrain krn Gemma ditinggalkan.)
 
-- **Tahap 3 — Packaging & Submission: 🟡 SIAP KECUALI OUTPUT (menunggu Bimo Run-All).**
-  - [x] `submission/requirements.txt` pipreqs-style (15 lib) + `submission/link_huggingface.txt` placeholder (`GANTI_USERNAME` → diisi URL asli setelah run).
+- **Tahap 2 — Notebook RAG Basic + gr.Interface (Phi-3.5): ✅ DIBANGUN & TERVALIDASI LOKAL (2026-07-21). PENDING Colab Run-All (Bimo).**
+  - [x] **VERIFY-FIRST chunker lokal** (`scripts/verify_chunker.py`): `RecursiveCharacterTextSplitter(1000,150)` — overlap AKTIF (17400>15005 char, irisan chunk[0]→[1] terdeteksi, max 998 ≤1000). pypdf buka 4 PDF (739/56/27/1127 hal), PP_51 → 47 chunk. LULUS. (Non-model, valid utk model apa pun.)
+  - [x] `scripts/build_rag_notebook.py` (Phi-3.5) → generate `submission/RAG_submission_PGABL_Bimo_Bramantyo.ipynb` (20 sel: 11 md + 9 kode). Validasi JSON/ast/HR-scan CLEAN.
+  - [x] Alur: install → auth+config (REPO Phi) → mount Drive + verifikasi 4 PDF (`MyDrive/PGABL_Bimo/`) → `muat_pdf` (pypdf) + `potong_teks` (Recursive 1000/150) + metadata → `buat_embedding` MiniLM via `transformers` AutoModel+mean-pooling (BUKAN sentence-transformers — hindari bug versi) → **ChromaDB in-memory cosine** → load generator = Phi SFT Bimo via `transformers`+BitsAndBytesConfig 4-bit **fp16** (Phi stabil, tak butuh eager) → `ambil_konteks` top-4 / `rakit_prompt` chat Phi-3.5 / `hasilkan_jawaban` greedy `add_special_tokens=False` + `repetition_penalty=1.15` stop `<|end|>` → **sel contoh 3 Q&A tercetak** → `gr.Interface` share=True.
+  - [x] Anti-plagiarisme: Phi vs Llama/Qwen, MiniLM vs bge-m3/e5, ChromaDB in-memory vs FAISS/persistent, Recursive vs regex/sliding/kalimat, penamaan Indonesia berbeda. Overlap gr.Interface+ChromaDB = pilihan biner rubrik (SAH).
+  - [ ] **USER TODO:** Bimo upload 4 PDF ke Drive + Run-All di Colab T4 (setelah model Phi SFT public).
+
+- **Tahap 3 — Packaging & Submission: 🟡 SIAP KECUALI OUTPUT (menunggu Bimo Run-All 2 notebook Phi).**
+  - [x] `submission/requirements.txt` pipreqs-style (15 lib, tanpa sentence-transformers) + `submission/link_huggingface.txt` = `https://huggingface.co/bimo2107/PGABL-Phi-3.5-mini-SFT-Bimo`.
   - [x] Folder `submission/` = tepat 4 file deliverable (2 ipynb + link + requirements). Tanpa GRPO notebook (Basic).
-  - [ ] **USER TODO:** setelah 2 notebook di-Run-All & di-download (output ter-embed), isi link asli → zip flat `PGABL_Bimo_Bramantyo.zip` (4 file) → upload Dicoding.
+  - [ ] **USER TODO:** setelah 2 notebook Phi di-Run-All & di-download (output ter-embed), pastikan link asli → zip flat `PGABL_Bimo_Bramantyo.zip` (4 file) → upload Dicoding.
 
 ---
-**Status ringkas:** 🟢 Semua kerja lokal beres (Tahap 0-2 dibangun & tervalidasi; scaffold + 2 notebook siap-jalan + chunker terverifikasi). Sisa = **eksekusi Colab oleh Bimo** (butuh akun HF sendiri + Colab Secret + upload 4 PDF ke Drive), lalu packaging zip. Panduan lengkap: [`panduan/PANDUAN_COLAB.md`](panduan/PANDUAN_COLAB.md).
+**Status ringkas:** 🟡 **PIVOT ke Phi-3.5** (Gemma-2 rusak fp16 di T4 → ditinggalkan). Kedua notebook sudah di-rebuild untuk Phi-3.5 + tervalidasi lokal. **Sisa: Bimo Run-All ULANG 2 notebook di Colab T4** — (1) Fine-tuning Phi (retrain ~60-90 mnt, HF_USERNAME=`bimo2107`) → model `PGABL-Phi-3.5-mini-SFT-Bimo` public; (2) RAG (upload 4 PDF ke `MyDrive/PGABL_Bimo/`). Lalu download 2 notebook ber-output → zip flat `PGABL_Bimo_Bramantyo.zip` (4 file). Panduan: [`panduan/PANDUAN_COLAB.md`](panduan/PANDUAN_COLAB.md).

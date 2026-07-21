@@ -1,1 +1,1 @@
-https://huggingface.co/GANTI_USERNAME/PGABL-Gemma-2-2B-SFT-Bimo
+https://huggingface.co/bimo2107/PGABL-Phi-3.5-mini-SFT-Bimo

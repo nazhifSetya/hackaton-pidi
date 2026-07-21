@@ -29,7 +29,7 @@ Ikuti urut. Notebook Fine-tuning WAJIB duluan (menghasilkan model), baru RAG.
 4. **Runtime → Run all.**
    - Sel pertama meng-install Unsloth dkk. Kalau Colab minta **restart session** setelah install → klik restart, lalu **Run all lagi** (pola 2× Run All normal).
 5. Tunggu training **800 steps** (± 45–90 menit di T4). Jangan tutup tab.
-6. Di akhir, model di-push ke `https://huggingface.co/<username>/PGABL-Gemma-2-2B-SFT-Bimo`.
+6. Di akhir, model di-push ke `https://huggingface.co/<username>/PGABL-Phi-3.5-mini-SFT-Bimo`.
    - **Verifikasi:** buka link itu → pastikan **Public** + ada file `model-0000x-of-0000x.safetensors` (model utuh, bukan cuma `adapter_*`).
 7. Sel terakhir menuliskan `link_huggingface.txt`. Catat URL-nya.
 8. **File → Download → Download .ipynb** (yang SUDAH ada output) → nanti timpa file di `submission/`.

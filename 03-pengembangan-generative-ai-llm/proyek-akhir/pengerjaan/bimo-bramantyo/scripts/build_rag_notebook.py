@@ -6,7 +6,7 @@ Merakit `submission/RAG_submission_PGABL_Bimo_Bramantyo.ipynb` lalu memvalidasi
 
 Pipeline: muat 4 PDF -> potong (RecursiveCharacterTextSplitter 1000/150) ->
 embedding MiniLM -> ChromaDB in-memory (cosine) -> retrieve top-4 -> generate
-dengan model K1 (Gemma SFT Bimo) -> contoh Q&A + gr.Interface.
+dengan model K1 (Phi-3.5 SFT Bimo) -> contoh Q&A + gr.Interface.
 Jalankan: python scripts/build_rag_notebook.py
 """
 import ast
@@ -38,7 +38,7 @@ sel.append(md("""
     Notebook ini membangun asisten tanya-jawab atas **4 regulasi Cipta Kerja**
     (PP 5/2021, PP 35/2021, PP 51/2023, UU 6/2023). Dokumen dipotong, di-embed,
     disimpan di vector database lokal, lalu jawaban dibuat oleh **model hasil
-    fine-tuning sendiri** (Gemma-2-2B SFT dari Kriteria 1).
+    fine-tuning sendiri** (Phi-3.5-mini SFT dari Kriteria 1).
 
     Alur: muat PDF -> potong teks -> embedding -> ChromaDB -> retrieve ->
     rakit prompt -> generate -> antarmuka Gradio.
@@ -55,7 +55,7 @@ sel.append(md("""
 """))
 sel.append(code(r"""
     %%capture
-    !pip install --upgrade --no-cache-dir pypdf langchain-text-splitters sentence-transformers chromadb gradio
+    !pip install --upgrade --no-cache-dir pypdf langchain-text-splitters chromadb gradio
     !pip install --upgrade --no-cache-dir transformers accelerate bitsandbytes huggingface_hub
 """))
 
@@ -82,7 +82,7 @@ sel.append(code(r"""
     from huggingface_hub import login
     login(token=HF_TOKEN)
 
-    REPO_MODEL    = f"{HF_USERNAME}/PGABL-Gemma-2-2B-SFT-Bimo"
+    REPO_MODEL    = f"{HF_USERNAME}/PGABL-Phi-3.5-mini-SFT-Bimo"
     ID_EMBED      = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     UKURAN_CHUNK  = 1000
     OVERLAP_CHUNK = 150
@@ -155,19 +155,42 @@ sel.append(code(r"""
 sel.append(md("""
     ## 5. Embedding & Simpan ke ChromaDB (in-memory, cosine)
 
-    Model embedding open-source `paraphrase-multilingual-MiniLM-L12-v2` mengubah
-    tiap chunk menjadi vektor ter-normalisasi, lalu disimpan ke koleksi ChromaDB
-    in-memory dengan ruang jarak **cosine**. Penambahan dilakukan bertahap agar
-    tidak menembus batas ukuran batch ChromaDB.
+    Model embedding open-source `paraphrase-multilingual-MiniLM-L12-v2` dimuat via
+    `transformers` (`AutoModel`) lalu tiap chunk diringkas jadi satu vektor dengan
+    **mean pooling** (rata-rata token, ditimbang attention mask) + normalisasi L2 —
+    ini rumus baku model kalimat MiniLM. Vektor disimpan ke koleksi ChromaDB
+    in-memory dengan ruang jarak **cosine**; penambahan bertahap agar tak menembus
+    batas ukuran batch ChromaDB.
 """))
 sel.append(code(r"""
-    from sentence_transformers import SentenceTransformer
+    import torch
     import chromadb
+    from transformers import AutoTokenizer, AutoModel
 
-    perangkat_embed = SentenceTransformer(ID_EMBED)
-    vektor = perangkat_embed.encode(
-        dokumen, batch_size=64, show_progress_bar=True, normalize_embeddings=True
-    ).tolist()
+    tok_embed = AutoTokenizer.from_pretrained(ID_EMBED)
+    model_embed = AutoModel.from_pretrained(ID_EMBED).eval()
+    PERANGKAT = "cuda" if torch.cuda.is_available() else "cpu"
+    model_embed = model_embed.to(PERANGKAT)
+
+    def _rata_token(keluaran, mask):
+        emb = keluaran.last_hidden_state
+        m = mask.unsqueeze(-1).expand(emb.size()).float()
+        return (emb * m).sum(1) / m.sum(1).clamp(min=1e-9)
+
+    def buat_embedding(daftar_teks, batch=64):
+        hasil = []
+        for i in range(0, len(daftar_teks), batch):
+            enc = tok_embed(daftar_teks[i:i + batch], padding=True, truncation=True,
+                            max_length=256, return_tensors="pt").to(PERANGKAT)
+            with torch.no_grad():
+                keluaran = model_embed(**enc)
+            vek = _rata_token(keluaran, enc["attention_mask"])
+            vek = torch.nn.functional.normalize(vek, p=2, dim=1)
+            hasil.append(vek.cpu())
+        return torch.cat(hasil).tolist()
+
+    vektor = buat_embedding(dokumen)
+    print("Dimensi embedding:", len(vektor[0]), "| jumlah vektor:", len(vektor))
 
     klien = chromadb.Client()
     koleksi = klien.create_collection(
@@ -214,7 +237,7 @@ sel.append(code(r"""
     )
     generator.eval()
 
-    AKHIR_GILIRAN = tok.convert_tokens_to_ids("<end_of_turn>")
+    AKHIR_GILIRAN = tok.convert_tokens_to_ids("<|end|>")
     STOP_ID = [tok.eos_token_id, AKHIR_GILIRAN]
     print("Generator siap:", REPO_MODEL)
 """))
@@ -224,12 +247,12 @@ sel.append(md("""
     ## 7. Fungsi RAG: Retrieve -> Prompt -> Generate
 
     `ambil_konteks` mengambil `top-4` chunk paling relevan; `rakit_prompt`
-    menyusun prompt berisi `{konteks}` dan `{pertanyaan}` dalam format chat Gemma;
+    menyusun prompt berisi `{konteks}` dan `{pertanyaan}` dalam format chat Phi-3.5;
     `hasilkan_jawaban` melakukan inferensi. `tanya` menyatukan ketiganya.
 """))
 sel.append(code(r"""
     def ambil_konteks(pertanyaan, k=TOP_K):
-        q = perangkat_embed.encode([pertanyaan], normalize_embeddings=True).tolist()
+        q = buat_embedding([pertanyaan])
         hasil = koleksi.query(query_embeddings=q, n_results=k,
                               include=["documents", "metadatas"])
         return list(zip(hasil["documents"][0], hasil["metadatas"][0]))
@@ -246,12 +269,16 @@ sel.append(code(r"""
         return tok.apply_chat_template(pesan, tokenize=False, add_generation_prompt=True)
 
     def hasilkan_jawaban(prompt):
-        masuk = tok(prompt, return_tensors="pt").to(generator.device)
+        # add_special_tokens=False: prompt sudah punya <bos> dari chat template,
+        # jangan sampai tokenizer menambah token spesial ganda di depan prompt.
+        masuk = tok(prompt, return_tensors="pt",
+                    add_special_tokens=False).to(generator.device)
         with torch.no_grad():
             keluar = generator.generate(
                 **masuk,
                 max_new_tokens=320,
                 do_sample=False,
+                repetition_penalty=1.15,
                 eos_token_id=STOP_ID,
                 pad_token_id=tok.eos_token_id,
             )
@@ -321,7 +348,7 @@ sel.append(md("""
     | Chunking | `RecursiveCharacterTextSplitter`, 1000 / overlap 150 (eksplisit) |
     | Embedding | `paraphrase-multilingual-MiniLM-L12-v2` (open-source) |
     | Vector DB | ChromaDB in-memory, ruang cosine |
-    | Generator | Gemma-2-2B hasil fine-tuning sendiri (Kriteria 1) |
+    | Generator | Phi-3.5-mini hasil fine-tuning sendiri (Kriteria 1) |
     | Antarmuka | Gradio `gr.Interface` |
 
     Kriteria 2 (Basic) terpenuhi.
