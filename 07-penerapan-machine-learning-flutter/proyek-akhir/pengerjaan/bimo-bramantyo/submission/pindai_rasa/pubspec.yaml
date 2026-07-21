@@ -1,0 +1,37 @@
+name: pindai_rasa
+description: "PindaiRasa — pindai foto makanan lalu tebak namanya memakai model AIY Food V1 (Google) di atas runtime LiteRT. Proyek akhir kelas Belajar Penerapan Machine Learning untuk Flutter (Dicoding) oleh Bimo Bramantyo."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Ambil foto lewat kamera atau pilih dari galeri perangkat (Kriteria 1).
+  image_picker: ^1.1.2
+
+  # Jalankan berkas .tflite AIY Food V1 on-device lewat LiteRT (Kriteria 2).
+  flutter_litert: ^3.5.1
+
+  # Dekode & ubah ukuran bitmap sebelum masuk ke tensor input model.
+  image: ^4.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/models/aiy_food_v1.tflite
+    - assets/models/labels.txt
