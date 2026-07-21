@@ -1,0 +1,9 @@
+Kriteria 1 — Eksperimen & Preprocessing Dataset
+
+Tautan repository GitHub (WAJIB publik):
+https://github.com/<USERNAME_GITHUB_BIMO>/Eksperimen_SML_Bimo-Bramantyo
+
+Catatan:
+- Ganti <USERNAME_GITHUB_BIMO> dengan username GitHub Bimo setelah repo di-push.
+- Pastikan visibilitas repository disetel PUBLIC sebelum submit.
+- Isi repository: wine_raw.csv + preprocessing/ (Eksperimen_Bimo-Bramantyo.ipynb + wine_preprocessing.csv).

@@ -1,0 +1,18 @@
+===== BUKTI SERVING — Layanan Model Kultivar Anggur (Bimo Bramantyo) =====
+Endpoint serving : http://127.0.0.1:8010
+Model            : Pipeline(StandardScaler + SVC RBF), dimuat via mlflow.pyfunc
+
+----- GET /health -----
+{"model":"svc_rbf_anggur","status":"ok"}
+
+
+----- POST /predict (5 sampel uji, fitur skala asli) -----
+Mengirim 5 sampel ke http://127.0.0.1:8010/predict ...
+
+Sampel 1: kelas=0 (Kultivar_0)
+Sampel 2: kelas=0 (Kultivar_0)
+Sampel 3: kelas=1 (Kultivar_1)
+Sampel 4: kelas=2 (Kultivar_2)
+Sampel 5: kelas=1 (Kultivar_1)
+
+Selesai. Metrik prediksi kini terekam & siap di-scrape Prometheus.

@@ -1,0 +1,36 @@
+name: CI Anggur - Re-training Model
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  latih-ulang-model:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Siapkan Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalasi dependency pelatihan
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow==2.19.0 scikit-learn==1.5.2 pandas==2.2.3 "numpy<2.2"
+
+      - name: Re-training model lewat MLflow Project
+        working-directory: MLProject
+        run: |
+          mlflow run . --env-manager=local --experiment-name "Klasifikasi_Kultivar_Anggur_CI"
+
+      - name: Unggah artefak hasil pelatihan
+        uses: actions/upload-artifact@v4
+        with:
+          name: anggur-mlruns
+          path: MLProject/mlruns
+          if-no-files-found: warn

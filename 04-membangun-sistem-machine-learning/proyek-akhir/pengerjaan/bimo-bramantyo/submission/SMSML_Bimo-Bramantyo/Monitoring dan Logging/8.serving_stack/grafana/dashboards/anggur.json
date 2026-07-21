@@ -1,0 +1,80 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["anggur", "smsml", "bimo"],
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "bimo",
+  "uid": "anggur-monitoring",
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Laju Request API (per endpoint)",
+      "datasource": { "type": "prometheus", "uid": "prometheus-anggur" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 18 } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "targets": [
+        { "refId": "A", "expr": "rate(anggur_permintaan_total[1m])", "legendFormat": "{{endpoint}} ({{status}})", "datasource": { "type": "prometheus", "uid": "prometheus-anggur" } }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Rata-rata Latensi Inferensi (detik)",
+      "datasource": { "type": "prometheus", "uid": "prometheus-anggur" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 18 } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "targets": [
+        { "refId": "A", "expr": "sum(rate(anggur_inferensi_durasi_seconds_sum[5m])) / clamp_min(sum(rate(anggur_inferensi_durasi_seconds_count[5m])), 0.0001)", "legendFormat": "rata-rata latensi", "datasource": { "type": "prometheus", "uid": "prometheus-anggur" } }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Total Prediksi per Kultivar",
+      "datasource": { "type": "prometheus", "uid": "prometheus-anggur" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "bars", "fillOpacity": 70 } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi" } },
+      "targets": [
+        { "refId": "A", "expr": "anggur_prediksi_total", "legendFormat": "{{kultivar}}", "datasource": { "type": "prometheus", "uid": "prometheus-anggur" } }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "gauge",
+      "title": "Pemakaian CPU (%)",
+      "datasource": { "type": "prometheus", "uid": "prometheus-anggur" },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 60 }, { "color": "red", "value": 85 } ] } }, "overrides": [] },
+      "options": { "showThresholdLabels": false, "showThresholdMarkers": true },
+      "targets": [
+        { "refId": "A", "expr": "anggur_cpu_persen", "legendFormat": "CPU", "datasource": { "type": "prometheus", "uid": "prometheus-anggur" } }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "gauge",
+      "title": "Pemakaian Memori (%)",
+      "datasource": { "type": "prometheus", "uid": "prometheus-anggur" },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 70 }, { "color": "red", "value": 90 } ] } }, "overrides": [] },
+      "options": { "showThresholdLabels": false, "showThresholdMarkers": true },
+      "targets": [
+        { "refId": "A", "expr": "anggur_memori_persen", "legendFormat": "Memori", "datasource": { "type": "prometheus", "uid": "prometheus-anggur" } }
+      ]
+    }
+  ]
+}

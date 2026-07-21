@@ -1,0 +1,7 @@
+name: klasifikasi_kultivar_anggur
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "python modelling.py"

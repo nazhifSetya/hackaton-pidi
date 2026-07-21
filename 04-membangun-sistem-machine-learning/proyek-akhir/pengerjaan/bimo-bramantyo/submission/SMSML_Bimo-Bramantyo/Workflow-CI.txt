@@ -1,0 +1,11 @@
+Kriteria 3 — Workflow CI (MLflow Project + GitHub Actions)
+
+Tautan repository GitHub (WAJIB publik):
+https://github.com/<USERNAME_GITHUB_BIMO>/Workflow-CI
+
+Catatan:
+- Ganti <USERNAME_GITHUB_BIMO> dengan username GitHub Bimo setelah repo di-push.
+- Pastikan visibilitas repository disetel PUBLIC sebelum submit.
+- Isi repository: MLProject/ (modelling.py, conda.yaml, MLProject, wine_preprocessing.csv)
+  dan .github/workflows/ci.yml.
+- Pastikan Actions minimal satu kali berhasil (hijau) sebelum submit.
