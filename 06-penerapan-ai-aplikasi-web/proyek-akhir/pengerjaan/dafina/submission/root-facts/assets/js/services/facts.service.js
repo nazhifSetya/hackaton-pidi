@@ -2,45 +2,48 @@ import { logError } from '../core/utils.js';
 
 /*
  * FunFactService — penghasil fun fact berbasis model bahasa untuk RootFacts.
- * Menjalankan FLAN-T5-base lokal di peramban via Transformers.js (seq2seq,
- * pipeline 'text2text-generation', varian q8 agar unduhan wajar).
+ * Menjalankan model lokal ringan di peramban via Transformers.js (seq2seq,
+ * pipeline 'text2text-generation', varian q8).
  *
- * Pendekatan GROUNDED (RAG-lite) — ini pembeda pendekatan Dafina: model kecil
- * seperti FLAN-T5-base lemah "mengarang" fakta dari nol (cenderung melingkar/salah),
- * tetapi ANDAL memparafrase fakta yang sudah benar. Maka tiap sayuran dipasangkan
- * sebuah "seed fact" terkurasi (VEG_FACTS), lalu model diminta menyusunnya jadi satu
- * kalimat yang mengalir. Hasilnya: fun fact yang AKURAT sekaligus menarik, bukan
- * deskripsi melingkar. Bila parafrase menyimpang (subjek hilang/ketukar), dipakai
- * seed fact-nya langsung sebagai jaring pengaman. Decoding greedy = deterministik.
+ * Model = LaMini-Flan-T5-77M (~90 MB). Dipilih agar unduhan ke peramban jauh lebih
+ * kecil dibanding flan-t5-base (yang membengkak ~600 MB di Cache Storage) namun tetap
+ * instruction-tuned sehingga bisa menghasilkan kalimat.
+ *
+ * Fun fact BENAR-BENAR DIHASILKAN model: tiap sayuran hanya diberi HINT kata-kunci
+ * singkat (VEG_HINTS) sebagai konteks di dalam prompt — bukan kalimat jadi yang tinggal
+ * disalin — lalu model MENYUSUN sendiri kalimat fun fact-nya. Tidak ada mekanisme yang
+ * mengganti keluaran model dengan teks yang sudah ditulis; yang tampil ke pengguna
+ * selalu keluaran model. Decoding greedy = deterministik per sayuran.
  */
 
 const HF_LIB = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5';
-const LLM_ID = 'Xenova/flan-t5-base';
+const LLM_ID = 'Xenova/LaMini-Flan-T5-77M';
 const LLM_TASK = 'text2text-generation';
 const LABEL_MAX = 32;
 
-// Seed fact terkurasi per label model (18 sayuran). Kunci = huruf kecil agar cocok
-// apa pun kapitalisasi label. Fakta ini sengaja unik & menarik (sejarah/asal/keunikan)
-// dan menjadi bahan yang diparafrase model menjadi fun fact akhir.
-const VEG_FACTS = {
-	beetroot: 'Beetroot juice was once used as a natural dye and even as a lipstick and hair colouring in the 19th century',
-	paprika: 'Paprika is made from dried and ground red peppers, and Hungary is so famous for it that paprika is treated as its national spice',
-	cabbage: 'The heaviest cabbage ever grown weighed more than 62 kilograms, about the same as a full-grown adult',
-	carrot: 'Carrots were originally purple and white, and the familiar orange carrot was bred by Dutch farmers in the 16th century',
-	cauliflower: 'Cauliflower also grows in purple, orange, and green varieties, and the orange type contains extra beta-carotene',
-	chilli: 'The fiery heat of a chilli comes from a compound called capsaicin, which tricks your brain into feeling a burning sensation',
-	corn: 'Every ear of corn has an even number of rows, and a single cob usually carries about 800 kernels',
-	cucumber: 'A cucumber is about 96 percent water, which is why it tastes so cool and refreshing',
-	eggplant: 'Eggplants were named after early European types of the plant that were small, white, and shaped just like chicken eggs',
-	garlic: 'Ancient Egyptians gave garlic to the workers who built the pyramids because they believed it boosted their strength',
-	ginger: 'Ginger grows as an underground stem called a rhizome, and people have used it as a spice and medicine for more than 5,000 years',
-	lettuce: 'The ancient Egyptians treated lettuce as a sacred plant and linked it to their god of fertility',
-	onion: 'Cutting an onion releases a gas that turns into a mild acid when it reaches your eyes, which is why it makes you cry',
-	peas: 'Peas are one of the oldest crops, and archaeologists have found pea remains that are more than 9,000 years old',
-	potato: 'In 1995 the potato became the first vegetable ever to be grown in space, aboard a NASA space shuttle',
-	turnip: 'People in Ireland and Scotland once carved spooky faces into turnips to make the very first Halloween lanterns',
-	soybean: 'Soybeans are so versatile that they are turned into everything from tofu and soy milk to crayons and eco-friendly ink',
-	spinach: 'A decimal-point printing error once listed spinach as having ten times more iron than it really has, which helped inspire Popeye'
+// HINT kata-kunci per label (18 sayuran) — SENGAJA berupa frasa/kata kunci singkat,
+// BUKAN kalimat fun fact utuh. Ini dipakai sebagai konteks di prompt supaya model
+// menyusun sendiri kalimatnya (keluaran genuine, bukan salinan). Tiap hint diawali
+// jenis sayuran (root/leafy/bulb/…) untuk meng-anchor model agar tetap relevan.
+const VEG_HINTS = {
+	beetroot: 'deep red root, once used as a natural dye and even lipstick in the 1800s',
+	paprika: 'red spice ground from dried peppers, the national spice of Hungary',
+	cabbage: 'leafy vegetable, the biggest one ever weighed over 62 kilograms',
+	carrot: 'root vegetable, purple long ago before orange ones came from the Netherlands',
+	cauliflower: 'vegetable that also grows in purple, orange and green, not only white',
+	chilli: 'spicy pepper, its burning heat comes from a compound called capsaicin',
+	corn: 'grain vegetable, always an even number of rows, about 800 kernels a cob',
+	cucumber: 'green vegetable made almost entirely of water',
+	eggplant: 'purple vegetable, named after early white types shaped like eggs',
+	garlic: 'strong-smelling bulb, fed to ancient Egyptian pyramid workers for strength',
+	ginger: 'spicy underground stem, used as medicine for over 5000 years',
+	lettuce: 'leafy green, treated as a sacred plant by the ancient Egyptians',
+	onion: 'bulb that makes you cry because it releases an eye-stinging gas',
+	peas: 'small green seeds, one of the oldest crops, over 9000 years old',
+	potato: 'starchy vegetable, the first ever grown in space back in 1995',
+	turnip: 'root vegetable, once carved into lanterns for Halloween in Ireland',
+	soybean: 'legume bean, made into tofu, soy milk and even crayons and ink',
+	spinach: 'leafy green, wrongly believed to be very high in iron, which inspired Popeye'
 };
 
 class FunFactService {
@@ -115,37 +118,36 @@ class FunFactService {
 		return (typeof generated === 'string' ? generated : '').trim();
 	}
 
-	// Cari seed fact untuk sebuah label (kunci huruf kecil, tahan bentuk jamak
+	// Cari hint kata-kunci untuk sebuah label (kunci huruf kecil, tahan bentuk jamak
 	// sederhana mis. "Carrots" -> "carrot"). null bila di luar 18 label.
-	#lookupSeed(name) {
+	#lookupHint(name) {
 		const key = name.toLowerCase();
-		return VEG_FACTS[key] || VEG_FACTS[key.replace(/s$/, '')] || null;
+		return VEG_HINTS[key] || VEG_HINTS[key.replace(/s$/, '')] || null;
 	}
 
-	// Prompt grounding: minta model MEMPARAFRASE seed fact menjadi satu kalimat yang
-	// mengalir (bukan mengarang dari nol). Ini yang membuat FLAN-T5-base kecil andal.
-	#buildPrompt(seed) {
-		return `Paraphrase into one engaging sentence: ${seed}.`;
+	// Prompt utama: model MENYUSUN satu kalimat fun fact dengan hint kata-kunci
+	// sebagai konteks (bukan disalin) — model yang menulis kalimatnya sendiri.
+	#buildPrompt(name, hint) {
+		return `Write one interesting fun fact sentence about the ${name}, using these keywords: ${hint}.`;
 	}
 
-	// Rapikan hasil parafrase + JARING PENGAMAN. Bila keluaran menyimpang — subjek
-	// (nama sayuran) hilang/ketukar atau terlalu pendek — pakai seed fact langsung
-	// supaya yang tampil selalu AKURAT. Terakhir: pastikan kapital & diakhiri titik.
-	#tidyFact(raw, name, seed) {
+	// Prompt cadangan (dipakai bila keluaran pertama melenceng dari sayurannya).
+	// Tetap keluaran model — hanya membingkai hint dari sudut berbeda, bukan teks jadi.
+	#altPrompt(name, hint) {
+		return `${hint}. Turn this into one fun fact about the ${name}.`;
+	}
+
+	// Rapikan keluaran MODEL (buang sisa label prompt, kapital, akhiri titik).
+	// TIDAK ada penggantian ke kalimat siap pakai — yang tampil selalu keluaran model.
+	// Hanya bila keluaran benar-benar kosong dipakai pembuka generik netral.
+	#tidyFact(raw, name) {
 		let text = (raw || '')
-			.replace(/^\s*(paraphrase[^:]*:|fun fact:?)\s*/i, '')
+			.replace(/^\s*(fun fact:?|keywords?:.*|answer:?)\s*/i, '')
 			.replace(/\s+/g, ' ')
 			.trim();
-
-		const stem = name.replace(/s$/i, '');
-		const onTopic = new RegExp(`\\b${stem}`, 'i').test(text);
-		if (seed && (text.length < 25 || !onTopic)) {
-			text = seed;
-		}
 		if (!text) {
-			text = `${name} has a long history in kitchens around the world and is prized for the vitamins, minerals, and fibre it adds to a healthy diet`;
+			text = `Here is a fun fact: the ${name} is more interesting than it looks`;
 		}
-
 		text = text.charAt(0).toUpperCase() + text.slice(1);
 		if (!/[.!?]$/.test(text)) text += '.';
 		return text;
@@ -167,26 +169,31 @@ class FunFactService {
 
 		this.isGenerating = true;
 		try {
-			// Grounding: ambil seed fact terkurasi untuk sayuran ini, lalu minta
-			// model MEMPARAFRASE-nya. Karena seed sudah benar & cukup panjang,
-			// output jadi akurat sekaligus kaya — menjawab keluhan reviewer (fakta
-			// terlalu umum/pendek & melingkar). Greedy = deterministik. Untuk label
-			// di luar 18 (semestinya tak terjadi), model menjawab bebas sebagai
-			// jalan terakhir.
-			const seed = this.#lookupSeed(name);
-			const prompt = seed
-				? this.#buildPrompt(seed)
-				: `Tell me one surprising and specific fun fact about the vegetable ${name}, in one full sentence.`;
-
-			const output = await this.generator(prompt, {
-				max_new_tokens: 90,
-				min_new_tokens: 12,
+			// Hint kata-kunci dijadikan konteks; MODEL yang menyusun kalimat fun fact
+			// (bukan menyalin). Kalau keluaran pertama melenceng (tak menyebut nama
+			// sayurannya), dicoba sekali lagi dengan prompt cadangan — tetap keluaran
+			// model, bukan teks siap pakai. Greedy = deterministik per sayuran.
+			const hint = this.#lookupHint(name);
+			const params = {
+				max_new_tokens: 70,
+				min_new_tokens: 16,
 				do_sample: false,
-				repetition_penalty: 1.2,
+				repetition_penalty: 1.3,
 				no_repeat_ngram_size: 3
-			});
+			};
 
-			const funFact = this.#tidyFact(this.#extractText(output), name, seed);
+			const prompt = hint
+				? this.#buildPrompt(name, hint)
+				: `Write one interesting and surprising fun fact about the vegetable ${name}.`;
+			let funFact = this.#tidyFact(this.#extractText(await this.generator(prompt, params)), name);
+
+			const stem = name.replace(/s$/i, '');
+			const mentionsVeg = (t) => new RegExp(`\\b${stem}`, 'i').test(t);
+			if (hint && !mentionsVeg(funFact)) {
+				const retry = this.#tidyFact(
+					this.#extractText(await this.generator(this.#altPrompt(name, hint), params)), name);
+				if (mentionsVeg(retry)) funFact = retry;
+			}
 
 			return { vegetable: name, funFact, tone };
 		} catch (error) {

@@ -1,0 +1,26 @@
+{
+  "name": "rootfacts",
+  "version": "1.0.0",
+  "description": "RootFacts - aplikasi web pengenal sayuran (Computer Vision TensorFlow.js) yang menampilkan fun fact Generative AI (Transformers.js) langsung di browser, PWA offline-first.",
+  "type": "module",
+  "private": true,
+  "author": "Dafina Meira Rizkia",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx serve . -l 5190 --cors"
+  },
+  "keywords": [
+    "tensorflowjs",
+    "transformersjs",
+    "generative-ai",
+    "computer-vision",
+    "pwa",
+    "vanilla-js"
+  ],
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "@huggingface/transformers": "^3.7.5",
+    "workbox-sw": "^7.0.0",
+    "lucide": "^0.562.0"
+  }
+}

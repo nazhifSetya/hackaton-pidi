@@ -24,7 +24,7 @@ function bootServiceWorker(wb) {
 	core.setCacheNameDetails({ prefix: 'rootfacts-dmr', suffix: 'v1' });
 	core.setConfig?.({ debug: false });
 
-	const REV = 'dmr-2026-07-20-r2';
+	const REV = 'dmr-2026-07-20-r3';
 	const withRev = (list) => list.map((url) => ({ url, revision: REV }));
 
 	const APP_SHELL = [
