@@ -4,11 +4,12 @@ Minimal-pass build. Backend = Hapi (pure `@tensorflow/tfjs` + `sharp`, no native
 Deploy target = **Cloud Run** (auto-satisfies criteria 3 backend deploy + 7 static IP).
 
 ## Fixed identifiers
-- Project ID: `submissionmlgc-nazhifsetya`
+- Project ID: `submissionmlgc-dafina1907`  — format Dicoding `submissionmlgc-namapeserta` (≤30 char, lowercase). Ganti kalau mau nama lain.
 - Region: `asia-southeast2` (Jakarta)  — change if preferred
-- Bucket (model): `submissionmlgc-nazhifsetya-model`
+- Bucket (model): `submissionmlgc-dafina1907-model`
 - Firestore: `(default)` database, Native mode, collection `predictions`
 - Reviewer: `reviewer_googlecloud@dicoding.com`
+- Billing: pakai billing account yang SAMA dengan proyek lain (project tetap baru & atas nama Dafina).
 
 ## Status
 - [x] Phase 0–2 DONE + verified locally. All 4 mandatory Postman scenarios pass over HTTP:
@@ -29,12 +30,12 @@ Deploy target = **Cloud Run** (auto-satisfies criteria 3 backend deploy + 7 stat
 ## Remaining commands (run after `gcloud auth login`)
 
 ```bash
-PROJECT=submissionmlgc-nazhifsetya
+PROJECT=submissionmlgc-dafina1907
 REGION=asia-southeast2
 BUCKET=$PROJECT-model
 
 # 3) Project + billing + APIs
-gcloud config set account nazhif.nugroho@gmail.com
+gcloud config set account <email-google-dafina>   # akun Google yang punya akses ke billing account tim
 gcloud projects create $PROJECT
 gcloud billing projects link $PROJECT --billing-account=<BILLING_ACCOUNT_ID>
 gcloud config set project $PROJECT

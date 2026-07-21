@@ -6,7 +6,7 @@ Merakit `submission/RAG_submission_PGABL_Bimo_Bramantyo.ipynb` lalu memvalidasi
 
 Pipeline: muat 4 PDF -> potong (RecursiveCharacterTextSplitter 1000/150) ->
 embedding MiniLM -> ChromaDB in-memory (cosine) -> retrieve top-4 -> generate
-dengan model K1 (Phi-3.5 SFT Bimo) -> contoh Q&A + gr.Interface.
+dengan model K1 (Llama-3.2 SFT Bimo) -> contoh Q&A + gr.Interface.
 Jalankan: python scripts/build_rag_notebook.py
 """
 import ast
@@ -38,7 +38,7 @@ sel.append(md("""
     Notebook ini membangun asisten tanya-jawab atas **4 regulasi Cipta Kerja**
     (PP 5/2021, PP 35/2021, PP 51/2023, UU 6/2023). Dokumen dipotong, di-embed,
     disimpan di vector database lokal, lalu jawaban dibuat oleh **model hasil
-    fine-tuning sendiri** (Phi-3.5-mini SFT dari Kriteria 1).
+    fine-tuning sendiri** (Llama-3.2-1B SFT dari Kriteria 1).
 
     Alur: muat PDF -> potong teks -> embedding -> ChromaDB -> retrieve ->
     rakit prompt -> generate -> antarmuka Gradio.
@@ -82,7 +82,7 @@ sel.append(code(r"""
     from huggingface_hub import login
     login(token=HF_TOKEN)
 
-    REPO_MODEL    = f"{HF_USERNAME}/PGABL-Phi-3.5-mini-SFT-Bimo"
+    REPO_MODEL    = f"{HF_USERNAME}/PGABL-Llama-3.2-1B-SFT-Bimo"
     ID_EMBED      = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     UKURAN_CHUNK  = 1000
     OVERLAP_CHUNK = 150
@@ -237,7 +237,7 @@ sel.append(code(r"""
     )
     generator.eval()
 
-    AKHIR_GILIRAN = tok.convert_tokens_to_ids("<|end|>")
+    AKHIR_GILIRAN = tok.convert_tokens_to_ids("<|eot_id|>")
     STOP_ID = [tok.eos_token_id, AKHIR_GILIRAN]
     print("Generator siap:", REPO_MODEL)
 """))
@@ -247,7 +247,7 @@ sel.append(md("""
     ## 7. Fungsi RAG: Retrieve -> Prompt -> Generate
 
     `ambil_konteks` mengambil `top-4` chunk paling relevan; `rakit_prompt`
-    menyusun prompt berisi `{konteks}` dan `{pertanyaan}` dalam format chat Phi-3.5;
+    menyusun prompt berisi `{konteks}` dan `{pertanyaan}` dalam format chat Llama-3;
     `hasilkan_jawaban` melakukan inferensi. `tanya` menyatukan ketiganya.
 """))
 sel.append(code(r"""
@@ -348,7 +348,7 @@ sel.append(md("""
     | Chunking | `RecursiveCharacterTextSplitter`, 1000 / overlap 150 (eksplisit) |
     | Embedding | `paraphrase-multilingual-MiniLM-L12-v2` (open-source) |
     | Vector DB | ChromaDB in-memory, ruang cosine |
-    | Generator | Phi-3.5-mini hasil fine-tuning sendiri (Kriteria 1) |
+    | Generator | Llama-3.2-1B hasil fine-tuning sendiri (Kriteria 1) |
     | Antarmuka | Gradio `gr.Interface` |
 
     Kriteria 2 (Basic) terpenuhi.

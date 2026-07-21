@@ -32,14 +32,14 @@ sel = []
 
 # --- Judul -----------------------------------------------------------------
 sel.append(md("""
-    # Fine-tuning SLM Phi-3.5-mini (QLoRA) — Kriteria 1 PGABL
+    # Fine-tuning SLM Llama-3.2-1B (QLoRA) — Kriteria 1 PGABL
 
-    Notebook ini melatih model bahasa kecil **Phi-3.5-mini-instruct** memakai teknik
+    Notebook ini melatih model bahasa kecil **Llama-3.2-1B-Instruct** memakai teknik
     **QLoRA 4-bit** pada dataset instruksi Bahasa Indonesia, lalu mengunggah
     hasilnya ke Hugging Face agar bisa dipanggil kembali pada tahap RAG.
 
     Alur: instalasi -> autentikasi -> muat model 4-bit -> pasang LoRA ->
-    format dataset (chat template Phi-3.5) -> latih 800 langkah -> unggah
+    format dataset (chat template Llama-3) -> latih 800 langkah -> unggah
     `merged_16bit`.
 
     **Lingkungan:** Google Colab, Runtime **T4 GPU**.
@@ -92,8 +92,8 @@ sel.append(md("""
     Semua angka penting dikumpulkan di satu tempat agar mudah dilacak reviewer.
 """))
 sel.append(code("""
-    ID_MODEL     = "unsloth/Phi-3.5-mini-instruct-bnb-4bit"   # sudah 4-bit (nf4 + double quant)
-    REPO_MODEL   = f"{HF_USERNAME}/PGABL-Phi-3.5-mini-SFT-Bimo"
+    ID_MODEL     = "unsloth/Llama-3.2-1B-Instruct-bnb-4bit"   # sudah 4-bit (nf4 + double quant)
+    REPO_MODEL   = f"{HF_USERNAME}/PGABL-Llama-3.2-1B-SFT-Bimo"
 
     MAKS_TOKEN   = 1024      # panjang urutan maksimum
     BENIH        = 3407      # seed reproducibility
@@ -136,10 +136,10 @@ sel.append(code("""
 sel.append(md("""
     ## 5. Pasang Adapter LoRA (Attention + FFN)
 
-    Adapter ditaruh di proyeksi Phi-3.5 yang menyentuh dua komponen komputasi
-    utama: Multi-Head Attention (`qkv_proj`, `o_proj` — Phi memakai QKV ter-fusi)
-    dan Feed-Forward Network (`gate_up_proj`, `down_proj`). Rank kecil (r=8) cukup
-    untuk membentuk gaya jawaban formal Bahasa Indonesia tanpa memberatkan VRAM.
+    Adapter ditaruh di tujuh proyeksi supaya menyentuh dua komponen komputasi
+    utama sekaligus: Multi-Head Attention (`q,k,v,o`) dan Feed-Forward Network
+    (`gate,up,down`). Rank kecil (r=8) cukup untuk membentuk gaya jawaban formal
+    Bahasa Indonesia tanpa memberatkan VRAM.
 """))
 sel.append(code("""
     model = FastLanguageModel.get_peft_model(
@@ -148,8 +148,8 @@ sel.append(code("""
         lora_alpha=ALPHA_LORA,
         lora_dropout=DROPOUT_LORA,
         target_modules=[
-            "qkv_proj", "o_proj",         # Multi-Head Attention (QKV ter-fusi)
-            "gate_up_proj", "down_proj",  # Feed-Forward Network (gate/up ter-fusi)
+            "q_proj", "k_proj", "v_proj", "o_proj",   # Multi-Head Attention
+            "gate_proj", "up_proj", "down_proj",       # Feed-Forward Network
         ],
         bias="none",
         use_gradient_checkpointing="unsloth",
@@ -188,18 +188,18 @@ sel.append(code("""
 
 # --- Chat template + bukti -------------------------------------------------
 sel.append(md("""
-    ## 7. Terapkan Chat Template Phi-3.5 (Bukti Token Spesial)
+    ## 7. Terapkan Chat Template Llama-3 (Bukti Token Spesial)
 
-    Phi-3.5 memakai format percakapan dengan penanda `<|user|>`, `<|assistant|>`,
-    dan `<|end|>`. Template diatur lewat `get_chat_template(chat_template="phi-3.5")`,
-    lalu tiap baris dipetakan `datasets.map()` menjadi kolom `text`. Cetakan
-    berikut WAJIB memperlihatkan token spesial tersebut sebagai bukti template
-    sudah diterapkan sebelum melatih.
+    Llama-3.2 memakai format percakapan dengan penanda `<|start_header_id|>`,
+    `<|end_header_id|>`, dan `<|eot_id|>`. Template diatur lewat
+    `get_chat_template(chat_template="llama-3.1")`, lalu tiap baris dipetakan
+    `datasets.map()` menjadi kolom `text`. Cetakan berikut WAJIB memperlihatkan
+    token spesial tersebut sebagai bukti template sudah diterapkan sebelum melatih.
 """))
 sel.append(code("""
     from unsloth.chat_templates import get_chat_template
 
-    tokenizer = get_chat_template(tokenizer, chat_template="phi-3.5")
+    tokenizer = get_chat_template(tokenizer, chat_template="llama-3.1")
 
     def susun_teks(baris):
         percakapan = [
@@ -213,11 +213,11 @@ sel.append(code("""
 
     baris_contoh = siap_latih[0]["text"]
     print("-" * 70)
-    print("SATU BARIS DATASET SETELAH CHAT TEMPLATE PHI-3.5")
+    print("SATU BARIS DATASET SETELAH CHAT TEMPLATE LLAMA-3")
     print("-" * 70)
     print(baris_contoh)
     print("-" * 70)
-    for penanda in ["<|user|>", "<|assistant|>", "<|end|>"]:
+    for penanda in ["<|begin_of_text|>", "<|start_header_id|>", "<|eot_id|>"]:
         status = "ADA" if penanda in baris_contoh else "TIDAK ADA"
         print(f"[{status}] token spesial {penanda}")
 """))
@@ -289,7 +289,7 @@ sel.append(md("""
 sel.append(code("""
     from huggingface_hub import HfApi, create_repo
 
-    FOLDER_GABUNG = "/content/phi_sft_merged"
+    FOLDER_GABUNG = "/content/llama_sft_merged"
 
     model.save_pretrained_merged(FOLDER_GABUNG, tokenizer, save_method="merged_16bit")
     print("Bobot tergabung disimpan:", FOLDER_GABUNG)
@@ -300,7 +300,7 @@ sel.append(code("""
         folder_path=FOLDER_GABUNG,
         repo_id=REPO_MODEL,
         token=HF_TOKEN,
-        commit_message="SFT Phi-3.5-mini merged_16bit (PGABL)",
+        commit_message="SFT Llama-3.2-1B merged_16bit (PGABL)",
         delete_patterns=["adapter_config.json", "adapter_model.safetensors"],
     )
     tautan_model = f"https://huggingface.co/{REPO_MODEL}"
@@ -327,9 +327,9 @@ sel.append(md("""
 
     | Aspek | Nilai |
     |---|---|
-    | Model dasar | `unsloth/Phi-3.5-mini-instruct-bnb-4bit` |
+    | Model dasar | `unsloth/Llama-3.2-1B-Instruct-bnb-4bit` |
     | Teknik | QLoRA 4-bit (nf4 + double quant), LoRA r=8 a=16 pada MHA+FFN |
-    | Dataset | `Ichsan2895/alpaca-gpt4-indonesian` (chat template Phi-3.5) |
+    | Dataset | `Ichsan2895/alpaca-gpt4-indonesian` (chat template Llama-3) |
     | Pelatihan | SFTTrainer 800 langkah, effective batch 8, LR 2e-4 linear |
     | Unggah | `merged_16bit` ke repositori Hugging Face publik |
 
