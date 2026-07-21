@@ -87,14 +87,22 @@ class CameraService {
 		});
 	}
 
-	// Selesai ketika metadata frame pertama sudah tersedia.
+	// Selesai ketika sebuah frame BENAR-BENAR ter-render (bukan sekadar metadata).
+	// `loadedmetadata` menyala saat dimensi diketahui (readyState 1) tapi piksel
+	// belum tentu ada — memprediksi di sana bisa kena bingkai kosong. Maka kita
+	// tunggu `requestVideoFrameCallback` (frame benar-benar tampil) bila didukung,
+	// atau `loadeddata` (readyState 2 / HAVE_CURRENT_DATA) sebagai cadangan.
 	#awaitFirstFrame() {
 		return new Promise((resolve) => {
 			if (this.video.readyState >= 2) {
 				resolve();
 				return;
 			}
-			this.video.addEventListener('loadedmetadata', () => resolve(), { once: true });
+			if (typeof this.video.requestVideoFrameCallback === 'function') {
+				this.video.requestVideoFrameCallback(() => resolve());
+				return;
+			}
+			this.video.addEventListener('loadeddata', () => resolve(), { once: true });
 		});
 	}
 
@@ -105,9 +113,11 @@ class CameraService {
 			this.#stream = await this.#openStream();
 			if (!this.video) throw new Error('Elemen <video> tidak ditemukan.');
 
+			// Mulai pemutaran DULU baru tunggu frame: requestVideoFrameCallback hanya
+			// menyala saat video benar-benar berjalan.
 			this.video.srcObject = this.#stream;
+			await this.video.play().catch(() => {});
 			await this.#awaitFirstFrame();
-			await this.video.play();
 		} catch (error) {
 			logError('Gagal memulai kamera', error);
 			const errorMessage = getCameraErrorMessage(error);
